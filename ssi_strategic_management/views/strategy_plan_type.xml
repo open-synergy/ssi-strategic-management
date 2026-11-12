@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_plan_type_view_search" model="ir.ui.view">
+    <field name="name">strategy_plan_type - search</field>
+    <field name="model">strategy_plan_type</field>
+    <field
+            name="inherit_id"
+            ref="ssi_master_data_mixin.mixin_master_data_view_search"
+        />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data />
+    </field>
+</record>
+
+<record id="strategy_plan_type_view_tree" model="ir.ui.view">
+    <field name="name">strategy_plan_type - tree</field>
+    <field name="model">strategy_plan_type</field>
+    <field name="inherit_id" ref="ssi_master_data_mixin.mixin_master_data_view_tree" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="methodology" />
+                <field name="cascade_level" />
+                <field name="score_scale" />
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_plan_type_view_form" model="ir.ui.view">
+    <field name="name">strategy_plan_type - form</field>
+    <field name="model">strategy_plan_type</field>
+    <field name="inherit_id" ref="ssi_master_data_mixin.mixin_master_data_view_form" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//notebook/page[@name='note']" position="before">
+                <page name="configuration" string="Configuration">
+                    <group name="configuration_group_1" string="Configuration">
+                        <field name="methodology" />
+                        <field name="cascade_level" />
+                        <field name="score_scale" />
+                        <field name="score_category_id" />
+                    </group>
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_plan_type_action" model="ir.actions.act_window">
+    <field name="name">Plan Types</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_plan_type</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem
+        id="strategy_plan_type_menu"
+        name="Plan Types"
+        parent="menu_strategic_management_configuration"
+        action="strategy_plan_type_action"
+        groups="strategy_plan_type_group"
+        sequence="40"
+    />
+</odoo>

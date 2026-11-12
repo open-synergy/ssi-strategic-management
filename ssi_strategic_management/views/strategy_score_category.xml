@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_score_category_view_search" model="ir.ui.view">
+    <field name="name">strategy_score_category - search</field>
+    <field name="model">strategy_score_category</field>
+    <field
+            name="inherit_id"
+            ref="ssi_master_data_mixin.mixin_master_data_view_search"
+        />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data />
+    </field>
+</record>
+
+<record id="strategy_score_category_view_tree" model="ir.ui.view">
+    <field name="name">strategy_score_category - tree</field>
+    <field name="model">strategy_score_category</field>
+    <field name="inherit_id" ref="ssi_master_data_mixin.mixin_master_data_view_tree" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data />
+    </field>
+</record>
+
+<record id="strategy_score_category_view_form" model="ir.ui.view">
+    <field name="name">strategy_score_category - form</field>
+    <field name="model">strategy_score_category</field>
+    <field name="inherit_id" ref="ssi_master_data_mixin.mixin_master_data_view_form" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//notebook/page[@name='note']" position="before">
+                <page name="ranges" string="Ranges">
+                    <field name="range_ids" colspan="4" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="sequence" widget="handle" />
+                            <field name="name" />
+                            <field name="min_value" />
+                            <field name="max_value" />
+                        </tree>
+                        <form>
+                            <group name="range_group_1" colspan="4" col="2">
+                                <field name="name" />
+                                <field name="min_value" />
+                                <field name="max_value" />
+                                <field name="sequence" />
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_score_category_action" model="ir.actions.act_window">
+    <field name="name">Score Categories</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_score_category</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem
+        id="strategy_score_category_menu"
+        name="Score Categories"
+        parent="menu_strategic_management_configuration"
+        action="strategy_score_category_action"
+        groups="strategy_score_category_group"
+        sequence="30"
+    />
+</odoo>

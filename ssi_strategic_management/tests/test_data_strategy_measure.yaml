@@ -1,0 +1,154 @@
+setup:
+  steps:
+    - step: "Create configurator user"
+      action: "create"
+      model: "res.users"
+      save_as: "configurator"
+      values:
+        name: "Strategy Configurator"
+        login: "EVAL: 'cfg%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Create plain internal user"
+      action: "create"
+      model: "res.users"
+      save_as: "plain_user"
+      values:
+        name: "Strategy Plain User"
+        login: "EVAL: 'pln%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [6, 0, ["REF: base.group_user"]]
+
+scenarios:
+  - name: "Create measure"
+    steps:
+      - step: "Create measure as configurator"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "record"
+        as_user: "configurator"
+        values:
+          name: "Test measure"
+          code: "TST"
+          score_range_ids:
+            - [0, 0, {min_value: 0.0, max_value: 50.0, score: 50.0}]
+            - [0, 0, {min_value: 50.0, max_value: 100.0, score: 100.0}]
+      - step: "Assert created"
+        action: "assert"
+        target: "record"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "Test measure"
+          polarity:
+            type: "value"
+            expected: "higher"
+          frequency:
+            type: "value"
+            expected: "monthly"
+          score_range_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+
+  - name: "Edit measure"
+    steps:
+      - step: "Create measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "record"
+        values:
+          name: "Edit measure"
+          code: "EDT"
+          score_range_ids:
+            - [0, 0, {min_value: 0.0, max_value: 50.0, score: 50.0}]
+            - [0, 0, {min_value: 50.0, max_value: 100.0, score: 100.0}]
+      - step: "Write new name as configurator"
+        action: "write"
+        target: "record"
+        as_user: "configurator"
+        values:
+          name: "Updated measure"
+      - step: "Assert name updated"
+        action: "assert"
+        target: "record"
+        asserts:
+          name:
+            type: "value"
+            expected: "Updated measure"
+
+  - name: "Delete measure"
+    steps:
+      - step: "Create measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "record"
+        values:
+          name: "Delete measure"
+          code: "DEL"
+          score_range_ids:
+            - [0, 0, {min_value: 0.0, max_value: 50.0, score: 50.0}]
+            - [0, 0, {min_value: 50.0, max_value: 100.0, score: 100.0}]
+      - step: "Delete measure as configurator"
+        action: "unlink"
+        target: "record"
+        as_user: "configurator"
+      - step: "Verify deleted"
+        action: "search"
+        model: "strategy_measure"
+        domain: [["code", "=", "DEL"]]
+        save_as: "result"
+        expect_count: 0
+
+  - name: "Internal user cannot create measure"
+    steps:
+      - step: "Create measure as plain internal user"
+        action: "create"
+        model: "strategy_measure"
+        as_user: "plain_user"
+        expect_error:
+          type: "AccessError"
+        values:
+          name: "Denied measure"
+          code: "DNY"
+          score_range_ids:
+            - [0, 0, {min_value: 0.0, max_value: 50.0, score: 50.0}]
+            - [0, 0, {min_value: 50.0, max_value: 100.0, score: 100.0}]
+
+  - name: "Measure minimum score above maximum is rejected"
+    steps:
+      - step: "Create measure with inverted score limits"
+        action: "create"
+        model: "strategy_measure"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Minimum score must not be greater"
+        values:
+          name: "Inverted Score Limits"
+          code: "INVSCR"
+          score_min: 100.0
+          score_max: 50.0
+
+  - name: "Measure score range inverted bounds is rejected"
+    steps:
+      - step: "Create measure with an inverted score range"
+        action: "create"
+        model: "strategy_measure"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Range start must not be greater"
+        values:
+          name: "Inverted Range"
+          code: "INVRNG"
+          score_range_ids:
+            - [0, 0, {min_value: 80.0, max_value: 20.0, score: 10.0}]
