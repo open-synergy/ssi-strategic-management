@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_plan_view_search" model="ir.ui.view">
+    <field name="name">strategy_plan - search</field>
+    <field name="model">strategy_plan</field>
+    <field
+            name="inherit_id"
+            ref="ssi_transaction_mixin.mixin_transaction_view_search"
+        />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="type_id" />
+                <field name="parent_id" />
+                <field name="date_start" />
+                <field name="date_end" />
+            </xpath>
+            <xpath expr="//filter[@name='grp_responsible']" position="after">
+                <filter
+                        name="grp_type_id"
+                        string="Plan Type"
+                        context="{'group_by':'type_id'}"
+                    />
+                <filter
+                        name="grp_parent_id"
+                        string="Parent Plan"
+                        context="{'group_by':'parent_id'}"
+                    />
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_plan_view_tree" model="ir.ui.view">
+    <field name="name">strategy_plan - tree</field>
+    <field name="model">strategy_plan</field>
+    <field name="inherit_id" ref="ssi_transaction_mixin.mixin_transaction_view_tree" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="type_id" />
+                <field name="parent_id" />
+                <field name="date_start" />
+                <field name="date_end" />
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_plan_view_form" model="ir.ui.view">
+    <field name="name">strategy_plan - form</field>
+    <field name="model">strategy_plan</field>
+    <field name="inherit_id" ref="ssi_transaction_mixin.mixin_transaction_view_form" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="type_id" />
+                <field name="parent_id" />
+            </xpath>
+            <xpath expr="//group[@name='header_right']" position="inside">
+                <field name="date_start" />
+                <field name="date_end" />
+            </xpath>
+            <xpath expr="//page[@name='note']" position="before">
+                <page name="direction" string="Direction">
+                    <group name="direction_1" colspan="4" col="2">
+                        <field name="vision" />
+                        <field name="mission" />
+                    </group>
+                </page>
+                <page name="sub_plan" string="Sub-Plans">
+                    <field name="child_ids" colspan="4" nolabel="1">
+                        <tree>
+                            <field name="name" />
+                            <field name="type_id" />
+                            <field name="date_start" />
+                            <field name="date_end" />
+                            <field name="state" />
+                        </tree>
+                        <form>
+                            <group name="sub_plan_form_1" colspan="4" col="2">
+                                <field name="name" />
+                                <field name="type_id" />
+                                <field name="date_start" />
+                                <field name="date_end" />
+                                <field name="state" />
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_plan_action" model="ir.actions.act_window">
+    <field name="name">Plans</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_plan</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem
+        id="strategy_plan_menu"
+        name="Plans"
+        parent="menu_strategic_management_strategy"
+        action="strategy_plan_action"
+        groups="strategy_plan_viewer_group"
+        sequence="10"
+    />
+</odoo>

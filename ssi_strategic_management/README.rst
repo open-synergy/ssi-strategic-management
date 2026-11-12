@@ -10,7 +10,10 @@ Strategic management application for companies that run on Odoo: strategic
 plans, Balanced Scorecard perspectives, OKR, KPI measures and initiatives.
 This module provides the application skeleton, the security categories, the
 main menu and the master data shared by the whole module family:
-perspectives, the measure library, score categories and plan types.
+perspectives, the measure library, score categories and plan types. It
+also provides the strategy plan, the parent document of every objective,
+KPI and initiative, which can be nested into sub-plans and goes through
+an approval workflow.
 
 
 Work Instruction
@@ -35,6 +38,17 @@ Plan Type
 ---------
 
 * `Create Plan Type <docs/strategy_plan_type/01-create.html>`_
+
+Plan
+----
+
+* `Create Plan <docs/strategy_plan/01-create.html>`_
+* `Confirm Plan <docs/strategy_plan/04-confirm.html>`_
+* `Approve Plan <docs/strategy_plan/05-approve.html>`_
+* `Reject Plan <docs/strategy_plan/06-reject.html>`_
+* `Start Plan <docs/strategy_plan/07-start.html>`_
+* `Finish Plan <docs/strategy_plan/09-finish.html>`_
+* `Cancel Plan <docs/strategy_plan/10-cancel.html>`_
 
 
 Installation

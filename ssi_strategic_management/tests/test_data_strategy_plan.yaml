@@ -1,0 +1,298 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Plan Validator"
+        login: "EVAL: 'val%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+              ],
+            ]
+    - step: "Create plan type as administrator"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "plan_type"
+      as_user: "base.user_admin"
+      values:
+        name: "Test plan type"
+        code: "EVAL: 'PT%s' % datetime.now().strftime('%H%M%S%f')"
+
+scenarios:
+  - name: "Plan goes from draft to done"
+    steps:
+      - step: "Create plan as validator"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+          vision: "Be the best"
+          mission: "Serve well"
+      - step: "Plan starts in draft"
+        action: "assert"
+        target: "plan"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+      - step: "Confirm plan"
+        action: "call"
+        target: "plan"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Approve plan as validator"
+        action: "call"
+        target: "plan"
+        method: "action_approve_approval"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+          approved:
+            type: "value"
+            expected: true
+      - step: "Start plan"
+        action: "call"
+        target: "plan"
+        method: "action_open"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+          name:
+            type: "value"
+            operator: "contains"
+            expected: "SP/"
+      - step: "Finish plan"
+        action: "call"
+        target: "plan"
+        method: "action_done"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+
+  - name: "Draft plan can be cancelled"
+    steps:
+      - step: "Create plan as validator"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Cancel plan"
+        action: "call"
+        target: "plan"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+
+  - name: "Sub-plan inside parent period is saved and started after parent"
+    steps:
+      - step: "Create parent plan"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create sub-plan inside the parent period"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          parent_id: "REC: parent.id"
+          date_start: 2026-04-01
+          date_end: 2026-06-30
+      - step: "Sub-plan is linked to the parent"
+        action: "assert"
+        target: "child"
+        asserts:
+          parent_id:
+            type: "m2o"
+            expected: "REC: parent"
+      - step: "Parent lists the sub-plan"
+        action: "assert"
+        target: "parent"
+        asserts:
+          child_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 1
+      - step: "Start parent plan"
+        action: "call"
+        target: "parent"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Start sub-plan"
+        action: "call"
+        target: "child"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+  - name: "Sub-plan ending after its parent is rejected"
+    steps:
+      - step: "Create parent plan"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create sub-plan ending after the parent"
+        action: "create"
+        model: "strategy_plan"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Plan period must be within its parent plan period."
+        values:
+          type_id: "REC: plan_type.id"
+          parent_id: "REC: parent.id"
+          date_start: 2026-04-01
+          date_end: 2027-01-31
+
+  - name: "Parent plan cannot be shrunk away from its sub-plan"
+    steps:
+      - step: "Create parent plan"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create sub-plan"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          parent_id: "REC: parent.id"
+          date_start: 2026-04-01
+          date_end: 2026-12-31
+      - step: "Shrink the parent period below the sub-plan"
+        action: "write"
+        target: "parent"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Plan period must be within its parent plan period."
+        values:
+          date_end: 2026-06-30
+
+  - name: "Plan cannot be its own ancestor"
+    steps:
+      - step: "Create plan A"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan_a"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create plan B with A as parent"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan_b"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          parent_id: "REC: plan_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Make B the parent of A"
+        action: "write"
+        target: "plan_a"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "A plan cannot be its own ancestor."
+        values:
+          parent_id: "REC: plan_b.id"
+
+  - name: "Sub-plan cannot start before its parent"
+    steps:
+      - step: "Create parent plan left in draft"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create sub-plan"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          parent_id: "REC: parent.id"
+          date_start: 2026-04-01
+          date_end: 2026-06-30
+      - step: "Start sub-plan while the parent is draft"
+        action: "call"
+        target: "child"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains: "The parent plan must be in progress first."
