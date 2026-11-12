@@ -1,0 +1,120 @@
+setup:
+  steps:
+    - step: "Create configurator user"
+      action: "create"
+      model: "res.users"
+      save_as: "configurator"
+      values:
+        name: "Strategy Configurator"
+        login: "EVAL: 'cfg%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_perspective_group",
+              ],
+            ]
+    - step: "Create plain internal user"
+      action: "create"
+      model: "res.users"
+      save_as: "plain_user"
+      values:
+        name: "Strategy Plain User"
+        login: "EVAL: 'pln%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [6, 0, ["REF: base.group_user"]]
+
+scenarios:
+  - name: "Create perspective"
+    steps:
+      - step: "Create perspective as configurator"
+        action: "create"
+        model: "strategy_perspective"
+        save_as: "record"
+        as_user: "configurator"
+        values:
+          name: "Test perspective"
+          code: "TST"
+          sequence: 15
+      - step: "Assert created"
+        action: "assert"
+        target: "record"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "Test perspective"
+          sequence:
+            type: "value"
+            expected: 15
+
+  - name: "Edit perspective"
+    steps:
+      - step: "Create perspective"
+        action: "create"
+        model: "strategy_perspective"
+        save_as: "record"
+        values:
+          name: "Edit perspective"
+          code: "EDT"
+          sequence: 15
+      - step: "Write new name as configurator"
+        action: "write"
+        target: "record"
+        as_user: "configurator"
+        values:
+          name: "Updated perspective"
+      - step: "Assert name updated"
+        action: "assert"
+        target: "record"
+        asserts:
+          name:
+            type: "value"
+            expected: "Updated perspective"
+
+  - name: "Delete perspective"
+    steps:
+      - step: "Create perspective"
+        action: "create"
+        model: "strategy_perspective"
+        save_as: "record"
+        values:
+          name: "Delete perspective"
+          code: "DEL"
+          sequence: 15
+      - step: "Delete perspective as configurator"
+        action: "unlink"
+        target: "record"
+        as_user: "configurator"
+      - step: "Verify deleted"
+        action: "search"
+        model: "strategy_perspective"
+        domain: [["code", "=", "DEL"]]
+        save_as: "result"
+        expect_count: 0
+
+  - name: "Internal user cannot create perspective"
+    steps:
+      - step: "Create perspective as plain internal user"
+        action: "create"
+        model: "strategy_perspective"
+        as_user: "plain_user"
+        expect_error:
+          type: "AccessError"
+        values:
+          name: "Denied perspective"
+          code: "DNY"
+          sequence: 15
+
+  - name: "Default perspectives exist"
+    steps:
+      - step: "Search the four default perspectives"
+        action: "search"
+        model: "strategy_perspective"
+        domain: [["code", "in", ["FIN", "CUS", "INT", "LEA"]]]
+        save_as: "result"
+        expect_count: 4

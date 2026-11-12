@@ -1,0 +1,135 @@
+setup:
+  steps:
+    - step: "Create configurator user"
+      action: "create"
+      model: "res.users"
+      save_as: "configurator"
+      values:
+        name: "Strategy Configurator"
+        login: "EVAL: 'cfg%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_score_category_group",
+              ],
+            ]
+    - step: "Create plain internal user"
+      action: "create"
+      model: "res.users"
+      save_as: "plain_user"
+      values:
+        name: "Strategy Plain User"
+        login: "EVAL: 'pln%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [6, 0, ["REF: base.group_user"]]
+
+scenarios:
+  - name: "Create score category"
+    steps:
+      - step: "Create score category as configurator"
+        action: "create"
+        model: "strategy_score_category"
+        save_as: "record"
+        as_user: "configurator"
+        values:
+          name: "Test score category"
+          code: "TST"
+          range_ids:
+            - [0, 0, {name: "Poor", min_value: 0.0, max_value: 60.0, sequence: 10}]
+            - [0, 0, {name: "Good", min_value: 60.0, max_value: 100.0, sequence: 20}]
+      - step: "Assert created"
+        action: "assert"
+        target: "record"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "Test score category"
+          range_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+
+  - name: "Edit score category"
+    steps:
+      - step: "Create score category"
+        action: "create"
+        model: "strategy_score_category"
+        save_as: "record"
+        values:
+          name: "Edit score category"
+          code: "EDT"
+          range_ids:
+            - [0, 0, {name: "Poor", min_value: 0.0, max_value: 60.0, sequence: 10}]
+            - [0, 0, {name: "Good", min_value: 60.0, max_value: 100.0, sequence: 20}]
+      - step: "Write new name as configurator"
+        action: "write"
+        target: "record"
+        as_user: "configurator"
+        values:
+          name: "Updated score category"
+      - step: "Assert name updated"
+        action: "assert"
+        target: "record"
+        asserts:
+          name:
+            type: "value"
+            expected: "Updated score category"
+
+  - name: "Delete score category"
+    steps:
+      - step: "Create score category"
+        action: "create"
+        model: "strategy_score_category"
+        save_as: "record"
+        values:
+          name: "Delete score category"
+          code: "DEL"
+          range_ids:
+            - [0, 0, {name: "Poor", min_value: 0.0, max_value: 60.0, sequence: 10}]
+            - [0, 0, {name: "Good", min_value: 60.0, max_value: 100.0, sequence: 20}]
+      - step: "Delete score category as configurator"
+        action: "unlink"
+        target: "record"
+        as_user: "configurator"
+      - step: "Verify deleted"
+        action: "search"
+        model: "strategy_score_category"
+        domain: [["code", "=", "DEL"]]
+        save_as: "result"
+        expect_count: 0
+
+  - name: "Internal user cannot create score category"
+    steps:
+      - step: "Create score category as plain internal user"
+        action: "create"
+        model: "strategy_score_category"
+        as_user: "plain_user"
+        expect_error:
+          type: "AccessError"
+        values:
+          name: "Denied score category"
+          code: "DNY"
+          range_ids:
+            - [0, 0, {name: "Poor", min_value: 0.0, max_value: 60.0, sequence: 10}]
+            - [0, 0, {name: "Good", min_value: 60.0, max_value: 100.0, sequence: 20}]
+
+  - name: "Overlapping ranges are rejected"
+    steps:
+      - step: "Create category with overlapping ranges"
+        action: "create"
+        model: "strategy_score_category"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Score ranges must not overlap."
+        values:
+          name: "Overlapping Category"
+          code: "OVLCAT"
+          range_ids:
+            - [0, 0, {name: "Low", min_value: 0.0, max_value: 60.0, sequence: 10}]
+            - [0, 0, {name: "High", min_value: 50.0, max_value: 100.0, sequence: 20}]

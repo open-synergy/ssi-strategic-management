@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+<record id="strategy_perspective_financial" model="strategy_perspective">
+    <field name="name">Financial</field>
+    <field name="code">FIN</field>
+    <field name="sequence">10</field>
+</record>
+
+<record id="strategy_perspective_customer" model="strategy_perspective">
+    <field name="name">Customer</field>
+    <field name="code">CUS</field>
+    <field name="sequence">20</field>
+</record>
+
+<record id="strategy_perspective_internal_process" model="strategy_perspective">
+    <field name="name">Internal Process</field>
+    <field name="code">INT</field>
+    <field name="sequence">30</field>
+</record>
+
+<record id="strategy_perspective_learning_growth" model="strategy_perspective">
+    <field name="name">Learning &amp; Growth</field>
+    <field name="code">LEA</field>
+    <field name="sequence">40</field>
+</record>
+</odoo>

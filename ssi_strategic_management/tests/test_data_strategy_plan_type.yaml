@@ -1,0 +1,148 @@
+setup:
+  steps:
+    - step: "Create configurator user"
+      action: "create"
+      model: "res.users"
+      save_as: "configurator"
+      values:
+        name: "Strategy Configurator"
+        login: "EVAL: 'cfg%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_type_group",
+              ],
+            ]
+    - step: "Create plain internal user"
+      action: "create"
+      model: "res.users"
+      save_as: "plain_user"
+      values:
+        name: "Strategy Plain User"
+        login: "EVAL: 'pln%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [6, 0, ["REF: base.group_user"]]
+
+scenarios:
+  - name: "Create plan type"
+    steps:
+      - step: "Create plan type as configurator"
+        action: "create"
+        model: "strategy_plan_type"
+        save_as: "record"
+        as_user: "configurator"
+        values:
+          name: "Test plan type"
+          code: "TST"
+          score_scale: "percent"
+      - step: "Assert created"
+        action: "assert"
+        target: "record"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "Test plan type"
+          methodology:
+            type: "value"
+            expected: "bsc"
+          cascade_level:
+            type: "value"
+            expected: "department"
+
+  - name: "Edit plan type"
+    steps:
+      - step: "Create plan type"
+        action: "create"
+        model: "strategy_plan_type"
+        save_as: "record"
+        values:
+          name: "Edit plan type"
+          code: "EDT"
+          score_scale: "percent"
+      - step: "Write new name as configurator"
+        action: "write"
+        target: "record"
+        as_user: "configurator"
+        values:
+          name: "Updated plan type"
+      - step: "Assert name updated"
+        action: "assert"
+        target: "record"
+        asserts:
+          name:
+            type: "value"
+            expected: "Updated plan type"
+
+  - name: "Delete plan type"
+    steps:
+      - step: "Create plan type"
+        action: "create"
+        model: "strategy_plan_type"
+        save_as: "record"
+        values:
+          name: "Delete plan type"
+          code: "DEL"
+          score_scale: "percent"
+      - step: "Delete plan type as configurator"
+        action: "unlink"
+        target: "record"
+        as_user: "configurator"
+      - step: "Verify deleted"
+        action: "search"
+        model: "strategy_plan_type"
+        domain: [["code", "=", "DEL"]]
+        save_as: "result"
+        expect_count: 0
+
+  - name: "Internal user cannot create plan type"
+    steps:
+      - step: "Create plan type as plain internal user"
+        action: "create"
+        model: "strategy_plan_type"
+        as_user: "plain_user"
+        expect_error:
+          type: "AccessError"
+        values:
+          name: "Denied plan type"
+          code: "DNY"
+          score_scale: "percent"
+
+  - name: "Create OKR plan type with OKR score scale"
+    steps:
+      - step: "Create OKR plan type"
+        action: "create"
+        model: "strategy_plan_type"
+        save_as: "record"
+        as_user: "configurator"
+        values:
+          name: "Test OKR Plan Type"
+          code: "TSTOKR"
+          methodology: "okr"
+          score_scale: "okr"
+      - step: "Assert OKR plan type saved"
+        action: "assert"
+        target: "record"
+        asserts:
+          score_scale:
+            type: "value"
+            expected: "okr"
+
+  - name: "OKR plan type with percentage scale is rejected"
+    steps:
+      - step: "Create OKR plan type with percentage scale"
+        action: "create"
+        model: "strategy_plan_type"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "OKR plan types must use the OKR score scale."
+        values:
+          name: "Invalid OKR Plan Type"
+          code: "INVOKR"
+          methodology: "okr"
+          score_scale: "percent"

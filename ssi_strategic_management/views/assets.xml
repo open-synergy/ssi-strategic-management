@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <template
+        id="assets_tests"
+        name="ssi_strategic_management assets tests"
+        inherit_id="web.assets_tests"
+    >
+        <xpath expr="." position="inside">
+            <script
+                type="text/javascript"
+                src="/ssi_strategic_management/static/tests/tours/strategy_perspective_tour.js"
+            />
+            <script
+                type="text/javascript"
+                src="/ssi_strategic_management/static/tests/tours/strategy_measure_tour.js"
+            />
+            <script
+                type="text/javascript"
+                src="/ssi_strategic_management/static/tests/tours/strategy_score_category_tour.js"
+            />
+            <script
+                type="text/javascript"
+                src="/ssi_strategic_management/static/tests/tours/strategy_plan_type_tour.js"
+            />
+        </xpath>
+    </template>
+</odoo>
