@@ -333,4 +333,68 @@ odoo.define("ssi_strategic_management.strategy_plan_tour", function (require) {
             },
         ])
     );
+
+    // IK: docs/strategy_plan/12-restart.md
+    tour.register(
+        "ssi_strategic_management_strategy_plan_restart",
+        {
+            test: true,
+            url: "/web",
+        },
+        [].concat(
+            openPlanList(),
+            openPlanByType("Tour Plan Type Reopen"),
+            // Flow 3-4 -- Click Restart, then OK on the dialog.
+            // Post-Condition -- status returns to Draft. The removal of the
+            // approval records is data, not a user-visible surface, so it is
+            // left to the unit test.
+            pressAndConfirm("action_restart", "Restart", "draft", "Draft")
+        )
+    );
+
+    // IK: docs/strategy_plan/14-restart-approval.md
+    tour.register(
+        "ssi_strategic_management_strategy_plan_restart_approval",
+        {
+            test: true,
+            url: "/web",
+        },
+        [].concat(openPlanList(), openPlanByType("Tour Plan Type Restart Approval"), [
+            // Flow 3 -- Click the Restart Approval Process button.
+            {
+                content: "Click the Restart Approval Process button",
+                trigger:
+                    ".o_statusbar_buttons button[name='action_reload_approval_template']",
+                extra_trigger: ".o_form_view",
+            },
+
+            // Flow 4 -- Click OK on the confirmation dialog.
+            {
+                content: "Confirm the dialog",
+                trigger: ".modal-footer button.btn-primary",
+                in_modal: true,
+            },
+
+            // Post-Condition -- the approval records are rebuilt without
+            // changing the status: the Approve button shows up for the
+            // active approver, and the Restart Approval Process button
+            // is gone because a template is assigned again.
+            {
+                content: "Approve button is available",
+                trigger: ".o_statusbar_buttons button[name='action_approve_approval']",
+                extra_trigger: "body:not(:has(.modal))",
+                run: function () {
+                    // Assertion only.
+                },
+            },
+            {
+                content: "Status is still Waiting for Approval",
+                trigger:
+                    ".o_statusbar_status .o_arrow_button[data-value='confirm'].btn-primary",
+                run: function () {
+                    // Assertion only.
+                },
+            },
+        ])
+    );
 });

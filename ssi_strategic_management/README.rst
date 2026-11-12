@@ -49,6 +49,10 @@ Plan
 * `Start Plan <docs/strategy_plan/07-start.html>`_
 * `Finish Plan <docs/strategy_plan/09-finish.html>`_
 * `Cancel Plan <docs/strategy_plan/10-cancel.html>`_
+* `Restart Plan <docs/strategy_plan/12-restart.html>`_
+* `Reset Plan Document Number <docs/strategy_plan/13-reset-number.html>`_
+* `Restart Plan Approval Process <docs/strategy_plan/14-restart-approval.html>`_
+* `Reload Plan Policy Template <docs/strategy_plan/15-reload-policy-template.html>`_
 
 
 Installation

@@ -74,6 +74,18 @@ class TestUiStrategyPlan(HttpSavepointCase):
         # cancel policy allows.
         cls.plan_cancel = cls._create_plan("Cancel")
 
+        # Pre-Condition 12-restart.md: Cancelled.
+        cls.plan_restart = cls._create_plan("Reopen")
+        cls._run_transition(cls.plan_restart, "action_cancel")
+
+        # Pre-Condition 14-restart-approval.md: Waiting for Approval with
+        # no approval.template assigned. The standard template is cleared
+        # on the fixture the way a plan stuck without approvers looks.
+        cls.plan_restart_approval = cls._create_plan("Restart Approval")
+        cls._run_transition(cls.plan_restart_approval, "action_confirm")
+        cls.plan_restart_approval.invalidate_cache()
+        cls.plan_restart_approval.sudo().write({"approval_template_id": False})
+
     @classmethod
     def _create_plan_type(cls, label):
         """Create one plan type dedicated to a single tour.
@@ -88,7 +100,7 @@ class TestUiStrategyPlan(HttpSavepointCase):
             .create(
                 {
                     "name": "Tour Plan Type %s" % label,
-                    "code": "TOURPT%s" % label.upper(),
+                    "code": "TOURPT%s" % label.upper().replace(" ", ""),
                 }
             )
         )
@@ -196,5 +208,27 @@ class TestUiStrategyPlan(HttpSavepointCase):
         self.start_tour(
             "/web",
             "ssi_strategic_management_strategy_plan_cancel",
+            login="admin",
+        )
+
+    def test_restart(self):
+        """Run the restart tour for ``strategy_plan``.
+
+        IK: docs/strategy_plan/12-restart.md
+        """
+        self.start_tour(
+            "/web",
+            "ssi_strategic_management_strategy_plan_restart",
+            login="admin",
+        )
+
+    def test_restart_approval(self):
+        """Run the restart approval tour for ``strategy_plan``.
+
+        IK: docs/strategy_plan/14-restart-approval.md
+        """
+        self.start_tour(
+            "/web",
+            "ssi_strategic_management_strategy_plan_restart_approval",
             login="admin",
         )
