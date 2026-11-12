@@ -17,7 +17,11 @@ Strategic planning, balanced scorecard, OKR, KPI measurement, and strategic init
 
 [//]: # (addons)
 
-This part will be replaced when running the oca-gen-addons-table script from OCA/maintainer-tools.
+Available addons
+----------------
+addon | version | maintainers | summary
+--- | --- | --- | ---
+[ssi_strategic_management](ssi_strategic_management/) | 14.0.1.0.1 |  | Strategic Management
 
 [//]: # (end addons)
 
