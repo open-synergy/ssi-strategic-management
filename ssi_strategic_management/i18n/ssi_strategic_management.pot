@@ -1,0 +1,908 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ssi_strategic_management
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__measure_id
+msgid "# Measure"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__category_id
+msgid "# Score Category"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_needaction
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_needaction
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_needaction
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__active
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__active
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__active
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__active
+msgid "Active"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_state
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_state
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_state
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregation
+msgid "Aggregation"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__avg
+msgid "Average"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__methodology__bsc
+msgid "Balanced Scorecard"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__definition
+msgid "Business definition and formula of the measure."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__cascade_level
+msgid "Cascade Level"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__code
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__code
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__code
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__code
+msgid "Code"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__color
+msgid "Color Index"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__color
+msgid "Color index used to tint the perspective on dashboards."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_configuration
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_type_view_form
+msgid "Configuration"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:strategy_perspective,name:ssi_strategic_management.strategy_perspective_customer
+msgid "Customer"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__data_source
+msgid "Data Source"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__cascade_level
+msgid ""
+"Deepest organization level objectives can be cascaded to: Department = stop "
+"at departments, Employee = continue down to employees."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__definition
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
+msgid "Definition"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__cascade_level__department
+msgid "Department"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__polarity
+msgid ""
+"Direction in which the measure improves: Higher is Better = larger values "
+"score better, Lower is Better = smaller values score better, Within Range = "
+"values must stay inside a target range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__sequence
+msgid "Display order of the perspective. Lower values appear first."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category_range__sequence
+msgid "Display order of the range inside its category."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__cascade_level__employee
+msgid "Employee"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:strategy_perspective,name:ssi_strategic_management.strategy_perspective_financial
+msgid "Financial"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_channel_ids
+msgid "Followers (Channels)"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_type_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_type_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_type_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__frequency
+msgid "Frequency"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__min_value
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__min_value
+msgid "From"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__polarity__higher
+msgid "Higher is Better"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__score_max
+msgid "Highest score a realization can receive."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__frequency
+msgid "How often a realization of this measure is expected."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregation
+msgid ""
+"How periodic realizations roll up into a longer period: Sum = add them, "
+"Average = mean value, Last Value = value of the latest period."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__id
+msgid "ID"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_exception_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_exception_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_exception_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_needaction
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_unread
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_needaction
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_unread
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_needaction
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_unread
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_needaction
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_unread
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_has_error
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_has_error
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_has_error
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
+msgid "Indicator"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__indicator_type
+msgid "Indicator Type"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:strategy_perspective,name:ssi_strategic_management.strategy_perspective_internal_process
+msgid "Internal Process"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_is_follower
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_is_follower
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_is_follower
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__name
+msgid "Label"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category_range__name
+msgid "Label given to scores that fall in this range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__indicator_type__lagging
+msgid "Lagging"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__indicator_type
+msgid ""
+"Lagging = reports an outcome that already happened. Leading = predicts a "
+"future outcome."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__last
+msgid "Last Value"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__indicator_type__leading
+msgid "Leading"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:strategy_perspective,name:ssi_strategic_management.strategy_perspective_learning_growth
+msgid "Learning & Growth"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__min_value
+msgid "Lower bound of the realization value range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category_range__min_value
+msgid "Lower bound of the score range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__polarity__lower
+msgid "Lower is Better"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__score_min
+msgid "Lowest score a realization can receive."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__score_range_ids
+msgid "Mapping from realization value ranges to scores."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__active
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__active
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__active
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__active
+msgid ""
+"Master data status\n"
+"\n"
+"* Inactive data can not be selected when creating new transaction\n"
+"* Transaction with inactive master data can still be viewed\n"
+"* Set master data as inactive if master data no longger needed,\n"
+"but master data already used on transaction"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__code
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__code
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__code
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__code
+msgid ""
+"Master data unique identifier.\n"
+"\n"
+"* Fill with '/' if You do not need unique identifier\n"
+"* Click 'Generate Code' button to automatically assign code.\n"
+"  Sequence template mush be set to perform this action\n"
+"  Only master data with '/' code will be assign automatic code"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__score_max
+msgid "Maximum Score"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_measure_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_measure_menu
+msgid "Measure Library"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__measure_id
+msgid "Measure that owns this score range line."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_has_error
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_has_error
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_has_error
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__methodology
+msgid "Methodology"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__score_min
+msgid "Minimum Score"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_monitoring
+msgid "Monitoring"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__frequency__monthly
+msgid "Monthly"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__name
+msgid "Name"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_summary
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_summary
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_summary
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_type_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_type_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_type_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__note
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__note
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__note
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__note
+msgid "Note"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_needaction_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_needaction_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_needaction_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_has_error_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_has_error_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_has_error_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_unread_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_unread_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_unread_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_unread_counter
+msgid "Number of unread messages"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__methodology__okr
+msgid "OKR"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__score_scale__okr
+msgid "OKR (0.0-1.0)"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__score_scale__percent
+msgid "Percentage (0-100+)"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_perspective_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_perspective_menu
+msgid "Perspectives"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_plan_type_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_plan_type_menu
+msgid "Plan Types"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__methodology
+msgid "Planning methodology that plans of this type follow."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__polarity
+msgid "Polarity"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__frequency__quarterly
+msgid "Quarterly"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__range_ids
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_score_category_view_form
+msgid "Ranges"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_reporting
+msgid "Reporting"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_user_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_user_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_user_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__score_scale
+msgid "Scale in which scores of plans of this type are expressed."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__score
+msgid "Score"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_score_category_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_score_category_menu
+msgid "Score Categories"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__score_category_id
+msgid "Score Category"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
+msgid "Score Limits"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__score_range_ids
+msgid "Score Ranges"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__score_scale
+msgid "Score Scale"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category_range__category_id
+msgid "Score category that owns this range line."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__score_category_id
+msgid "Score category used to classify scores of plans of this type."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__score
+msgid "Score earned when the realization falls in this range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__range_ids
+msgid "Score ranges and the label each of them carries."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
+msgid "Scoring"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__frequency__semesterly
+msgid "Semesterly"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__sequence
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_state
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_state
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_state
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.module.category,name:ssi_strategic_management.strategic_management_module_category
+#: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_root
+msgid "Strategic Management"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.module.category,name:ssi_strategic_management.strategic_management_configurator_module_category
+msgid "Strategic Management - Configurator"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.module.category,name:ssi_strategic_management.strategic_management_data_ownership_module_category
+msgid "Strategic Management - Data Ownership"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.module.category,name:ssi_strategic_management.strategic_management_workflow_module_category
+msgid "Strategic Management - Workflow"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_strategy
+msgid "Strategy"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_measure
+#: model:res.groups,name:ssi_strategic_management.strategy_measure_group
+msgid "Strategy Measure"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_measure_score_range
+msgid "Strategy Measure - Score Range"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_perspective
+#: model:res.groups,name:ssi_strategic_management.strategy_perspective_group
+msgid "Strategy Perspective"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_plan_type
+#: model:res.groups,name:ssi_strategic_management.strategy_plan_type_group
+msgid "Strategy Plan Type"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_score_category
+#: model:res.groups,name:ssi_strategic_management.strategy_score_category_group
+msgid "Strategy Score Category"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_score_category_range
+msgid "Strategy Score Category - Range"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__sum
+msgid "Sum"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__max_value
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__max_value
+msgid "To"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__uom_label
+msgid "Unit"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__uom_label
+msgid "Unit label shown next to values of this measure."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_unread
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_unread
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_unread
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_unread
+msgid "Unread Messages"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__max_value
+msgid "Upper bound of the realization value range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category_range__max_value
+msgid "Upper bound of the score range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__website_message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__website_message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__website_message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__website_message_ids
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__website_message_ids
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__website_message_ids
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__data_source
+msgid "Where the realization data of this measure comes from."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__polarity__range
+msgid "Within Range"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__frequency__yearly
+msgid "Yearly"
+msgstr ""
