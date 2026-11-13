@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_kpi_target_view_search" model="ir.ui.view">
+    <field name="name">strategy_kpi.target - search</field>
+    <field name="model">strategy_kpi.target</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="kpi_id" />
+            <field name="plan_id" />
+            <field name="objective_id" />
+            <field name="department_id" />
+            <field name="employee_id" />
+            <field name="perspective_id" />
+            <field name="date_range_id" />
+            <group name="group_by" string="Group By">
+                <filter
+                        name="grp_plan_id"
+                        string="Plan"
+                        context="{'group_by':'plan_id'}"
+                    />
+                <filter
+                        name="grp_department_id"
+                        string="Department"
+                        context="{'group_by':'department_id'}"
+                    />
+                <filter
+                        name="grp_perspective_id"
+                        string="Perspective"
+                        context="{'group_by':'perspective_id'}"
+                    />
+                <filter
+                        name="grp_objective_id"
+                        string="Objective"
+                        context="{'group_by':'objective_id'}"
+                    />
+                <filter
+                        name="grp_kpi_id"
+                        string="KPI"
+                        context="{'group_by':'kpi_id'}"
+                    />
+                <filter
+                        name="grp_date_start"
+                        string="Period (Month)"
+                        context="{'group_by':'date_start:month'}"
+                    />
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="strategy_kpi_target_view_tree" model="ir.ui.view">
+    <field name="name">strategy_kpi.target - tree</field>
+    <field name="model">strategy_kpi.target</field>
+    <field name="arch" type="xml">
+        <tree create="0" edit="0" delete="0">
+            <field name="kpi_id" />
+            <field name="plan_id" />
+            <field name="department_id" />
+            <field name="perspective_id" />
+            <field name="date_start" />
+            <field name="date_end" />
+            <field name="target" />
+            <field name="realization" />
+            <field name="score" />
+            <field name="final_score" />
+        </tree>
+    </field>
+</record>
+
+<record id="strategy_kpi_target_view_form" model="ir.ui.view">
+    <field name="name">strategy_kpi.target - form</field>
+    <field name="model">strategy_kpi.target</field>
+    <field name="arch" type="xml">
+        <form create="0" edit="0" delete="0">
+            <sheet>
+                <group name="group_1" colspan="4" col="2">
+                    <field name="kpi_id" />
+                    <field name="plan_id" />
+                    <field name="objective_id" />
+                    <field name="department_id" />
+                    <field name="employee_id" />
+                    <field name="perspective_id" />
+                    <field name="date_start" />
+                    <field name="date_end" />
+                    <field name="target" />
+                    <field name="realization" />
+                    <field name="score" />
+                    <field name="final_score" />
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="strategy_kpi_target_view_pivot" model="ir.ui.view">
+    <field name="name">strategy_kpi.target - pivot</field>
+    <field name="model">strategy_kpi.target</field>
+    <field name="arch" type="xml">
+        <pivot string="KPI Scorecard">
+            <field name="department_id" type="row" />
+            <field name="perspective_id" type="row" />
+            <field name="date_start" interval="month" type="col" />
+            <field name="score" type="measure" />
+            <field name="final_score" type="measure" />
+            <field name="realization" type="measure" />
+            <field name="target" type="measure" />
+        </pivot>
+    </field>
+</record>
+
+<record id="strategy_kpi_target_view_graph" model="ir.ui.view">
+    <field name="name">strategy_kpi.target - graph</field>
+    <field name="model">strategy_kpi.target</field>
+    <field name="arch" type="xml">
+        <graph string="KPI Scorecard" type="bar">
+            <field name="department_id" type="row" />
+            <field name="perspective_id" type="row" />
+            <field name="score" type="measure" />
+        </graph>
+    </field>
+</record>
+
+<record id="strategy_kpi_target_action" model="ir.actions.act_window">
+    <field name="name">KPI Scorecard</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_kpi.target</field>
+    <field name="view_mode">pivot,graph,tree</field>
+    <field name="search_view_id" ref="strategy_kpi_target_view_search" />
+</record>
+
+<menuitem
+        id="strategy_kpi_target_menu"
+        name="KPI Scorecard"
+        parent="menu_strategic_management_reporting"
+        action="strategy_kpi_target_action"
+        groups="strategy_objective_viewer_group"
+        sequence="10"
+    />
+</odoo>

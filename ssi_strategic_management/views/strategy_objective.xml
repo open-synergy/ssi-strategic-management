@@ -257,4 +257,78 @@
         groups="strategy_objective_viewer_group"
         sequence="20"
     />
+
+<record id="strategy_objective_view_pivot" model="ir.ui.view">
+    <field name="name">strategy_objective - pivot</field>
+    <field name="model">strategy_objective</field>
+    <field name="arch" type="xml">
+        <pivot string="Objective Scorecard">
+            <field name="department_id" type="row" />
+            <field name="perspective_id" type="col" />
+            <field name="score" type="measure" />
+        </pivot>
+    </field>
+</record>
+
+<record id="strategy_objective_view_graph" model="ir.ui.view">
+    <field name="name">strategy_objective - graph</field>
+    <field name="model">strategy_objective</field>
+    <field name="arch" type="xml">
+        <graph string="Objective Scorecard" type="bar">
+            <field name="department_id" type="row" />
+            <field name="perspective_id" type="row" />
+            <field name="score" type="measure" />
+        </graph>
+    </field>
+</record>
+
+<record id="strategy_objective_view_hierarchy" model="ir.ui.view">
+    <field name="name">strategy_objective - hierarchy</field>
+    <field name="model">strategy_objective</field>
+    <field name="arch" type="xml">
+        <hierarchy
+                string="Objective Tree"
+                parent_field="parent_id"
+                child_field="child_ids"
+            >
+            <field name="name" />
+            <field name="department_id" />
+            <field name="perspective_id" />
+            <field name="score" />
+            <field name="state" />
+        </hierarchy>
+    </field>
+</record>
+
+<record id="strategy_objective_scorecard_action" model="ir.actions.act_window">
+    <field name="name">Objective Scorecard</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_objective</field>
+    <field name="view_mode">pivot,graph,tree</field>
+</record>
+
+<record id="strategy_objective_tree_action" model="ir.actions.act_window">
+    <field name="name">Objective Tree</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_objective</field>
+    <field name="view_mode">hierarchy,tree,form</field>
+</record>
+
+<menuitem
+        id="strategy_objective_scorecard_menu"
+        name="Objective Scorecard"
+        parent="menu_strategic_management_reporting"
+        action="strategy_objective_scorecard_action"
+        groups="strategy_objective_viewer_group"
+        sequence="20"
+    />
+
+<menuitem
+        id="strategy_objective_tree_menu"
+        name="Objective Tree"
+        parent="menu_strategic_management_reporting"
+        action="strategy_objective_tree_action"
+        groups="strategy_objective_viewer_group"
+        sequence="30"
+    />
 </odoo>

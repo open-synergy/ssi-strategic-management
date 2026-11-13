@@ -54,6 +54,38 @@ class StrategyKpiTarget(models.Model):
         compute_sudo=True,
         help="Strategy objective of the KPI.",
     )
+    plan_id = fields.Many2one(
+        string="Plan",
+        comodel_name="strategy_plan",
+        related="kpi_id.objective_id.plan_id",
+        store=True,
+        compute_sudo=True,
+        help="Strategy plan of the objective of the KPI.",
+    )
+    department_id = fields.Many2one(
+        string="Department",
+        comodel_name="hr.department",
+        related="kpi_id.objective_id.department_id",
+        store=True,
+        compute_sudo=True,
+        help="Department that the objective of the KPI is cascaded to.",
+    )
+    employee_id = fields.Many2one(
+        string="Employee",
+        comodel_name="hr.employee",
+        related="kpi_id.objective_id.employee_id",
+        store=True,
+        compute_sudo=True,
+        help="Employee that the objective of the KPI is cascaded to.",
+    )
+    perspective_id = fields.Many2one(
+        string="Perspective",
+        comodel_name="strategy_perspective",
+        related="kpi_id.objective_id.perspective_id",
+        store=True,
+        compute_sudo=True,
+        help="Balanced Scorecard perspective of the objective of the KPI.",
+    )
     date_range_id = fields.Many2one(
         string="Period",
         comodel_name="date.range",
@@ -98,6 +130,7 @@ class StrategyKpiTarget(models.Model):
         compute="_compute_score",
         store=True,
         compute_sudo=True,
+        group_operator="avg",
         help="Score of the realization against the target, following "
         "the score method of the KPI.",
     )
