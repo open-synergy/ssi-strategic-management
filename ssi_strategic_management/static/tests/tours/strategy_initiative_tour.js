@@ -122,7 +122,7 @@ odoo.define("ssi_strategic_management.strategy_initiative_tour", function (requi
                 // default values.
                 {
                     content: "Fill in the Title",
-                    trigger: ".o_field_widget[name='title'] input",
+                    trigger: ".o_field_widget[name='title']",
                     extra_trigger: ".o_form_view.o_form_editable",
                     run: "text Tour Initiative Title",
                 },
