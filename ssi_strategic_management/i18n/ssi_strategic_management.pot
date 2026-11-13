@@ -381,6 +381,11 @@ msgid "Child Objectives"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__child_score
+msgid "Child Score"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__code
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__code
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__code
@@ -1146,6 +1151,16 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__kpi_id
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_measurement_view_search
 msgid "KPI"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__kpi_portion
+msgid "KPI Portion (%)"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__kpi_score
+msgid "KPI Score"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -2001,6 +2016,20 @@ msgid "Quarterly"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__score_category_range_id
+msgid ""
+"Range of the score category of the plan type that contains the score of this"
+" objective."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__score_category_range_id
+msgid ""
+"Range of the score category of the plan type that contains the score of this"
+" plan."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__range_ids
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_score_category_view_form
 msgid "Ranges"
@@ -2117,6 +2146,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__score
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__score
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__score
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__score
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__score
 msgid "Score"
 msgstr ""
 
@@ -2127,6 +2158,8 @@ msgid "Score Categories"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__score_category_range_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__score_category_range_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__score_category_id
 msgid "Score Category"
 msgstr ""
@@ -2190,6 +2223,13 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__score
+msgid ""
+"Score of this objective: the KPI portion of the KPI score plus the remaining"
+" portion of the child score."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__range_ids
 msgid "Score ranges and the label each of them carries."
 msgstr ""
@@ -2216,6 +2256,14 @@ msgstr ""
 msgid ""
 "Share of the initiative that this milestone carries. The weights of the "
 "milestones must add up to 100% before the initiative starts."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__kpi_portion
+msgid ""
+"Share of the objective score that comes from its KPIs, the remainder comes "
+"from its contributing child objectives. Defaults to 100 with KPIs only, 0 "
+"with contributing children only and 50 with both. The value stays editable."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -2728,6 +2776,26 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_initiative_milestone__weight
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__weight
 msgid "Weight (%)"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__score
+msgid ""
+"Weighted average of the scores of the top objectives of this plan, using "
+"their weights. A simple average when the weights add up to zero, 0 without "
+"objectives."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__kpi_score
+msgid "Weighted score of the KPIs of this objective."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__child_score
+msgid ""
+"Weighted score of the contributing child objectives. Cancelled children and "
+"children that only align with this objective are not counted."
 msgstr ""
 
 #. module: ssi_strategic_management
