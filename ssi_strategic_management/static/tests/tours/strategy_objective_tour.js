@@ -97,6 +97,26 @@ odoo.define("ssi_strategic_management.strategy_objective_tour", function (requir
         ];
     }
 
+    // Presses the primary button of the topmost dialog. Its label is
+    // "Save & Close" for a new record and "Save" for an existing one
+    // (14.0 view_dialogs.js), so both labels are accepted.
+    function clickDialogSaveStep(content) {
+        return {
+            content: content,
+            trigger: ".modal-footer button.btn-primary",
+            run: function () {
+                var $btn = $(".modal:visible")
+                    .last()
+                    .find(".modal-footer button.btn-primary")
+                    .filter(function () {
+                        var text = $(this).text().trim();
+                        return text === "Save & Close" || text === "Save";
+                    });
+                $btn[0].click();
+            },
+        };
+    }
+
     // IK: docs/strategy_objective/01-create.md
     tour.register(
         "ssi_strategic_management_strategy_objective_create",
@@ -435,10 +455,7 @@ odoo.define("ssi_strategic_management.strategy_objective_tour", function (requir
 
                 // Flow 15 -- Save & Close the target dialog, then the KPI
                 // dialog.
-                {
-                    content: "Save & Close the target dialog again",
-                    trigger: ".modal-footer .btn-primary:contains(Save & Close)",
-                },
+                clickDialogSaveStep("Save & Close the target dialog again"),
                 {
                     content: "Target is listed in the KPI dialog again",
                     trigger:
@@ -447,10 +464,7 @@ odoo.define("ssi_strategic_management.strategy_objective_tour", function (requir
                         // Assertion only.
                     },
                 },
-                {
-                    content: "Save & Close the KPI dialog again",
-                    trigger: ".modal-footer .btn-primary:contains(Save & Close)",
-                },
+                clickDialogSaveStep("Save & Close the KPI dialog again"),
 
                 // Flow 16 -- Click Save.
                 {

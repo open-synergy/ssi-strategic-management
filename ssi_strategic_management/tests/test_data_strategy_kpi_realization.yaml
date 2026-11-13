@@ -1241,11 +1241,8 @@ scenarios:
         model: "queue.job"
         domain:
           - ["method_name", "=", "action_compute_realization"]
-          - [
-              "func_string",
-              "=",
-              "EVAL: repr(registry['t_month']) + '.action_compute_realization()'",
-            ]
+          - ["model_name", "=", "strategy_kpi.target"]
+          - ["func_string", "like", "EVAL: '(%d,)' % registry['t_month'].id"]
         save_as: "job_month"
         expect_count: 1
       - step: "No job is queued for the quarterly target"
@@ -1253,10 +1250,7 @@ scenarios:
         model: "queue.job"
         domain:
           - ["method_name", "=", "action_compute_realization"]
-          - [
-              "func_string",
-              "=",
-              "EVAL: repr(registry['t_quarter']) + '.action_compute_realization()'",
-            ]
+          - ["model_name", "=", "strategy_kpi.target"]
+          - ["func_string", "like", "EVAL: '(%d,)' % registry['t_quarter'].id"]
         save_as: "job_quarter"
         expect_count: 0
