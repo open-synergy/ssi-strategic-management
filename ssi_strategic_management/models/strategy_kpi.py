@@ -157,6 +157,44 @@ class StrategyKpi(models.Model):
         inverse_name="kpi_id",
         help="Targets of this KPI per period.",
     )
+    realization_method = fields.Selection(
+        string="Realization Method",
+        selection=[
+            ("manual", "Manual"),
+            ("aggregate", "Aggregate (no code)"),
+            ("python", "Python Code"),
+        ],
+        compute="_compute_realization_method",
+        store=True,
+        readonly=False,
+        compute_sudo=True,
+        help="How the realization of this KPI is obtained. Copied from "
+        "the measure and editable. The aggregate definition is always "
+        "read from the measure.",
+    )
+    python_code = fields.Text(
+        string="Python Code",
+        compute="_compute_python_code",
+        store=True,
+        readonly=False,
+        compute_sudo=True,
+        help="Python code that computes the realization when the method "
+        "is Python Code. Copied from the measure and editable.",
+    )
+    parent_kpi_id = fields.Many2one(
+        string="Parent KPI",
+        comodel_name="strategy_kpi",
+        ondelete="set null",
+        help="KPI of the parent objective that this KPI feeds. The "
+        "realization of the parent KPI is then rolled up from its child "
+        "KPIs (direct cascade).",
+    )
+    child_kpi_ids = fields.One2many(
+        string="Child KPIs",
+        comodel_name="strategy_kpi",
+        inverse_name="parent_kpi_id",
+        help="KPIs of the child objectives that feed this KPI.",
+    )
     score = fields.Float(
         string="Score",
         compute="_compute_score",
@@ -210,6 +248,24 @@ class StrategyKpi(models.Model):
             if record.measure_id:
                 result = record.measure_id.score_max
             record.score_max = result
+
+    @api.depends("measure_id")
+    def _compute_realization_method(self):
+        """Copy the realization method of the measure into the KPI."""
+        for record in self:
+            result = "manual"
+            if record.measure_id:
+                result = record.measure_id.realization_method
+            record.realization_method = result
+
+    @api.depends("measure_id")
+    def _compute_python_code(self):
+        """Copy the Python code of the measure into the KPI."""
+        for record in self:
+            result = False
+            if record.measure_id:
+                result = record.measure_id.python_code
+            record.python_code = result
 
     @api.depends("polarity")
     def _compute_score_method(self):
@@ -286,3 +342,34 @@ Solution: Select a key result type or uncheck the key result flag
         """
         self.ensure_one()
         return not (self.is_key_result and not self.key_result_type)
+
+    @api.constrains("parent_kpi_id", "objective_id")
+    def _check_parent_kpi(self):
+        """Require the parent KPI to belong to the parent objective.
+
+        :raises ValidationError: when the condition method returns False
+        """
+        for record in self.sudo():
+            if not record._check_parent_kpi_condition():
+                error_message = """
+Context: Create or update strategy KPI
+Database ID: %s
+Problem: The parent KPI must belong to the parent objective.
+Solution: Select a KPI of the parent objective as the parent KPI
+""" % (
+                    record.id,
+                )
+                raise ValidationError(_(error_message))
+
+    def _check_parent_kpi_condition(self):
+        """Tell whether the parent KPI sits on the parent objective.
+
+        Extension point: override to relax or tighten the rule.
+
+        :return: True when there is no parent KPI or its objective is
+            the parent objective of the objective of this KPI
+        """
+        self.ensure_one()
+        if not self.parent_kpi_id:
+            return True
+        return self.parent_kpi_id.objective_id == self.objective_id.parent_id

@@ -4,7 +4,8 @@
 > **Model:** `strategy_objective`\
 > **Menu:** Strategic Management > Strategy > Objectives\
 > **Actor:** user in group `User` (`strategy_objective_user_group`)\
-> **Requires:** `01-create`
+> **Requires:** `01-create`\
+> **Inline Actions:** `action_compute_realization` (Compute)
 
 ## Pre-Condition
 
@@ -15,6 +16,10 @@
 - **Data:** A **Measure** exists in the measure library (see `strategy_measure`).
 - **Data:** The plan of the objective has a start and end date. The period of every
   target must lie within them.
+- **Data:** For the Compute step, a **Measure** with the realization method **Aggregate
+  (no code)** or **Python Code** (or a KPI that has child KPIs), a KPI that uses it and
+  a saved **Target** of that KPI exist. The **Compute** button only appears on a saved
+  target of such a KPI.
 - **Access:** User is in group `User` (`strategy_objective_user_group`) or `Validator`.
 
 ## Flow
@@ -46,6 +51,21 @@
    - **Note**: Optionally type a remark.
 9. Click **Save & Close** on the target dialog, then **Save & Close** on the KPI dialog.
 10. Click **Save**.
+11. Click the **Edit** button.
+12. In the **KPIs** tab, click the KPI that uses an automatic measure. In its
+    **Targets** tab, click the target to compute.
+13. Click the **Compute** button of the target dialog. The realization is computed from
+    Odoo data, from the Python code of the KPI or from the child KPIs, and an automatic
+    measurement dated today (not beyond the target period) appears in the
+    **Measurements** list. Clicking **Compute** again updates that same measurement.
+14. To replace an automatic value, click the automatic measurement in the
+    **Measurements** list and fill in the override:
+    - **Override Automatic Value**: Check it.
+    - **Value**: Type the value to use instead of the automatic value.
+    - **Dissenting Note** _(required)_: Type why the automatic value is overridden.
+15. Click **Save & Close** on the target dialog, then **Save & Close** on the KPI
+    dialog.
+16. Click **Save**.
 
 ## Post-Condition
 
@@ -56,3 +76,6 @@
   of the KPI).
 - The KPI shows the score of its latest measured target.
 - The measurement is listed on the **Monitoring > Measurements** menu.
+- The target holds an automatic measurement (mode **Automatic**) whose **Automatic
+  Value** is the computed realization. When the value is overridden, the target rolls up
+  the typed value instead.

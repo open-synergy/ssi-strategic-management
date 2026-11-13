@@ -2,8 +2,11 @@
 # Copyright 2026 PT. Simetri Sinergi Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+from datetime import datetime, time
+
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools.safe_eval import safe_eval
 
 
 class StrategyKpiTarget(models.Model):
@@ -14,9 +17,15 @@ class StrategyKpiTarget(models.Model):
     and the score of that realization. The score follows the score
     method of the KPI and is expressed on the score scale of the plan
     type.
+
+    The realization can also be computed automatically, by the
+    aggregate engine (no code), by Python code, or by rolling up the
+    same-period targets of the child KPIs, either on demand with the
+    Compute button or on a schedule.
     """
 
     _name = "strategy_kpi.target"
+    _inherit = ["mixin.localdict"]
     _description = "Strategy KPI - Target"
     _order = "kpi_id, date_start, id"
 
@@ -88,6 +97,13 @@ class StrategyKpiTarget(models.Model):
         help="Score of the realization against the target, following "
         "the score method of the KPI.",
     )
+    is_automatic = fields.Boolean(
+        string="Automatic Realization",
+        compute="_compute_is_automatic",
+        compute_sudo=True,
+        help="Checked when the realization of this target can be "
+        "computed: the KPI is not manual, or it has child KPIs.",
+    )
     final_score = fields.Float(
         string="Final Score",
         compute="_compute_final_score",
@@ -95,6 +111,18 @@ class StrategyKpiTarget(models.Model):
         compute_sudo=True,
         help="Score multiplied by the weight of the KPI.",
     )
+
+    @api.depends("kpi_id.realization_method", "kpi_id.child_kpi_ids")
+    def _compute_is_automatic(self):
+        """Tell whether the realization of the target can be computed."""
+        for record in self:
+            result = False
+            if record.kpi_id:
+                result = bool(
+                    record.kpi_id.realization_method != "manual"
+                    or record.kpi_id.child_kpi_ids
+                )
+            record.is_automatic = result
 
     @api.depends("kpi_id.name", "date_start", "date_end")
     def _compute_name(self):
@@ -278,3 +306,233 @@ Solution: Change the start or end date of the target
                 result = False
                 break
         return result
+
+    def action_compute_realization(self):
+        """Compute the realization of the targets into an auto measurement.
+
+        Creates the automatic measurement of the target, or updates its
+        automatic value and date when it already exists, so that a
+        target never holds more than one. The measurement is dated today,
+        limited to the period of the target. A manual override of the
+        measurement is kept.
+
+        :raises UserError: when the KPI of a target is manual and has no
+            child KPI
+        """
+        measurement_obj = self.env["strategy_kpi.measurement"]
+        for record in self:
+            if not record.is_automatic:
+                error_message = """
+Context: Compute KPI realization
+Database ID: %s
+Problem: Only automatic KPIs or KPIs with child KPIs can be computed.
+Solution: Change the realization method of the KPI or add child KPIs
+""" % (
+                    record.id,
+                )
+                raise UserError(_(error_message))
+            today = fields.Date.context_today(record)
+            measure_date = max(min(today, record.date_end), record.date_start)
+            vals = {
+                "date": measure_date,
+                "automatic_value": record._compute_automatic_value(),
+            }
+            automatic = record.measurement_ids.filtered(lambda r: r.mode == "auto")
+            if automatic:
+                automatic[0].write(vals)
+            else:
+                vals.update({"target_id": record.id, "mode": "auto"})
+                measurement_obj.create(vals)
+
+    def _compute_automatic_value(self):
+        """Compute the automatic realization of the target.
+
+        A KPI with child KPIs is always rolled up from them, whatever its
+        realization method. Otherwise the aggregate engine or the Python
+        code is used, following the realization method of the KPI.
+
+        :return: the computed realization as a float; 0.0 for a manual
+            KPI without child KPIs
+        """
+        self.ensure_one()
+        kpi = self.kpi_id
+        if kpi.child_kpi_ids:
+            return self._compute_cascade_value()
+        if kpi.realization_method == "aggregate":
+            return self._compute_aggregate_value()
+        if kpi.realization_method == "python":
+            return self._compute_python_value()
+        return 0.0
+
+    def _compute_cascade_value(self):
+        """Roll up the same-period targets of the child KPIs.
+
+        The realizations are added when the aggregation of the KPI is
+        ``sum`` and averaged otherwise.
+
+        :return: the rolled up realization; 0.0 when no child target
+            covers exactly the same period
+        """
+        self.ensure_one()
+        children = self.sudo().search(
+            [
+                ("kpi_id", "in", self.kpi_id.child_kpi_ids.ids),
+                ("date_start", "=", self.date_start),
+                ("date_end", "=", self.date_end),
+            ]
+        )
+        values = children.mapped("realization")
+        if not values:
+            return 0.0
+        result = sum(values)
+        if self.kpi_id.aggregation != "sum":
+            result = result / len(values)
+        return result
+
+    def _compute_aggregate_value(self):
+        """Compute the realization with the aggregate engine.
+
+        With the ratio option the aggregate is divided by the
+        denominator aggregate and expressed as a percentage; a zero
+        denominator gives 0.0.
+
+        :return: the aggregated realization as a float
+        """
+        self.ensure_one()
+        measure = self.kpi_id.measure_id
+        result = self._read_aggregate(measure, "aggregate")
+        if measure.use_ratio:
+            denominator = self._read_aggregate(measure, "denominator")
+            result = result * 100.0 / denominator if denominator else 0.0
+        return result
+
+    def _read_aggregate(self, measure, prefix):
+        """Read one aggregate definition of a measure over the period.
+
+        The records are filtered by the domain of the definition, by the
+        period of the target on the date field and, when the fields are
+        set, by the department and the employee of the objective.
+
+        :param measure: the ``strategy_measure`` holding the definition
+        :param prefix: ``aggregate`` for the numerator or
+            ``denominator`` for the divisor
+        :return: the aggregated figure as a float; 0.0 when no record
+            matches
+        """
+        self.ensure_one()
+        model = self.env[measure["%s_model_id" % prefix].model].sudo()
+        domain = safe_eval(
+            measure["%s_domain" % prefix] or "[]",
+            self._get_default_localdict(),
+        )
+        domain = list(domain) + self._get_period_domain(
+            measure["%s_date_field_id" % prefix]
+        )
+        objective = self.objective_id
+        department_field = measure["%s_department_field_id" % prefix]
+        if department_field and objective.department_id:
+            domain.append((department_field.name, "=", objective.department_id.id))
+        employee_field = measure["%s_employee_field_id" % prefix]
+        if employee_field and objective.employee_id:
+            domain.append((employee_field.name, "=", objective.employee_id.id))
+        function = measure["%s_function" % prefix]
+        if function == "count":
+            return float(model.read_group(domain, ["__count"], [])[0]["__count"])
+        value_field = measure["%s_field_id" % prefix].name
+        data = model.read_group(domain, ["%s:%s" % (value_field, function)], [])
+        return float(data[0][value_field] or 0.0)
+
+    def _get_period_domain(self, date_field):
+        """Build the domain that keeps the records inside the period.
+
+        A datetime field is compared from the start of the first day to
+        the end of the last day of the period.
+
+        :param date_field: the ``ir.model.fields`` date or datetime field
+        :return: a list of two domain leaves
+        """
+        self.ensure_one()
+        date_start = self.date_start
+        date_end = self.date_end
+        if date_field.ttype == "datetime":
+            date_start = datetime.combine(date_start, time.min)
+            date_end = datetime.combine(date_end, time(23, 59, 59))
+        return [
+            (date_field.name, ">=", date_start),
+            (date_field.name, "<=", date_end),
+        ]
+
+    def _compute_python_value(self):
+        """Compute the realization with the Python code of the KPI.
+
+        The code assigns the figure to ``result``.
+
+        :return: the value of ``result`` as a float
+        :raises UserError: when the code fails
+        """
+        self.ensure_one()
+        localdict = self._get_default_localdict()
+        localdict["result"] = 0.0
+        try:
+            safe_eval(
+                self.kpi_id.python_code or "", localdict, mode="exec", nocopy=True
+            )
+            result = float(localdict["result"] or 0.0)
+        except Exception as error:  # pylint: disable=broad-except
+            error_message = """
+Context: Compute KPI realization
+Database ID: %s
+Problem: Error evaluating realization code: %s
+Solution: Correct the Python code of the KPI
+""" % (
+                self.id,
+                error,
+            )
+            raise UserError(_(error_message))
+        return result
+
+    def _get_default_localdict(self):
+        """Extend the default local dict with the target context.
+
+        :return: the dict of the mixin plus ``date_start``, ``date_end``,
+            ``department``, ``employee`` and ``company``
+        """
+        self.ensure_one()
+        result = super()._get_default_localdict()
+        objective = self.objective_id
+        result.update(
+            {
+                "date_start": self.date_start,
+                "date_end": self.date_end,
+                "department": objective.department_id,
+                "employee": objective.employee_id,
+                "company": objective.company_id or self.env.company,
+            }
+        )
+        return result
+
+    @api.model
+    def _cron_compute_realization(self, frequency):
+        """Queue the computation of the running automatic targets.
+
+        One job is queued for each target whose period holds today,
+        whose objective is in progress, and whose KPI is not manual (or
+        has child KPIs) and uses a measure of the given frequency.
+
+        :param frequency: ``monthly``, ``quarterly``, ``semesterly`` or
+            ``yearly``
+        """
+        today = fields.Date.context_today(self)
+        targets = self.search(
+            [
+                ("date_start", "<=", today),
+                ("date_end", ">=", today),
+                ("kpi_id.measure_id.frequency", "=", frequency),
+                ("objective_id.state", "=", "open"),
+                "|",
+                ("kpi_id.realization_method", "!=", "manual"),
+                ("kpi_id.child_kpi_ids", "!=", False),
+            ]
+        )
+        for target in targets:
+            target.with_delay().action_compute_realization()

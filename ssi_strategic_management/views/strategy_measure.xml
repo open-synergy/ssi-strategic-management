@@ -28,6 +28,7 @@
                 <field name="frequency" />
                 <field name="indicator_type" />
                 <field name="aggregation" />
+                <field name="realization_method" />
             </xpath>
         </data>
     </field>
@@ -54,6 +55,48 @@
                     <group name="definition_group_1" string="Definition">
                         <field name="definition" />
                         <field name="data_source" />
+                    </group>
+                </page>
+                <page name="realization" string="Realization">
+                    <group name="realization_group_1" string="Realization">
+                        <field name="realization_method" />
+                        <field
+                                name="use_ratio"
+                                attrs="{'invisible': [('realization_method', '!=', 'aggregate')]}"
+                            />
+                    </group>
+                    <group
+                            name="realization_group_2"
+                            string="Aggregate"
+                            attrs="{'invisible': [('realization_method', '!=', 'aggregate')]}"
+                        >
+                        <field name="aggregate_model_id" />
+                        <field name="aggregate_domain" />
+                        <field name="aggregate_function" />
+                        <field name="aggregate_date_field_id" />
+                        <field name="aggregate_field_id" />
+                        <field name="aggregate_department_field_id" />
+                        <field name="aggregate_employee_field_id" />
+                    </group>
+                    <group
+                            name="realization_group_3"
+                            string="Denominator"
+                            attrs="{'invisible': ['|', ('realization_method', '!=', 'aggregate'), ('use_ratio', '=', False)]}"
+                        >
+                        <field name="denominator_model_id" />
+                        <field name="denominator_domain" />
+                        <field name="denominator_function" />
+                        <field name="denominator_date_field_id" />
+                        <field name="denominator_field_id" />
+                        <field name="denominator_department_field_id" />
+                        <field name="denominator_employee_field_id" />
+                    </group>
+                    <group
+                            name="realization_group_4"
+                            string="Python Code"
+                            attrs="{'invisible': [('realization_method', '!=', 'python')]}"
+                        >
+                        <field name="python_code" colspan="2" nolabel="1" />
                     </group>
                 </page>
                 <page name="scoring" string="Scoring">

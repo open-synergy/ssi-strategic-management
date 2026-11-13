@@ -81,6 +81,35 @@ class TestUiStrategyObjective(HttpSavepointCase):
         )
         cls.objective_edit = cls._create_objective("Edit")
 
+        # Pre-Condition 02-edit.md (Compute step): a KPI that uses an
+        # automatic measure, with a saved target on which the Compute
+        # button is shown. The weight stays 0 so that it never counts
+        # in a KPI weight check.
+        cls.measure_auto = cls.env["strategy_measure"].create(
+            {
+                "name": "Tour Auto Measure",
+                "code": "TOURAUTOM",
+                "realization_method": "python",
+                "python_code": "result = 1.0",
+            }
+        )
+        kpi_auto = cls.env["strategy_kpi"].create(
+            {
+                "objective_id": cls.objective_edit.id,
+                "measure_id": cls.measure_auto.id,
+                "name": "Tour Compute KPI",
+                "weight": 0.0,
+            }
+        )
+        cls.env["strategy_kpi.target"].create(
+            {
+                "kpi_id": kpi_auto.id,
+                "date_start": "2026-01-01",
+                "date_end": "2026-03-31",
+                "target": 10.0,
+            }
+        )
+
         # Pre-Condition 07-start.md: Draft, with one KPI whose weight is
         # 100 so that the KPI weight check of the start action passes.
         cls.objective_start = cls._create_objective("Start")

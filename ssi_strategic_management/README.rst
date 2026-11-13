@@ -16,9 +16,13 @@ KPI and initiative, which can be nested into sub-plans and goes through
 an approval workflow. Strategy objectives belong to a plan and are cascaded
 to departments and, when the plan type allows it, to employees, from a
 parent objective down to its children. Each objective is measured by KPIs
-(including OKR key results) that have targets per period and manually
-recorded measurements, and every target and KPI is scored according to the
-score method of the KPI.
+(including OKR key results) that have targets per period and
+measurements, and every target and KPI is scored according to the score
+method of the KPI. Measurements are recorded manually or computed
+automatically: by an aggregate over Odoo data configured without code (with
+an optional ratio), by Python code, or by rolling up child KPIs. They can be
+computed on demand with the Compute button or on a schedule, and an
+automatic value can be overridden by a manual one with a dissenting note.
 
 
 Work Instruction

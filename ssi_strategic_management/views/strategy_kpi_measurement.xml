@@ -34,6 +34,7 @@
         <tree create="0">
             <field name="kpi_id" />
             <field name="target_id" />
+            <field name="mode" />
             <field name="date" />
             <field name="value" />
             <field name="user_id" />
@@ -49,8 +50,12 @@
             <sheet>
                 <group name="measurement_group_1" colspan="4" col="2">
                     <field name="target_id" />
+                    <field name="mode" />
                     <field name="date" />
                     <field name="manual_value" />
+                    <field name="automatic_value" />
+                    <field name="override_automatic" />
+                    <field name="dissenting_note" />
                     <field name="value" />
                     <field name="user_id" />
                     <field name="note" />

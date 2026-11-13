@@ -67,6 +67,8 @@
             <field name="score_method" />
             <field name="score_min" />
             <field name="score_max" />
+            <field name="realization_method" />
+            <field name="parent_kpi_id" />
             <field name="is_key_result" />
             <field
                             name="key_result_type"
@@ -86,6 +88,16 @@
                         <field name="final_score" />
                     </tree>
                     <form>
+                        <field name="is_automatic" invisible="1" />
+                        <div name="target_action">
+                            <button
+                                            name="action_compute_realization"
+                                            type="object"
+                                            string="Compute"
+                                            class="oe_highlight"
+                                            attrs="{'invisible': ['|', ('id', '=', False), ('is_automatic', '=', False)]}"
+                                        />
+                        </div>
                         <group name="target_group_1" colspan="4" col="2">
                             <field name="date_range_id" />
                             <field name="date_start" />
@@ -97,20 +109,53 @@
                         </group>
                         <field name="measurement_ids" colspan="4" nolabel="1">
                             <tree editable="bottom">
+                                <field name="mode" />
                                 <field name="date" />
                                 <field name="manual_value" />
+                                <field name="automatic_value" />
+                                <field name="override_automatic" />
+                                <field name="dissenting_note" />
                                 <field name="user_id" />
                                 <field name="note" />
                             </tree>
                             <form>
                                 <group name="measurement_group_1" colspan="4" col="2">
+                                    <field name="mode" />
                                     <field name="date" />
                                     <field name="manual_value" />
+                                    <field name="automatic_value" />
+                                    <field name="override_automatic" />
+                                    <field name="dissenting_note" />
                                     <field name="user_id" />
                                     <field name="note" />
                                 </group>
                             </form>
                         </field>
+                    </form>
+                </field>
+            </page>
+            <page
+                            name="python_code"
+                            string="Python Code"
+                            attrs="{'invisible': [('realization_method', '!=', 'python')]}"
+                        >
+                <field name="python_code" colspan="4" nolabel="1" />
+            </page>
+            <page name="child_kpis" string="Child KPIs">
+                <field name="child_kpi_ids" colspan="4" nolabel="1" readonly="1">
+                    <tree>
+                        <field name="objective_id" />
+                        <field name="name" />
+                        <field name="weight" />
+                        <field name="score" />
+                    </tree>
+                    <form>
+                        <group name="child_kpi_group_1" colspan="4" col="2">
+                            <field name="objective_id" />
+                            <field name="name" />
+                            <field name="weight" />
+                            <field name="score" />
+                        </group>
                     </form>
                 </field>
             </page>

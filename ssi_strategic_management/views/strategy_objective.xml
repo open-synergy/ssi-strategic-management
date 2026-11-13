@@ -129,6 +129,16 @@
                         <field name="final_score" />
                     </tree>
                     <form>
+                        <field name="is_automatic" invisible="1" />
+                        <div name="target_action">
+                            <button
+                                                        name="action_compute_realization"
+                                                        type="object"
+                                                        string="Compute"
+                                                        class="oe_highlight"
+                                                        attrs="{'invisible': ['|', ('id', '=', False), ('is_automatic', '=', False)]}"
+                                                    />
+                        </div>
                         <group name="target_group_1" colspan="4" col="2">
                             <field name="date_range_id" />
                             <field name="date_start" />
@@ -140,15 +150,23 @@
                         </group>
                         <field name="measurement_ids" colspan="4" nolabel="1">
                             <tree editable="bottom">
+                                <field name="mode" />
                                 <field name="date" />
                                 <field name="manual_value" />
+                                <field name="automatic_value" />
+                                <field name="override_automatic" />
+                                <field name="dissenting_note" />
                                 <field name="user_id" />
                                 <field name="note" />
                             </tree>
                             <form>
                                 <group name="measurement_group_1" colspan="4" col="2">
+                                    <field name="mode" />
                                     <field name="date" />
                                     <field name="manual_value" />
+                                    <field name="automatic_value" />
+                                    <field name="override_automatic" />
+                                    <field name="dissenting_note" />
                                     <field name="user_id" />
                                     <field name="note" />
                                 </group>
