@@ -42,7 +42,7 @@ class StrategyKpi(models.Model):
     )
     uom_label = fields.Char(
         string="Unit",
-        compute="_compute_measure_defaults",
+        compute="_compute_uom_label",
         store=True,
         readonly=False,
         compute_sudo=True,
@@ -56,7 +56,7 @@ class StrategyKpi(models.Model):
             ("lower", "Lower is Better"),
             ("range", "Within Range"),
         ],
-        compute="_compute_measure_defaults",
+        compute="_compute_polarity",
         store=True,
         readonly=False,
         compute_sudo=True,
@@ -70,7 +70,7 @@ class StrategyKpi(models.Model):
             ("avg", "Average"),
             ("last", "Last Value"),
         ],
-        compute="_compute_measure_defaults",
+        compute="_compute_aggregation",
         store=True,
         readonly=False,
         compute_sudo=True,
@@ -81,7 +81,7 @@ class StrategyKpi(models.Model):
     )
     score_min = fields.Float(
         string="Minimum Score",
-        compute="_compute_measure_defaults",
+        compute="_compute_score_min",
         store=True,
         readonly=False,
         compute_sudo=True,
@@ -90,7 +90,7 @@ class StrategyKpi(models.Model):
     )
     score_max = fields.Float(
         string="Maximum Score",
-        compute="_compute_measure_defaults",
+        compute="_compute_score_max",
         store=True,
         readonly=False,
         compute_sudo=True,
@@ -167,29 +167,49 @@ class StrategyKpi(models.Model):
     )
 
     @api.depends("measure_id")
-    def _compute_measure_defaults(self):
-        """Copy the definition of the measure into the KPI.
-
-        Fills unit, polarity, aggregation and the score limits. The
-        values stay editable on the KPI.
-        """
+    def _compute_uom_label(self):
+        """Copy the unit label of the measure into the KPI."""
         for record in self:
-            uom_label = False
-            polarity = "higher"
-            aggregation = "last"
-            score_min = 0.0
-            score_max = 120.0
+            result = False
             if record.measure_id:
-                uom_label = record.measure_id.uom_label
-                polarity = record.measure_id.polarity
-                aggregation = record.measure_id.aggregation
-                score_min = record.measure_id.score_min
-                score_max = record.measure_id.score_max
-            record.uom_label = uom_label
-            record.polarity = polarity
-            record.aggregation = aggregation
-            record.score_min = score_min
-            record.score_max = score_max
+                result = record.measure_id.uom_label
+            record.uom_label = result
+
+    @api.depends("measure_id")
+    def _compute_polarity(self):
+        """Copy the polarity of the measure into the KPI."""
+        for record in self:
+            result = "higher"
+            if record.measure_id:
+                result = record.measure_id.polarity
+            record.polarity = result
+
+    @api.depends("measure_id")
+    def _compute_aggregation(self):
+        """Copy the aggregation of the measure into the KPI."""
+        for record in self:
+            result = "last"
+            if record.measure_id:
+                result = record.measure_id.aggregation
+            record.aggregation = result
+
+    @api.depends("measure_id")
+    def _compute_score_min(self):
+        """Copy the minimum score of the measure into the KPI."""
+        for record in self:
+            result = 0.0
+            if record.measure_id:
+                result = record.measure_id.score_min
+            record.score_min = result
+
+    @api.depends("measure_id")
+    def _compute_score_max(self):
+        """Copy the maximum score of the measure into the KPI."""
+        for record in self:
+            result = 120.0
+            if record.measure_id:
+                result = record.measure_id.score_max
+            record.score_max = result
 
     @api.depends("polarity")
     def _compute_score_method(self):
