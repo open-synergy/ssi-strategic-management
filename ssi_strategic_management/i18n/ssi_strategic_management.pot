@@ -14,6 +14,11 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__name
+msgid "# Document"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__measure_id
 msgid "# Measure"
 msgstr ""
@@ -26,6 +31,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_needaction
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_needaction
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_needaction
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_needaction
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_needaction
 msgid "Action Needed"
@@ -40,8 +46,24 @@ msgid "Active"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__active_approval_ids
+msgid "Active Approvals"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__active_approver_partner_ids
+msgid "Active Partners"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__active_approver_user_ids
+msgid "Active Users"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_ids
 msgid "Activities"
@@ -50,6 +72,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_exception_decoration
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_exception_decoration
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_exception_decoration
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_exception_decoration
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_exception_decoration
 msgid "Activity Exception Decoration"
@@ -58,6 +81,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_state
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_state
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_state
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_state
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_state
 msgid "Activity State"
@@ -66,6 +90,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_type_icon
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_type_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_type_icon
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_type_icon
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_type_icon
 msgid "Activity Type Icon"
@@ -77,8 +102,47 @@ msgid "Aggregation"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:res.groups,name:ssi_strategic_management.strategy_plan_all_group
+msgid "All"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__allowed_policy_template_ids
+msgid "Allowed Policy Templates"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__approval_template_id
+msgid "Approval Configuration"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__approval_template_id
+msgid "Approval Template"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__approval_ids
+msgid "Approvals"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__approve_ok
+msgid ""
+"Approve policy\n"
+"\n"
+"* If active user can see and execute 'Approve' button"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__approved
+msgid "Approved"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_attachment_count
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_attachment_count
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_attachment_count
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_attachment_count
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_attachment_count
 msgid "Attachment Count"
@@ -97,6 +161,64 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__definition
 msgid "Business definition and formula of the measure."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__approve_ok
+msgid "Can Approve"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__cancel_ok
+msgid "Can Cancel"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__confirm_ok
+msgid "Can Confirm"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__done_ok
+msgid "Can Finished"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__manual_number_ok
+msgid "Can Input Manual Document Number"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__reject_ok
+msgid "Can Reject"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__restart_ok
+msgid "Can Restart"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__restart_approval_ok
+msgid "Can Restart Approval"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__open_ok
+msgid "Can Start"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__cancel_reason_id
+msgid "Cancel Reason"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__cancel_ok
+msgid ""
+"Cancel policy\n"
+"\n"
+"* If active user can see and execute 'Cancel' button"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -123,15 +245,49 @@ msgid "Color index used to tint the perspective on dashboards."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__company_id
+#: model:res.groups,name:ssi_strategic_management.strategy_plan_company_group
+msgid "Company"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__company_partner_id
+msgid "Company Partner"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:res.groups,name:ssi_strategic_management.strategy_plan_company_child_group
+msgid "Company and All Child Companies"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__company_id
+msgid ""
+"Company that own the document\n"
+"\n"
+"* Automatically filled with user's company.\n"
+"  Default company can be changed"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_configuration
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_type_view_form
 msgid "Configuration"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__confirm_ok
+msgid ""
+"Confirm policy\n"
+"\n"
+"* If active user can see and execute 'Confirm' button"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__create_uid
@@ -142,6 +298,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__create_date
@@ -156,6 +313,16 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__data_source
 msgid "Data Source"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__date_end
+msgid "Date End"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__date_start
+msgid "Date Start"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -177,6 +344,11 @@ msgid "Department"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_view_form
+msgid "Direction"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__polarity
 msgid ""
 "Direction in which the measure improves: Higher is Better = larger values "
@@ -188,6 +360,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__display_name
@@ -205,6 +378,14 @@ msgid "Display order of the range inside its category."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__done_ok
+msgid ""
+"Done policy\n"
+"\n"
+"* If active user can see and execute 'Done' button"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__cascade_level__employee
 msgid "Employee"
 msgstr ""
@@ -217,6 +398,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_follower_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_follower_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_follower_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_follower_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_follower_ids
 msgid "Followers"
@@ -225,6 +407,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_channel_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_channel_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_channel_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_channel_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_channel_ids
 msgid "Followers (Channels)"
@@ -233,6 +416,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_partner_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_partner_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_partner_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_partner_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_partner_ids
 msgid "Followers (Partners)"
@@ -241,9 +425,17 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_type_icon
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_type_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__activity_type_icon
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_type_icon
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__note
+msgid ""
+"Free-form note attached to the document, used for any additional remarks or "
+"information related to the transaction."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -283,6 +475,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__id
@@ -292,6 +485,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_exception_icon
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_exception_icon
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_exception_icon
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_exception_icon
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_exception_icon
 msgid "Icon"
@@ -300,6 +494,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_exception_icon
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_exception_icon
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__activity_exception_icon
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_exception_icon
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_exception_icon
 msgid "Icon to indicate an exception activity."
@@ -310,6 +505,8 @@ msgstr ""
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_unread
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_needaction
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_unread
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__message_needaction
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__message_unread
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_needaction
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_unread
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_needaction
@@ -320,6 +517,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_has_error
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_has_error
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__message_has_error
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_has_error
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_has_error
 msgid "If checked, some messages have a delivery error."
@@ -343,6 +541,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_is_follower
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_is_follower
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_is_follower
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_is_follower
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_is_follower
 msgid "Is Follower"
@@ -374,6 +573,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range____last_update
@@ -384,6 +584,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__write_uid
@@ -394,6 +595,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__write_date
@@ -438,9 +640,18 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_main_attachment_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_main_attachment_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_main_attachment_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_main_attachment_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_main_attachment_id
 msgid "Main Attachment"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__manual_number_ok
+msgid ""
+"Manual number assignment policy\n"
+"\n"
+"* If active user can edit document number"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -495,6 +706,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_has_error
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_has_error
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_has_error
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_has_error
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_has_error
 msgid "Message Delivery error"
@@ -503,6 +715,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_ids
 msgid "Messages"
@@ -519,6 +732,16 @@ msgid "Minimum Score"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__mission
+msgid "Mission"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__mission
+msgid "Mission statement that this plan carries out."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_monitoring
 msgid "Monitoring"
 msgstr ""
@@ -531,6 +754,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__my_activity_date_deadline
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__my_activity_date_deadline
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__my_activity_date_deadline
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__my_activity_date_deadline
 msgid "My Activity Deadline"
@@ -545,8 +769,14 @@ msgid "Name"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__need_validation
+msgid "Need Validation"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_date_deadline
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_date_deadline
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_date_deadline
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_date_deadline
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_date_deadline
 msgid "Next Activity Deadline"
@@ -555,6 +785,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_summary
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_summary
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_summary
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_summary
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_summary
 msgid "Next Activity Summary"
@@ -563,14 +794,21 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_type_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_type_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_type_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_type_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_type_id
 msgid "Next Activity Type"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__next_approval_ids
+msgid "Next Approvals"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__note
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__note
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__note
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__note
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__note
 msgid "Note"
@@ -579,6 +817,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_needaction_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_needaction_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_needaction_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_needaction_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_needaction_counter
 msgid "Number of Actions"
@@ -587,6 +826,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_has_error_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_has_error_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_has_error_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_has_error_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_has_error_counter
 msgid "Number of errors"
@@ -595,6 +835,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_needaction_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_needaction_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__message_needaction_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_needaction_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_needaction_counter
 msgid "Number of messages which requires an action"
@@ -603,6 +844,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_has_error_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_has_error_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__message_has_error_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_has_error_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_has_error_counter
 msgid "Number of messages with delivery error"
@@ -611,6 +853,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__message_unread_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__message_unread_counter
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__message_unread_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__message_unread_counter
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__message_unread_counter
 msgid "Number of unread messages"
@@ -627,6 +870,22 @@ msgid "OKR (0.0-1.0)"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__parent_id
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_view_search
+msgid "Parent Plan"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__company_partner_id
+msgid ""
+"Partner (res.partner) linked to the document's company\n"
+"\n"
+"* Automatically follows 'company_id.partner_id'.\n"
+"* Used for reporting/printing documents that require the company-level\n"
+"  partner instead of the responsible user's partner."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__score_scale__percent
 msgid "Percentage (0-100+)"
 msgstr ""
@@ -638,9 +897,26 @@ msgid "Perspectives"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__type_id
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_view_search
+msgid "Plan Type"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.actions.act_window,name:ssi_strategic_management.strategy_plan_type_action
 #: model:ir.ui.menu,name:ssi_strategic_management.strategy_plan_type_menu
 msgid "Plan Types"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__parent_id
+msgid ""
+"Plan that contains this plan, e.g. the yearly plan of a quarterly plan."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__type_id
+msgid "Plan type that fixes the methodology of this plan."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -649,8 +925,24 @@ msgid "Planning methodology that plans of this type follow."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_plan_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_plan_menu
+msgid "Plans"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__child_ids
+msgid "Plans that are contained in this plan."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__polarity
 msgid "Polarity"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__policy_template_id
+msgid "Policy Template"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -665,16 +957,56 @@ msgid "Ranges"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__reject_ok
+msgid ""
+"Reject policy\n"
+"\n"
+"* If active user can see and execute 'Reject' button"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__rejected
+msgid "Rejected"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_reporting
 msgid "Reporting"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__user_id
+msgid "Responsible"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__activity_user_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__activity_user_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__activity_user_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__activity_user_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__activity_user_id
 msgid "Responsible User"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__restart_approval_ok
+msgid ""
+"Restart approval policy\n"
+"\n"
+"* If active user can see and execute 'Restart Approval' button"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__restart_ok
+msgid ""
+"Restart policy\n"
+"\n"
+"* If active user can see and execute 'Restart' button"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__reviewer_id
+msgid "Reviewer"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -750,8 +1082,22 @@ msgid "Sequence"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__open_ok
+msgid ""
+"Start policy\n"
+"\n"
+"* If active user can see and execute 'Start' button"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__state
+msgid "State"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_state
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_state
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__activity_state
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_state
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_state
 msgid ""
@@ -805,6 +1151,13 @@ msgid "Strategy Perspective"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_plan
+#: model:ir.module.category,name:ssi_strategic_management.strategy_plan_data_ownership_module_category
+#: model:ir.module.category,name:ssi_strategic_management.strategy_plan_workflow_module_category
+msgid "Strategy Plan"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model,name:ssi_strategic_management.model_strategy_plan_type
 #: model:res.groups,name:ssi_strategic_management.strategy_plan_type_group
 msgid "Strategy Plan Type"
@@ -822,6 +1175,12 @@ msgid "Strategy Score Category - Range"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__child_ids
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_view_form
+msgid "Sub-Plans"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__sum
 msgid "Sum"
 msgstr ""
@@ -833,8 +1192,22 @@ msgid "To"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__name
+msgid ""
+"Transaction/document number\n"
+"\n"
+"* Unique indentifer of transaction\n"
+"* Leave '/' to automatically generate number\n"
+"* Change '/' into any number/identifier to manually assign number.\n"
+"  Manual number assignment can be done in 'Draft' state\n"
+"  Only user with 'Can Manualy Assign Number' policy can manually assign number.\n"
+"* Transaction with number other than '/' can not be deleted."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__activity_exception_decoration
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__activity_exception_decoration
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__activity_exception_decoration
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__activity_exception_decoration
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__activity_exception_decoration
 msgid "Type of the exception activity on record."
@@ -853,6 +1226,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_unread
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_unread
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_unread
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_unread
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_unread
 msgid "Unread Messages"
@@ -861,6 +1235,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_unread_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_unread_counter
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__message_unread_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__message_unread_counter
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__message_unread_counter
 msgid "Unread Messages Counter"
@@ -877,8 +1252,57 @@ msgid "Upper bound of the score range."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:res.groups,name:ssi_strategic_management.strategy_plan_user_group
+msgid "User"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__user_id
+msgid ""
+"User that responsible for document\n"
+"\n"
+"* Create user can be different with responsible user\n"
+"* Automatically filled with user that initiate document creation.\n"
+"  Default responsible can be changed."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__reviewer_id
+msgid ""
+"User that responsible to review document\n"
+"\n"
+"* Unless it configured to approve reviewer does not equal to approver"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__active_approver_user_ids
+msgid "Users that can approve/reject document"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:res.groups,name:ssi_strategic_management.strategy_plan_validator_group
+msgid "Validator"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:res.groups,name:ssi_strategic_management.strategy_plan_viewer_group
+msgid "Viewer"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__vision
+msgid "Vision"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__vision
+msgid "Vision statement that this plan works toward."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__website_message_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__website_message_ids
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__website_message_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__website_message_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__website_message_ids
 msgid "Website Messages"
@@ -887,6 +1311,7 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__website_message_ids
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__website_message_ids
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__website_message_ids
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan_type__website_message_ids
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_score_category__website_message_ids
 msgid "Website communication history"
@@ -900,6 +1325,16 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__polarity__range
 msgid "Within Range"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__state
+msgid ""
+"Workflow status of the document\n"
+"\n"
+"* 'draft' is the only base state provided by this mixin.\n"
+"* Other states (e.g. confirmed, done, cancel) are added by derivative mixin\n"
+"  modules (such as confirm/done/cancel mixins) via 'selection_add'."
 msgstr ""
 
 #. module: ssi_strategic_management
