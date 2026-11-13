@@ -1259,3 +1259,243 @@ scenarios:
           - ["func_string", "like", "EVAL: '(%d,)' % registry['t_quarter'].id"]
         save_as: "job_quarter"
         expect_count: 0
+
+  - name: "The cron chains the jobs of the child KPIs before the parent KPIs"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_top"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create child objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_leaf"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: objective_top.id"
+          weight: 100.0
+      - step: "Create the parent KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_top"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_top.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Cron order parent"
+          weight: 100.0
+      - step: "Create the child KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_leaf"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_leaf.id"
+          measure_id: "REC: measure_count.id"
+          name: "Cron order child"
+          weight: 100.0
+          parent_kpi_id: "REC: kpi_top.id"
+      - step: "Create the parent target"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_top"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_top.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create the child target"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_leaf"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_leaf.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Start the parent objective"
+        action: "call"
+        target: "objective_top"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Start the child objective"
+        action: "call"
+        target: "objective_leaf"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Run the monthly cron"
+        action: "call"
+        target: "t_top"
+        method: "_cron_compute_realization"
+        args:
+          - "monthly"
+      - step: "The job of the child target can start at once"
+        action: "search"
+        model: "queue.job"
+        domain:
+          - ["method_name", "=", "action_compute_realization"]
+          - ["model_name", "=", "strategy_kpi.target"]
+          - ["func_string", "like", "EVAL: '(%d,)' % registry['t_leaf'].id"]
+          - ["state", "=", "pending"]
+        save_as: "job_leaf"
+        expect_count: 1
+      - step: "The job of the parent target waits for the child job"
+        action: "search"
+        model: "queue.job"
+        domain:
+          - ["method_name", "=", "action_compute_realization"]
+          - ["model_name", "=", "strategy_kpi.target"]
+          - ["func_string", "like", "EVAL: '(%d,)' % registry['t_top'].id"]
+          - ["state", "=", "wait_dependencies"]
+        save_as: "job_top"
+        expect_count: 1
+
+  - name: "A datetime field is cut at midnight of the company time zone"
+    steps:
+      - step: "Find the partner of the company"
+        action: "search"
+        model: "res.partner"
+        domain:
+          - ["id", "=", "EVAL: registry['objective'].sudo().company_id.partner_id.id"]
+        save_as: "partner_company"
+        limit: 1
+      - step: "Set the time zone of the company"
+        action: "write"
+        target: "partner_company"
+        values:
+          tz: "Asia/Jakarta"
+      - step: "Find the message model"
+        action: "search"
+        model: "ir.model"
+        domain: [["model", "=", "mail.message"]]
+        save_as: "model_msg"
+        limit: 1
+      - step: "Find the message date field"
+        action: "search"
+        model: "ir.model.fields"
+        domain: [["model", "=", "mail.message"], ["name", "=", "date"]]
+        save_as: "f_msg_date"
+        limit: 1
+      - step: "Find the message document id field"
+        action: "search"
+        model: "ir.model.fields"
+        domain: [["model", "=", "mail.message"], ["name", "=", "res_id"]]
+        save_as: "f_msg_res"
+        limit: 1
+      - step: "Create the sum measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_tz"
+        as_user: "validator"
+        values:
+          name: "Realization time zone measure"
+          code: "EVAL: 'RZ%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_msg.id"
+          aggregate_domain: '[("subject", "like", "TZ21-")]'
+          aggregate_date_field_id: "REC: f_msg_date.id"
+          aggregate_field_id: "REC: f_msg_res.id"
+          aggregate_function: "sum"
+      - step: "Create the message at 00:30 on the first day"
+        action: "create"
+        model: "mail.message"
+        values:
+          subject: "TZ21-in"
+          date: "2026-02-28 17:30:00"
+          res_id: 1
+          reply_to: "tz21@example.com"
+      - step: "Create the message at 00:30 after the last day"
+        action: "create"
+        model: "mail.message"
+        values:
+          subject: "TZ21-out"
+          date: "2026-03-31 17:30:00"
+          res_id: 10
+          reply_to: "tz21@example.com"
+      - step: "Create the plan of the year"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan_tz"
+        as_user: "validator"
+        values:
+          type_id: "REC: type_bsc.id"
+          date_start: "2026-01-01"
+          date_end: "2026-12-31"
+      - step: "Start the plan of the year"
+        action: "call"
+        target: "plan_tz"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Create the objective of the plan of the year"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_tz"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_tz.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create the KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_tz"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_tz.id"
+          measure_id: "REC: measure_tz.id"
+          name: "Time zone KPI"
+          weight: 100.0
+      - step: "Create the March target"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_tz"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_tz.id"
+          date_start: "2026-03-01"
+          date_end: "2026-03-31"
+          target: 100.0
+      - step: "Compute"
+        action: "call"
+        target: "t_tz"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Only the message of the first local day is counted"
+        action: "assert"
+        target: "t_tz"
+        refresh: true
+        asserts:
+          realization:
+            type: "value"
+            expected: 1.0

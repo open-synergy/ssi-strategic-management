@@ -357,6 +357,55 @@ Solution: Change minimum or maximum score
             return True
         return self._is_aggregate_complete("denominator")
 
+    @api.constrains(
+        "aggregate_model_id",
+        "aggregate_date_field_id",
+        "aggregate_field_id",
+        "aggregate_department_field_id",
+        "aggregate_employee_field_id",
+        "denominator_model_id",
+        "denominator_date_field_id",
+        "denominator_field_id",
+        "denominator_department_field_id",
+        "denominator_employee_field_id",
+    )
+    def _check_aggregate_field_model(self):
+        """Reject measures whose fields belong to another model.
+
+        :raises ValidationError: when the condition method returns False
+        """
+        for measure in self.sudo():
+            if not measure._check_aggregate_field_model_condition():
+                error_message = (
+                    "\nContext: Create or update strategy measure\n"
+                    "Database ID: %s\n"
+                    "Problem: Aggregate fields must belong to the selected "
+                    "model.\n"
+                    "Solution: Select fields of the model of the aggregate "
+                    "or of the denominator\n"
+                ) % (measure.id,)
+                raise ValidationError(_(error_message))
+
+    def _check_aggregate_field_model_condition(self):
+        """Tell whether every filled field belongs to its model.
+
+        Extension point: override to relax or tighten the rule. Applies
+        to the aggregate and to the denominator, whatever the
+        realization method; empty fields are ignored.
+
+        :return: True when each filled date, value, department and
+            employee field has the model of its definition as model
+        """
+        self.ensure_one()
+        suffixes = ("date_field", "field", "department_field", "employee_field")
+        for prefix in ("aggregate", "denominator"):
+            model = self["%s_model_id" % prefix]
+            for suffix in suffixes:
+                field = self["%s_%s_id" % (prefix, suffix)]
+                if field and field.model_id != model:
+                    return False
+        return True
+
     def _is_aggregate_complete(self, prefix):
         """Tell whether one aggregate definition is completely filled.
 
