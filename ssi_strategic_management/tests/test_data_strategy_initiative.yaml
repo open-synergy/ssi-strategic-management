@@ -647,6 +647,93 @@ scenarios:
           type: "UserError"
           message_contains: "Total milestone weight must be 100%."
 
+  - name: "Confirming with milestone weights that do not add up is rejected"
+    steps:
+      - step: "Create initiative using milestones"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "milestone"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Add a milestone of weight 40"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        save_as: "ms_a"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Milestone A"
+          weight: 40.0
+      - step: "Add a milestone of weight 50"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        save_as: "ms_b"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Milestone B"
+          weight: 50.0
+      - step: "Confirm initiative with a total weight of 90"
+        action: "call"
+        target: "init"
+        method: "action_confirm"
+        as_user: "validator"
+        expect_error:
+          type: "UserError"
+          message_contains: "Total milestone weight must be 100%."
+      - step: "Initiative is still a draft"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+      - step: "Correct the weight of the second milestone to 60"
+        action: "write"
+        target: "ms_b"
+        as_user: "validator"
+        values:
+          weight: 60.0
+      - step: "Confirm initiative with a total weight of 100"
+        action: "call"
+        target: "init"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+  - name: "Initiative with manual progress is confirmed without milestones"
+    steps:
+      - step: "Create initiative with manual progress"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 25.0
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Confirm initiative"
+        action: "call"
+        target: "init"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
   - name: "Starting before the plan is in progress is rejected"
     steps:
       - step: "Create initiative of the draft plan"

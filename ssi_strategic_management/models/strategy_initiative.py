@@ -368,6 +368,20 @@ Solution: Start the plan before starting this initiative
             )
             raise UserError(_(error_message))
 
+    @ssi_decorator.pre_confirm_check()
+    def _10_check_milestone_weight(self):
+        """Reject confirming a milestone based initiative with wrong weights.
+
+        Runs in the ``pre_confirm_check`` slot, so the initiative stays
+        a draft and its milestones can still be corrected. Initiatives
+        that do not use milestones pass.
+
+        :raises UserError: when the total weight of the milestones
+            differs from 100%
+        """
+        self.ensure_one()
+        self._check_total_milestone_weight("Confirm initiative", " before confirming")
+
     @ssi_decorator.pre_open_check()
     def _20_check_milestone_weight(self):
         """Reject starting a milestone based initiative with wrong weights.
@@ -379,17 +393,30 @@ Solution: Start the plan before starting this initiative
             differs from 100%
         """
         self.ensure_one()
+        self._check_total_milestone_weight("Start initiative", "")
+
+    def _check_total_milestone_weight(self, context_label, solution_suffix):
+        """Raise when milestone weights of this initiative do not total 100.
+
+        :param context_label: text shown on the ``Context`` line
+        :param solution_suffix: text appended to the ``Solution`` line
+        :raises UserError: when the progress method is milestone and
+            the total weight differs from 100%
+        """
+        self.ensure_one()
         if self.progress_method != "milestone":
             return
         total_weight = sum(self.milestone_ids.mapped("weight"))
         if float_compare(total_weight, 100.0, precision_digits=2) != 0:
             error_message = """
-Context: Start initiative
+Context: %s
 Database ID: %s
 Problem: Total milestone weight must be 100%%.
-Solution: Change the weights of the milestones so that they add up to 100%%
+Solution: Change the weights of the milestones so that they add up to 100%%%s
 """ % (
+                context_label,
                 self.id,
+                solution_suffix,
             )
             raise UserError(_(error_message))
 
