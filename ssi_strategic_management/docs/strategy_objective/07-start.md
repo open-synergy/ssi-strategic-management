@@ -11,8 +11,9 @@
 
 - **Record:** Status is **Draft**.
 - **Record:** The plan of the objective is **On Progress**.
-- **Record:** When the objective has child objectives that contribute to it, their
-  **Contribution Weight (%)** add up to exactly 100.
+- **Record:** When the objective has child objectives that contribute to it, the ones
+  that are not **Cancelled** have **Contribution Weight (%)** adding up to exactly 100.
+  Cancelled child objectives are not counted.
 - **Record:** When the objective has KPIs, their **Weight (%)** add up to exactly 100.
 - **Config:** An active `policy.template` for `strategy_objective` grants `open_ok` for
   state `draft` to the actor's group.
