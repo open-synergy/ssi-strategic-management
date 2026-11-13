@@ -132,6 +132,81 @@ class StrategyPlan(models.Model):
         string="Mission",
         help="Mission statement that this plan carries out.",
     )
+    score = fields.Float(
+        string="Score",
+        compute="_compute_score",
+        store=True,
+        compute_sudo=True,
+        help="Weighted average of the scores of the top objectives of "
+        "this plan, using their weights. A simple average when the "
+        "weights add up to zero, 0 without objectives.",
+    )
+    score_category_range_id = fields.Many2one(
+        string="Score Category",
+        comodel_name="strategy_score_category.range",
+        compute="_compute_score_category_range_id",
+        store=True,
+        compute_sudo=True,
+        help="Range of the score category of the plan type that contains "
+        "the score of this plan.",
+    )
+
+    def _get_top_objectives(self):
+        """Return the top objectives of this plan.
+
+        A top objective has no parent objective or a parent objective in
+        another plan. Cancelled objectives are left out.
+
+        :return: recordset of top objectives of the plan
+        """
+        self.ensure_one()
+        return self.objective_ids.filtered(
+            lambda r: r.state != "cancel"
+            and (not r.parent_id or r.parent_id.plan_id != self)
+        )
+
+    @api.depends(
+        "objective_ids.score",
+        "objective_ids.weight",
+        "objective_ids.state",
+        "objective_ids.parent_id",
+    )
+    def _compute_score(self):
+        """Average the scores of the top objectives of the plan.
+
+        The average is weighted by the objective weights, simple when
+        the weights add up to zero, and 0 without top objectives.
+        """
+        for record in self:
+            result = 0.0
+            objectives = record._get_top_objectives()
+            if objectives:
+                total_weight = sum(objectives.mapped("weight"))
+                if total_weight:
+                    result = sum(o.score * o.weight for o in objectives) / total_weight
+                else:
+                    result = sum(objectives.mapped("score")) / len(objectives)
+            record.score = result
+
+    @api.depends(
+        "score",
+        "type_id.score_category_id.range_ids.min_value",
+        "type_id.score_category_id.range_ids.max_value",
+    )
+    def _compute_score_category_range_id(self):
+        """Pick the range of the plan type score category for the score.
+
+        Empty when the plan type has no category or no range matches.
+        """
+        for record in self:
+            result = False
+            category = record.type_id.score_category_id
+            matching = category.range_ids.filtered(
+                lambda r, score=record.score: r.min_value <= score <= r.max_value
+            )
+            if matching:
+                result = matching[0]
+            record.score_category_range_id = result
 
     @api.constrains("parent_id")
     def _check_parent_recursion(self):

@@ -47,6 +47,8 @@
                 <field name="parent_id" />
                 <field name="date_start" />
                 <field name="date_end" />
+                <field name="score" />
+                <field name="score_category_range_id" />
             </xpath>
         </data>
     </field>
@@ -66,6 +68,8 @@
             <xpath expr="//group[@name='header_right']" position="inside">
                 <field name="date_start" />
                 <field name="date_end" />
+                <field name="score" />
+                <field name="score_category_range_id" />
             </xpath>
             <xpath expr="//page[@name='note']" position="before">
                 <page name="direction" string="Direction">

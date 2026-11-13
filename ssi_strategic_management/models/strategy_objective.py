@@ -197,6 +197,164 @@ class StrategyObjective(models.Model):
             result = record.objective_type == "bsc"
             record.contribute_to_parent = result
 
+    kpi_portion = fields.Float(
+        string="KPI Portion (%)",
+        compute="_compute_kpi_portion",
+        store=True,
+        readonly=False,
+        compute_sudo=True,
+        help="Share of the objective score that comes from its KPIs, "
+        "the remainder comes from its contributing child objectives. "
+        "Defaults to 100 with KPIs only, 0 with contributing children "
+        "only and 50 with both. The value stays editable.",
+    )
+    kpi_score = fields.Float(
+        string="KPI Score",
+        compute="_compute_score",
+        store=True,
+        compute_sudo=True,
+        recursive=True,
+        help="Weighted score of the KPIs of this objective.",
+    )
+    child_score = fields.Float(
+        string="Child Score",
+        compute="_compute_score",
+        store=True,
+        compute_sudo=True,
+        recursive=True,
+        help="Weighted score of the contributing child objectives. "
+        "Cancelled children and children that only align with this "
+        "objective are not counted.",
+    )
+    score = fields.Float(
+        string="Score",
+        compute="_compute_score",
+        store=True,
+        compute_sudo=True,
+        recursive=True,
+        help="Score of this objective: the KPI portion of the KPI score "
+        "plus the remaining portion of the child score.",
+    )
+    score_category_range_id = fields.Many2one(
+        string="Score Category",
+        comodel_name="strategy_score_category.range",
+        compute="_compute_score_category_range_id",
+        store=True,
+        compute_sudo=True,
+        help="Range of the score category of the plan type that contains "
+        "the score of this objective.",
+    )
+
+    def _get_contributive_children(self):
+        """Return the child objectives that contribute to this objective.
+
+        :return: children that contribute to the parent and are not
+            cancelled
+        """
+        self.ensure_one()
+        return self.child_ids.filtered(
+            lambda r: r.contribute_to_parent and r.state != "cancel"
+        )
+
+    @api.depends(
+        "kpi_ids",
+        "child_ids.contribute_to_parent",
+        "child_ids.state",
+    )
+    def _compute_kpi_portion(self):
+        """Default the KPI portion from the KPIs and contributing children.
+
+        100 with KPIs only (or with neither), 0 with contributing
+        children only, 50 with both. Cancelled children are ignored.
+        Recomputed only when the set of KPIs or of contributing
+        children changes, so a value edited by the user is kept.
+        """
+        for record in self:
+            has_kpi = bool(record.kpi_ids)
+            has_child = bool(record._get_contributive_children())
+            result = 100.0
+            if has_kpi and has_child:
+                result = 50.0
+            elif has_child:
+                result = 0.0
+            record.kpi_portion = result
+
+    @api.depends(
+        "kpi_portion",
+        "kpi_ids.score",
+        "kpi_ids.weight",
+        "child_ids.score",
+        "child_ids.weight",
+        "child_ids.contribute_to_parent",
+        "child_ids.state",
+    )
+    def _compute_score(self):
+        """Roll up the KPI score, the child score and the objective score.
+
+        The KPI score and the child score are the weighted sums of the
+        scores of the KPIs and of the contributing child objectives. The
+        score mixes both according to the KPI portion.
+        """
+        for record in self:
+            kpi_score = 0.0
+            for kpi in record.kpi_ids:
+                kpi_score += kpi.score * kpi.weight / 100.0
+            child_score = 0.0
+            for child in record._get_contributive_children():
+                child_score += child.score * child.weight / 100.0
+            portion = record.kpi_portion / 100.0
+            record.kpi_score = kpi_score
+            record.child_score = child_score
+            record.score = portion * kpi_score + (1.0 - portion) * child_score
+
+    @api.depends(
+        "score",
+        "plan_id.type_id.score_category_id.range_ids.min_value",
+        "plan_id.type_id.score_category_id.range_ids.max_value",
+    )
+    def _compute_score_category_range_id(self):
+        """Pick the range of the plan type score category for the score.
+
+        Empty when the plan type has no category or no range matches.
+        """
+        for record in self:
+            result = False
+            category = record.plan_id.type_id.score_category_id
+            matching = category.range_ids.filtered(
+                lambda r, score=record.score: r.min_value <= score <= r.max_value
+            )
+            if matching:
+                result = matching[0]
+            record.score_category_range_id = result
+
+    @api.constrains("kpi_portion")
+    def _check_kpi_portion(self):
+        """Reject a KPI portion outside 0-100.
+
+        :raises ValidationError: when the condition method returns False
+        """
+        for record in self.sudo():
+            if not record._check_kpi_portion_condition():
+                error_message = """
+Context: Create or update strategy objective
+Database ID: %s
+Problem: KPI portion must be between 0 and 100.
+Solution: Change the KPI portion to a value from 0 to 100
+""" % (
+                    record.id,
+                )
+                raise ValidationError(_(error_message))
+
+    def _check_kpi_portion_condition(self):
+        """Tell whether the KPI portion is a valid percentage.
+
+        Extension point: override to relax or tighten the rule.
+
+        :return: True when the KPI portion is between 0 and 100
+        """
+        self.ensure_one()
+        return 0.0 <= self.kpi_portion <= 100.0
+
     @api.constrains("plan_id", "perspective_id")
     def _check_perspective_required(self):
         """Require a perspective on Balanced Scorecard objectives.
