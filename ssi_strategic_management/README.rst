@@ -13,7 +13,9 @@ main menu and the master data shared by the whole module family:
 perspectives, the measure library, score categories and plan types. It
 also provides the strategy plan, the parent document of every objective,
 KPI and initiative, which can be nested into sub-plans and goes through
-an approval workflow.
+an approval workflow. Strategy objectives belong to a plan and are cascaded
+to departments and, when the plan type allows it, to employees, from a
+parent objective down to its children.
 
 
 Work Instruction
@@ -53,6 +55,17 @@ Plan
 * `Reset Plan Document Number <docs/strategy_plan/13-reset-number.html>`_
 * `Restart Plan Approval Process <docs/strategy_plan/14-restart-approval.html>`_
 * `Reload Plan Policy Template <docs/strategy_plan/15-reload-policy-template.html>`_
+
+Objective
+---------
+
+* `Create Objective <docs/strategy_objective/01-create.html>`_
+* `Start Objective <docs/strategy_objective/07-start.html>`_
+* `Finish Objective <docs/strategy_objective/09-finish.html>`_
+* `Cancel Objective <docs/strategy_objective/10-cancel.html>`_
+* `Restart Objective <docs/strategy_objective/12-restart.html>`_
+* `Reset Objective Document Number <docs/strategy_objective/13-reset-number.html>`_
+* `Reload Objective Policy Template <docs/strategy_objective/15-reload-policy-template.html>`_
 
 
 Installation

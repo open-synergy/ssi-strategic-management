@@ -8,9 +8,11 @@ from . import (  # noqa: F401
     test_strategy_score_category,
     test_strategy_plan_type,
     test_strategy_plan,
+    test_strategy_objective,
     test_ui_strategy_perspective,
     test_ui_strategy_measure,
     test_ui_strategy_score_category,
     test_ui_strategy_plan_type,
     test_ui_strategy_plan,
+    test_ui_strategy_objective,
 )

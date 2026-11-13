@@ -1,0 +1,698 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Objective Validator"
+        login: "EVAL: 'val%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+              ],
+            ]
+    - step: "Create department A"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_a"
+      values:
+        name: "Objective Department A"
+    - step: "Create department B"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_b"
+      values:
+        name: "Objective Department B"
+    - step: "Create employee of department A"
+      action: "create"
+      model: "hr.employee"
+      save_as: "emp_a"
+      values:
+        name: "Objective Employee A"
+        department_id: "REC: dept_a.id"
+    - step: "Create employee of department B"
+      action: "create"
+      model: "hr.employee"
+      save_as: "emp_b"
+      values:
+        name: "Objective Employee B"
+        department_id: "REC: dept_b.id"
+    - step: "Create Balanced Scorecard plan type cascading to departments"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_dept"
+      as_user: "base.user_admin"
+      values:
+        name: "Objective plan type department"
+        code: "EVAL: 'PD%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create Balanced Scorecard plan type cascading to employees"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_emp"
+      as_user: "base.user_admin"
+      values:
+        name: "Objective plan type employee"
+        code: "EVAL: 'PE%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "employee"
+    - step: "Create OKR plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_okr"
+      as_user: "base.user_admin"
+      values:
+        name: "Objective plan type okr"
+        code: "EVAL: 'PO%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "okr"
+        score_scale: "okr"
+        cascade_level: "department"
+    - step: "Create plan plan_dept"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_dept"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_dept.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Start plan plan_dept"
+      action: "call"
+      target: "plan_dept"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create plan plan_emp"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_emp"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_emp.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Start plan plan_emp"
+      action: "call"
+      target: "plan_emp"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create plan plan_okr"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_okr"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_okr.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Start plan plan_okr"
+      action: "call"
+      target: "plan_okr"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create plan plan_sub"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_sub"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_dept.id"
+        date_start: 2026-04-01
+        date_end: 2026-06-30
+        parent_id: "REC: plan_dept.id"
+    - step: "Start plan plan_sub"
+      action: "call"
+      target: "plan_sub"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create plan plan_draft"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_draft"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_dept.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+
+scenarios:
+  - name: "Objective goes from draft to done"
+    steps:
+      - step: "Create Balanced Scorecard objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Objective starts in draft with Balanced Scorecard defaults"
+        action: "assert"
+        target: "objective"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          objective_type:
+            type: "value"
+            expected: "bsc"
+          contribute_to_parent:
+            type: "value"
+            expected: true
+          cascade_method:
+            type: "value"
+            expected: "contributive"
+      - step: "Start objective"
+        action: "call"
+        target: "objective"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+          name:
+            type: "value"
+            operator: "contains"
+            expected: "SO/"
+      - step: "Finish objective"
+        action: "call"
+        target: "objective"
+        method: "action_done"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+      - step: "Plan lists the objective"
+        action: "assert"
+        target: "plan_dept"
+        asserts:
+          objective_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 1
+
+  - name: "Draft objective can be cancelled and restarted"
+    steps:
+      - step: "Create objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Cancel objective"
+        action: "call"
+        target: "objective"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Restart objective"
+        action: "call"
+        target: "objective"
+        method: "action_restart"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Document number can be reset"
+    steps:
+      - step: "Create objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Start objective"
+        action: "call"
+        target: "objective"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Reset the document number"
+        action: "call"
+        target: "objective"
+        method: "action_reset_document_number"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          name:
+            type: "value"
+            expected: "/"
+
+  - name: "Parent with contributing children adding up to 100 can start"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create first child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 60
+      - step: "Create second child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 40
+      - step: "Parent lists the children"
+        action: "assert"
+        target: "parent"
+        asserts:
+          child_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+      - step: "Start parent objective"
+        action: "call"
+        target: "parent"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+  - name: "Parent whose contributing weights differ from 100 cannot start"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create first child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 60
+      - step: "Create second child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 30
+      - step: "Start parent objective with a total weight of 90"
+        action: "call"
+        target: "parent"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains:
+            "Total weight of contributing child objectives must be 100%."
+
+  - name: "Non contributing children are ignored by the weight check"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create child that only aligns"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 10
+          contribute_to_parent: false
+      - step: "Start parent objective"
+        action: "call"
+        target: "parent"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+  - name: "Objective can be cascaded to an employee of the department"
+    steps:
+      - step: "Create objective for the employee"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_emp.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          employee_id: "REC: emp_a.id"
+          owner_id: "REC: emp_a.id"
+      - step: "Objective keeps the employee"
+        action: "assert"
+        target: "objective"
+        asserts:
+          employee_id:
+            type: "m2o"
+            expected: "REC: emp_a"
+          owner_id:
+            type: "m2o"
+            expected: "REC: emp_a"
+
+  - name: "OKR objective does not contribute to its parent by default"
+    steps:
+      - step: "Create OKR objective without perspective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_okr.id"
+          department_id: "REC: dept_a.id"
+      - step: "OKR defaults"
+        action: "assert"
+        target: "objective"
+        asserts:
+          objective_type:
+            type: "value"
+            expected: "okr"
+          contribute_to_parent:
+            type: "value"
+            expected: false
+
+  - name: "Objectives can influence each other"
+    steps:
+      - step: "Create influenced objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "target"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create influencing objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "source"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          influence_ids: [[6, 0, ["REC: target.id"]]]
+      - step: "Source influences target"
+        action: "assert"
+        target: "source"
+        asserts:
+          influence_ids:
+            type: "m2m"
+            check: "exact"
+            expected_records:
+              - "REC: target"
+
+  - name: "Parent objective may belong to an ancestor plan"
+    steps:
+      - step: "Create objective in the parent plan"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective in the sub-plan"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_sub.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+      - step: "Child keeps the parent"
+        action: "assert"
+        target: "child"
+        asserts:
+          parent_id:
+            type: "m2o"
+            expected: "REC: parent"
+
+  - name: "Employee is rejected when the plan type cascades to departments"
+    steps:
+      - step: "Create objective with an employee"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains:
+            "This plan type does not allow cascading objectives to employees."
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          employee_id: "REC: emp_a.id"
+
+  - name: "Employee of another department is rejected"
+    steps:
+      - step: "Create objective with a foreign employee"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "The employee must belong to the objective department."
+        values:
+          plan_id: "REC: plan_emp.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          employee_id: "REC: emp_b.id"
+
+  - name: "Objective cannot start while its plan is draft"
+    steps:
+      - step: "Create objective in the draft plan"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_draft.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Start objective of a draft plan"
+        action: "call"
+        target: "objective"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains: "The plan must be in progress before opening objectives."
+
+  - name: "Balanced Scorecard objective requires a perspective"
+    steps:
+      - step: "Create objective without perspective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Balanced Scorecard objectives require a perspective."
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+
+  - name: "Objective cannot be its own ancestor"
+    steps:
+      - step: "Create objective A"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective B under A"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: obj_a.id"
+      - step: "Make B the parent of A"
+        action: "write"
+        target: "obj_a"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "An objective cannot be its own ancestor."
+        values:
+          parent_id: "REC: obj_b.id"
+
+  - name: "Parent objective of an unrelated plan is rejected"
+    steps:
+      - step: "Create objective in the Balanced Scorecard plan"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective in the OKR plan under it"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains:
+            "The parent objective must belong to the same plan or an ancestor plan."
+        values:
+          plan_id: "REC: plan_okr.id"
+          department_id: "REC: dept_a.id"
+          parent_id: "REC: parent.id"
+
+  - name: "Parent objective of a descendant plan is rejected"
+    steps:
+      - step: "Create objective in the sub-plan"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_sub.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective in the plan under it"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains:
+            "The parent objective must belong to the same plan or an ancestor plan."
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"

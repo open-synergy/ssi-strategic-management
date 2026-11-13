@@ -29,6 +29,10 @@
                 type="text/javascript"
                 src="/ssi_strategic_management/static/tests/tours/strategy_plan_tour.js"
             />
+            <script
+                type="text/javascript"
+                src="/ssi_strategic_management/static/tests/tours/strategy_objective_tour.js"
+            />
         </xpath>
     </template>
 </odoo>
