@@ -74,7 +74,7 @@
     <field name="name">strategy_kpi.target - form</field>
     <field name="model">strategy_kpi.target</field>
     <field name="arch" type="xml">
-        <form create="0" edit="0" delete="0">
+        <form>
             <sheet>
                 <group name="group_1" colspan="4" col="2">
                     <field name="kpi_id" />
@@ -83,6 +83,7 @@
                     <field name="department_id" />
                     <field name="employee_id" />
                     <field name="perspective_id" />
+                    <field name="date_range_id" />
                     <field name="date_start" />
                     <field name="date_end" />
                     <field name="target" />
