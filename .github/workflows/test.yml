@@ -60,10 +60,10 @@ jobs:
         env:
           PIP_INDEX_URL: https://pypi.org/simple
           PIP_EXTRA_INDEX_URL: https://${{ secrets.SSI_PYPI_USER }}:${{ secrets.SSI_PYPI_PASSWORD }}@osmium.simetri-sinergi.biz.id/simple/
-      - name: Pin ssi_transaction_mixin to commit 90434d3 (test only)
+      - name: Pin ssi_transaction_mixin to commit 9897160d (test only)
         # PR uji untuk open-synergy/ssi-mixin#520. Tidak untuk di-merge.
         run: |
-          pip install --no-deps --force-reinstall "odoo14-addon-ssi_transaction_mixin @ git+https://github.com/open-synergy/ssi-mixin@90434d3b37078f60e409a47dbea80883cfb49013#subdirectory=setup/ssi_transaction_mixin"
+          pip install --no-deps --force-reinstall "odoo14-addon-ssi_transaction_mixin @ git+https://github.com/open-synergy/ssi-mixin@9897160d60cfd09e9278f75a3c48c45332585415#subdirectory=setup/ssi_transaction_mixin"
           pip freeze | grep -i ssi.transaction.mixin
           cat "$(python -c 'import site;print(site.getsitepackages()[0])')"/odoo14_addon_ssi_transaction_mixin*/direct_url.json
       - name: Pre-install chart of accounts
