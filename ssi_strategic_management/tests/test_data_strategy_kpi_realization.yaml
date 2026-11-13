@@ -690,6 +690,11 @@ scenarios:
         expect_error:
           type: "UserError"
           message_contains: "Only automatic KPIs"
+      - step: "The engine falls back to zero for a manual KPI without children"
+        action: "call"
+        target: "t_manual"
+        method: "_compute_automatic_value"
+        as_user: "validator"
 
   - name: "A parent KPI rolls up the same-period targets of its child KPIs"
     steps:
