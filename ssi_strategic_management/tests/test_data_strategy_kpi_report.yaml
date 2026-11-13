@@ -46,6 +46,7 @@ setup:
       save_as: "plan"
       as_user: "validator"
       values:
+        title: "Test plan title"
         type_id: "REC: type_bsc.id"
         date_start: 2026-01-01
         date_end: 2026-12-31
@@ -65,6 +66,7 @@ setup:
       save_as: "objective_a"
       as_user: "validator"
       values:
+        title: "Test objective title"
         plan_id: "REC: plan.id"
         department_id: "REC: dept_a.id"
         perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -177,6 +179,7 @@ scenarios:
         save_as: "objective_child"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept_b.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"

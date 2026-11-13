@@ -21,6 +21,8 @@
 1. Open the **Strategic Management > Strategy > Initiatives** menu.
 2. Click the **New** button. **(14.0: "Create")**
 3. Fill in the required fields:
+   - **Title** _(required)_: Enter a short title that identifies the initiative. It is
+     shown next to the document number in the document name.
    - **Plan** _(required)_: Select the plan that owns the initiative.
    - **Date Start** _(required)_: Enter the first day of the initiative.
    - **Date End** _(required)_: Enter the last day of the initiative.
@@ -45,6 +47,8 @@
 
 ## Post-Condition
 
+- The record is listed under its title, and the title is searchable. Once a number is
+  assigned, the name shows **number - title**.
 - A new Strategy Initiative record is created in **Draft** status.
 - The document number (**Name**) still shows **/** — it is only assigned when the
   initiative is started (see `07-start`).

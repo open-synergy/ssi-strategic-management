@@ -143,9 +143,15 @@ odoo.define("ssi_strategic_management.strategy_objective_tour", function (requir
                     },
                 },
 
-                // Flow 3 -- Fill in the required fields: Plan, Department
+                // Flow 3 -- Fill in the required fields: Title, Plan, Department
                 // and Perspective. Cascade Method and Responsible keep their
                 // default values.
+                {
+                    content: "Fill in the Title",
+                    trigger: ".o_field_widget[name='title'] input",
+                    extra_trigger: ".o_form_view.o_form_editable",
+                    run: "text Tour Objective Title",
+                },
                 {
                     content: "Type the Plan",
                     trigger: ".o_field_many2one[name='plan_id'] input",

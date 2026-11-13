@@ -51,6 +51,7 @@ setup:
       save_as: "plan_bsc"
       as_user: "validator"
       values:
+        title: "Test plan title"
         type_id: "REC: type_bsc.id"
         date_start: 2026-01-01
         date_end: 2026-12-31
@@ -60,6 +61,7 @@ setup:
       save_as: "plan_okr"
       as_user: "validator"
       values:
+        title: "Test plan title"
         type_id: "REC: type_okr.id"
         date_start: 2026-01-01
         date_end: 2026-12-31
@@ -69,6 +71,7 @@ setup:
       save_as: "objective"
       as_user: "validator"
       values:
+        title: "Test objective title"
         plan_id: "REC: plan_bsc.id"
         department_id: "REC: dept.id"
         perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -78,6 +81,7 @@ setup:
       save_as: "objective_okr"
       as_user: "validator"
       values:
+        title: "Test objective title"
         plan_id: "REC: plan_okr.id"
         department_id: "REC: dept.id"
     - step: "Create higher is better measure"

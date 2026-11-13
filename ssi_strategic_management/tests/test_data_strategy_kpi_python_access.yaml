@@ -59,6 +59,7 @@ setup:
       save_as: "plan"
       as_user: "base.user_admin"
       values:
+        title: "Test plan title"
         type_id: "REC: type_bsc.id"
         user_id: "REC: objective_user.id"
         date_start: 2026-01-01
@@ -69,6 +70,7 @@ setup:
       save_as: "objective"
       as_user: "base.user_admin"
       values:
+        title: "Test objective title"
         plan_id: "REC: plan.id"
         user_id: "REC: objective_user.id"
         department_id: "REC: dept.id"
