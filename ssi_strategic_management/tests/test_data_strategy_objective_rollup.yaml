@@ -1,0 +1,1278 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Rollup Validator"
+        login: "EVAL: 'rlv%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Create department"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept"
+      values:
+        name: "Rollup Department"
+    - step: "Create score category"
+      action: "create"
+      model: "strategy_score_category"
+      save_as: "category"
+      values:
+        name: "Rollup score category"
+        code: "EVAL: 'RC%s' % datetime.now().strftime('%H%M%S%f')"
+        range_ids:
+          - [0, 0, {name: "Poor", min_value: 0.0, max_value: 60.0, sequence: 10}]
+          - [0, 0, {name: "Good", min_value: 60.01, max_value: 100.0, sequence: 20}]
+    - step: "Create Balanced Scorecard plan type without category"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_bsc"
+      as_user: "base.user_admin"
+      values:
+        name: "Rollup plan type bsc"
+        code: "EVAL: 'RB%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create Balanced Scorecard plan type with category"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_cat"
+      as_user: "base.user_admin"
+      values:
+        name: "Rollup plan type category"
+        code: "EVAL: 'RT%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+        score_category_id: "REC: category.id"
+    - step: "Create OKR plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_okr"
+      as_user: "base.user_admin"
+      values:
+        name: "Rollup plan type okr"
+        code: "EVAL: 'RO%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "okr"
+        score_scale: "okr"
+        cascade_level: "department"
+    - step: "Create Balanced Scorecard plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_bsc"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_bsc.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create OKR plan under it"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_okr"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_okr.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+        parent_id: "REC: plan_bsc.id"
+    - step: "Create plan with a score category"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_cat"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_cat.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create higher is better measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_high"
+      as_user: "validator"
+      values:
+        name: "Rollup measure higher"
+        code: "EVAL: 'RM%s' % datetime.now().strftime('%H%M%S%f')"
+        polarity: "higher"
+        aggregation: "sum"
+
+scenarios:
+  - name: "Objective with KPIs only takes the KPI score"
+    steps:
+      - step: "Create objective objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI kpi_a"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_a"
+          weight: 50.0
+      - step: "Create target of kpi_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_a_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_a_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_a_t.id"
+          date: 2026-02-15
+          manual_value: 80.0
+      - step: "Create KPI kpi_b"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_b"
+          weight: 50.0
+      - step: "Create target of kpi_b"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_b_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_b.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_b"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_b_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_b_t.id"
+          date: 2026-02-15
+          manual_value: 60.0
+      - step: "KPI portion defaults to 100"
+        action: "assert"
+        target: "objective"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 100.0
+          kpi_score:
+            type: "value"
+            expected: 70.0
+          child_score:
+            type: "value"
+            expected: 0.0
+          score:
+            type: "value"
+            expected: 70.0
+      - step: "Plan without category has no range"
+        action: "assert"
+        target: "objective"
+        asserts:
+          score_category_range_id:
+            type: "value"
+            operator: "is_falsy"
+
+  - name: "Objective with contributing children only takes the child score"
+    steps:
+      - step: "Create objective parent"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective child_a"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 60.0
+      - step: "Create objective child_b"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 40.0
+      - step: "Create KPI kpi_a"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: child_a.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_a"
+          weight: 100.0
+      - step: "Create target of kpi_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_a_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_a_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_a_t.id"
+          date: 2026-02-15
+          manual_value: 70.0
+      - step: "Create KPI kpi_b"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: child_b.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_b"
+          weight: 100.0
+      - step: "Create target of kpi_b"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_b_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_b.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_b"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_b_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_b_t.id"
+          date: 2026-02-15
+          manual_value: 50.0
+      - step: "Child scores"
+        action: "assert"
+        target: "child_a"
+        asserts:
+          score:
+            type: "value"
+            expected: 70.0
+      - step: "Parent takes only the child score"
+        action: "assert"
+        target: "parent"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 0.0
+          kpi_score:
+            type: "value"
+            expected: 0.0
+          child_score:
+            type: "value"
+            expected: 62.0
+          score:
+            type: "value"
+            expected: 62.0
+
+  - name: "Objective with KPIs and children mixes them by the KPI portion"
+    steps:
+      - step: "Create objective parent"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 100.0
+      - step: "Create KPI kpi_parent"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_parent"
+        as_user: "validator"
+        values:
+          objective_id: "REC: parent.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_parent"
+          weight: 100.0
+      - step: "Create target of kpi_parent"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_parent_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_parent.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_parent"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_parent_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_parent_t.id"
+          date: 2026-02-15
+          manual_value: 80.0
+      - step: "Create KPI kpi_child"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_child"
+        as_user: "validator"
+        values:
+          objective_id: "REC: child.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_child"
+          weight: 100.0
+      - step: "Create target of kpi_child"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_child_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_child.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_child"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_child_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_child_t.id"
+          date: 2026-02-15
+          manual_value: 60.0
+      - step: "Portion defaults to 50"
+        action: "assert"
+        target: "parent"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 50.0
+          kpi_score:
+            type: "value"
+            expected: 80.0
+          child_score:
+            type: "value"
+            expected: 60.0
+          score:
+            type: "value"
+            expected: 70.0
+      - step: "User changes the KPI portion"
+        action: "write"
+        target: "parent"
+        as_user: "validator"
+        values:
+          kpi_portion: 75.0
+      - step: "Score follows the KPI portion"
+        action: "assert"
+        target: "parent"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 75.0
+          score:
+            type: "value"
+            expected: 75.0
+      - step: "Change the measurement of kpi_child to 40.0"
+        action: "write"
+        target: "kpi_child_m"
+        as_user: "validator"
+        values:
+          manual_value: 40.0
+      - step: "Edited portion survives a score change"
+        action: "assert"
+        target: "parent"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 75.0
+          child_score:
+            type: "value"
+            expected: 40.0
+          score:
+            type: "value"
+            expected: 70.0
+
+  - name: "Created KPI portion is kept until the KPIs or children change"
+    steps:
+      - step: "Create objective objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          kpi_portion: 30.0
+      - step: "Partial create keeps the given portion"
+        action: "assert"
+        target: "objective"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 30.0
+          kpi_score:
+            type: "value"
+            expected: 0.0
+          child_score:
+            type: "value"
+            expected: 0.0
+          score:
+            type: "value"
+            expected: 0.0
+      - step: "Create KPI kpi_a"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_a"
+          weight: 100.0
+      - step: "Create target of kpi_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_a_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_a_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_a_t.id"
+          date: 2026-02-15
+          manual_value: 80.0
+      - step: "Adding a KPI resets the portion"
+        action: "assert"
+        target: "objective"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 100.0
+          score:
+            type: "value"
+            expected: 80.0
+
+  - name: "OKR child objective does not feed the Balanced Scorecard parent"
+    steps:
+      - step: "Create objective parent"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create OKR child objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_okr.id"
+          department_id: "REC: dept.id"
+          parent_id: "REC: parent.id"
+          weight: 100.0
+      - step: "Create KPI kpi_parent"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_parent"
+        as_user: "validator"
+        values:
+          objective_id: "REC: parent.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_parent"
+          weight: 100.0
+      - step: "Create target of kpi_parent"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_parent_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_parent.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_parent"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_parent_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_parent_t.id"
+          date: 2026-02-15
+          manual_value: 80.0
+      - step: "Create KPI kpi_child"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_child"
+        as_user: "validator"
+        values:
+          objective_id: "REC: child.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_child"
+          weight: 100.0
+      - step: "Create target of kpi_child"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_child_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_child.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_child"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_child_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_child_t.id"
+          date: 2026-02-15
+          manual_value: 40.0
+      - step: "OKR child does not contribute"
+        action: "assert"
+        target: "child"
+        asserts:
+          contribute_to_parent:
+            type: "value"
+            expected: false
+          score:
+            type: "value"
+            expected: 0.4
+      - step: "Parent ignores the OKR child"
+        action: "assert"
+        target: "parent"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 100.0
+          child_score:
+            type: "value"
+            expected: 0.0
+          score:
+            type: "value"
+            expected: 80.0
+      - step: "Objective under a parent of another plan is a top objective"
+        action: "assert"
+        target: "plan_okr"
+        asserts:
+          score:
+            type: "value"
+            expected: 0.4
+
+  - name: "Cancelled child is not a contributing child"
+    steps:
+      - step: "Create objective parent"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 100.0
+      - step: "Create KPI kpi_parent"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_parent"
+        as_user: "validator"
+        values:
+          objective_id: "REC: parent.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_parent"
+          weight: 100.0
+      - step: "Create target of kpi_parent"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_parent_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_parent.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_parent"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_parent_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_parent_t.id"
+          date: 2026-02-15
+          manual_value: 80.0
+      - step: "Create KPI kpi_child"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_child"
+        as_user: "validator"
+        values:
+          objective_id: "REC: child.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_child"
+          weight: 100.0
+      - step: "Create target of kpi_child"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_child_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_child.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_child"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_child_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_child_t.id"
+          date: 2026-02-15
+          manual_value: 20.0
+      - step: "Active child shares the portion"
+        action: "assert"
+        target: "parent"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 50.0
+          child_score:
+            type: "value"
+            expected: 20.0
+          score:
+            type: "value"
+            expected: 50.0
+      - step: "Cancel the only child"
+        action: "call"
+        target: "child"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Parent is treated as having no child"
+        action: "assert"
+        target: "parent"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 100.0
+          child_score:
+            type: "value"
+            expected: 0.0
+          score:
+            type: "value"
+            expected: 80.0
+
+  - name: "KPI measurement change rolls up to the objective and the plan"
+    steps:
+      - step: "Create objective parent"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 100.0
+      - step: "Create KPI kpi_child"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_child"
+        as_user: "validator"
+        values:
+          objective_id: "REC: child.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_child"
+          weight: 100.0
+      - step: "Create target of kpi_child"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_child_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_child.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_child"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_child_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_child_t.id"
+          date: 2026-02-15
+          manual_value: 60.0
+      - step: "Child score"
+        action: "assert"
+        target: "child"
+        asserts:
+          score:
+            type: "value"
+            expected: 60.0
+      - step: "Parent score"
+        action: "assert"
+        target: "parent"
+        asserts:
+          score:
+            type: "value"
+            expected: 60.0
+      - step: "Plan score"
+        action: "assert"
+        target: "plan_bsc"
+        asserts:
+          score:
+            type: "value"
+            expected: 60.0
+      - step: "Change the measurement of kpi_child to 90.0"
+        action: "write"
+        target: "kpi_child_m"
+        as_user: "validator"
+        values:
+          manual_value: 90.0
+      - step: "Child score follows the measurement"
+        action: "assert"
+        target: "child"
+        asserts:
+          score:
+            type: "value"
+            expected: 90.0
+      - step: "Parent score follows the child"
+        action: "assert"
+        target: "parent"
+        asserts:
+          score:
+            type: "value"
+            expected: 90.0
+      - step: "Plan score follows the parent"
+        action: "assert"
+        target: "plan_bsc"
+        asserts:
+          score:
+            type: "value"
+            expected: 90.0
+
+  - name: "Score category range follows the score of objective and plan"
+    steps:
+      - step: "Create objective objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_cat.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI kpi_a"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_a"
+          weight: 100.0
+      - step: "Create target of kpi_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_a_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_a_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_a_t.id"
+          date: 2026-02-15
+          manual_value: 70.0
+      - step: "Objective is Good"
+        action: "assert"
+        target: "objective"
+        asserts:
+          score_category_range_id.name:
+            type: "value"
+            expected: "Good"
+      - step: "Plan is Good"
+        action: "assert"
+        target: "plan_cat"
+        asserts:
+          score:
+            type: "value"
+            expected: 70.0
+          score_category_range_id.name:
+            type: "value"
+            expected: "Good"
+      - step: "Change the measurement of kpi_a to 50.0"
+        action: "write"
+        target: "kpi_a_m"
+        as_user: "validator"
+        values:
+          manual_value: 50.0
+      - step: "Objective turns Poor"
+        action: "assert"
+        target: "objective"
+        asserts:
+          score_category_range_id.name:
+            type: "value"
+            expected: "Poor"
+      - step: "Plan turns Poor"
+        action: "assert"
+        target: "plan_cat"
+        asserts:
+          score_category_range_id.name:
+            type: "value"
+            expected: "Poor"
+
+  - name: "Plan score is the weighted average of the top objectives"
+    steps:
+      - step: "Create objective obj_a"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          weight: 25.0
+      - step: "Create objective obj_b"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          weight: 75.0
+      - step: "Create KPI kpi_a"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: obj_a.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_a"
+          weight: 100.0
+      - step: "Create target of kpi_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_a_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_a_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_a_t.id"
+          date: 2026-02-15
+          manual_value: 80.0
+      - step: "Create KPI kpi_b"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: obj_b.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_b"
+          weight: 100.0
+      - step: "Create target of kpi_b"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_b_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_b.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_b"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_b_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_b_t.id"
+          date: 2026-02-15
+          manual_value: 40.0
+      - step: "Weighted average"
+        action: "assert"
+        target: "plan_bsc"
+        asserts:
+          score:
+            type: "value"
+            expected: 50.0
+
+  - name: "Plan score is the simple average when the weights are zero"
+    steps:
+      - step: "Create objective obj_a"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective obj_b"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI kpi_a"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: obj_a.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_a"
+          weight: 100.0
+      - step: "Create target of kpi_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_a_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_a_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_a_t.id"
+          date: 2026-02-15
+          manual_value: 70.0
+      - step: "Create KPI kpi_b"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: obj_b.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_b"
+          weight: 100.0
+      - step: "Create target of kpi_b"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_b_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_b.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_b"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_b_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_b_t.id"
+          date: 2026-02-15
+          manual_value: 50.0
+      - step: "Simple average"
+        action: "assert"
+        target: "plan_bsc"
+        asserts:
+          score:
+            type: "value"
+            expected: 60.0
+
+  - name: "Plan score ignores cancelled and child objectives"
+    steps:
+      - step: "Plan without objectives scores zero"
+        action: "assert"
+        target: "plan_bsc"
+        asserts:
+          score:
+            type: "value"
+            expected: 0.0
+      - step: "Create objective obj_a"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective obj_b"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective obj_child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "obj_child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: obj_a.id"
+          weight: 100.0
+      - step: "Create KPI kpi_a"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: obj_a.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_a"
+          weight: 100.0
+      - step: "Create target of kpi_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_a_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_a_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_a_t.id"
+          date: 2026-02-15
+          manual_value: 70.0
+      - step: "Create KPI kpi_b"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: obj_b.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_b"
+          weight: 100.0
+      - step: "Create target of kpi_b"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_b_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_b.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_b"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_b_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_b_t.id"
+          date: 2026-02-15
+          manual_value: 20.0
+      - step: "Create KPI kpi_child"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_child"
+        as_user: "validator"
+        values:
+          objective_id: "REC: obj_child.id"
+          measure_id: "REC: measure_high.id"
+          name: "kpi_child"
+          weight: 100.0
+      - step: "Create target of kpi_child"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "kpi_child_t"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_child.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement of kpi_child"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "kpi_child_m"
+        as_user: "validator"
+        values:
+          target_id: "REC: kpi_child_t.id"
+          date: 2026-02-15
+          manual_value: 10.0
+      - step: "Cancel the second top objective"
+        action: "call"
+        target: "obj_b"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Only the first top objective counts"
+        action: "assert"
+        target: "obj_a"
+        asserts:
+          kpi_portion:
+            type: "value"
+            expected: 50.0
+      - step: "Plan takes the active top objective"
+        action: "assert"
+        target: "plan_bsc"
+        asserts:
+          score:
+            type: "value"
+            expected: 40.0
+
+  - name: "KPI portion outside 0 to 100 is rejected"
+    steps:
+      - step: "Create objective objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_bsc.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Set portion above 100"
+        action: "write"
+        target: "objective"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "KPI portion must be between 0 and 100."
+        values:
+          kpi_portion: 120.0
+      - step: "Set portion below 0"
+        action: "write"
+        target: "objective"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "KPI portion must be between 0 and 100."
+        values:
+          kpi_portion: -5.0

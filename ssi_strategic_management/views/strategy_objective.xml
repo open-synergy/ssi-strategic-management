@@ -60,6 +60,8 @@
                 <field name="department_id" />
                 <field name="employee_id" />
                 <field name="parent_id" />
+                <field name="score" />
+                <field name="score_category_range_id" />
             </xpath>
         </data>
     </field>
@@ -85,6 +87,11 @@
                 <field name="cascade_method" />
                 <field name="contribute_to_parent" />
                 <field name="weight" />
+                <field name="kpi_portion" />
+                <field name="kpi_score" />
+                <field name="child_score" />
+                <field name="score" />
+                <field name="score_category_range_id" />
             </xpath>
             <xpath expr="//page[@name='note']" position="before">
                 <page name="kpi" string="KPIs">
