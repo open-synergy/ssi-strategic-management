@@ -357,6 +357,114 @@ odoo.define("ssi_strategic_management.strategy_objective_tour", function (requir
                         // Assertion only.
                     },
                 },
+
+                // Flow 11 -- Click the Edit button again.
+                {
+                    content: "Click Edit again",
+                    trigger: ".o_form_button_edit",
+                    extra_trigger: ".o_form_view.o_form_readonly",
+                },
+                {
+                    content: "Form is open in edit mode again",
+                    trigger: ".o_form_view.o_form_editable",
+                    run: function () {
+                        // Assertion only.
+                    },
+                },
+
+                // Flow 12 -- In the KPIs tab click the KPI that uses an
+                // automatic measure, then click its target in the Targets
+                // tab.
+                {
+                    content: "Open the KPIs page again",
+                    trigger: ".o_notebook .nav-link:contains(KPIs)",
+                    extra_trigger: ".o_form_view.o_form_editable",
+                },
+                {
+                    content: "Open the automatic KPI",
+                    trigger:
+                        ".o_field_widget[name='kpi_ids'] .o_data_row:contains(Tour Compute KPI) .o_data_cell:first",
+                },
+                {
+                    content: "Open the Targets page of the automatic KPI",
+                    trigger: ".o_notebook .nav-link:contains(Targets)",
+                },
+                {
+                    content: "Open the target to compute",
+                    trigger:
+                        ".o_field_widget[name='target_ids'] .o_data_row:contains(01/01/2026) .o_data_cell:first",
+                },
+
+                // Flow 13 -- Click the Compute button. The target had no
+                // measurement, so any row in the Measurements list proves
+                // that the automatic measurement was created.
+                {
+                    content: "Click Compute",
+                    trigger: "button[name='action_compute_realization']",
+                },
+                {
+                    content: "The automatic measurement is listed",
+                    trigger: ".o_field_widget[name='measurement_ids'] .o_data_row",
+                    run: function () {
+                        // Assertion only.
+                    },
+                },
+
+                // Flow 14 -- Override the automatic value: check Override
+                // Automatic Value, type the Value and the Dissenting Note.
+                {
+                    content: "Select the automatic measurement",
+                    trigger:
+                        ".o_field_widget[name='measurement_ids'] .o_data_row .o_data_cell:first",
+                },
+                {
+                    content: "Check Override Automatic Value",
+                    trigger:
+                        ".o_selected_row .o_field_widget[name='override_automatic'] input",
+                },
+                {
+                    content: "Type the overriding Value",
+                    trigger: ".o_selected_row .o_field_widget[name='manual_value']",
+                    run: "text 5",
+                },
+                {
+                    content: "Type the Dissenting Note",
+                    trigger: ".o_selected_row .o_field_widget[name='dissenting_note']",
+                    run: "text Known data error",
+                },
+
+                // Flow 15 -- Save & Close the target dialog, then the KPI
+                // dialog.
+                {
+                    content: "Save & Close the target dialog again",
+                    trigger: ".modal-footer .btn-primary:contains(Save & Close)",
+                },
+                {
+                    content: "Target is listed in the KPI dialog again",
+                    trigger:
+                        ".o_field_widget[name='target_ids'] .o_data_row:contains(01/01/2026)",
+                    run: function () {
+                        // Assertion only.
+                    },
+                },
+                {
+                    content: "Save & Close the KPI dialog again",
+                    trigger: ".modal-footer .btn-primary:contains(Save & Close)",
+                },
+
+                // Flow 16 -- Click Save.
+                {
+                    content: "Save the record again",
+                    trigger: ".o_form_button_save",
+                    extra_trigger: "body:not(:has(.modal))",
+                },
+                {
+                    content: "Record is saved again",
+                    trigger: ".o_form_view.o_form_readonly",
+                    run: function () {
+                        // Assertion only.
+                    },
+                },
             ]
         )
     );

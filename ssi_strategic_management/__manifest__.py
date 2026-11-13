@@ -51,6 +51,7 @@
         "policy_template/strategy_objective.xml",
         "menu.xml",
         "data/strategy_perspective_data.xml",
+        "data/ir_cron.xml",
         "views/strategy_perspective.xml",
         "views/strategy_measure.xml",
         "views/strategy_score_category.xml",

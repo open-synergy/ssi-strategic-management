@@ -1,0 +1,1262 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Realization Validator"
+        login: "EVAL: 'rzv%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Find the employee model"
+      action: "search"
+      model: "ir.model"
+      domain: [["model", "=", "hr.employee"]]
+      save_as: "model_emp"
+      limit: 1
+    - step: "Find the create date field"
+      action: "search"
+      model: "ir.model.fields"
+      domain: [["model", "=", "hr.employee"], ["name", "=", "create_date"]]
+      save_as: "f_create"
+      limit: 1
+    - step: "Find the birthday field"
+      action: "search"
+      model: "ir.model.fields"
+      domain: [["model", "=", "hr.employee"], ["name", "=", "birthday"]]
+      save_as: "f_birthday"
+      limit: 1
+    - step: "Find the distance field"
+      action: "search"
+      model: "ir.model.fields"
+      domain: [["model", "=", "hr.employee"], ["name", "=", "km_home_work"]]
+      save_as: "f_km"
+      limit: 1
+    - step: "Find the department field"
+      action: "search"
+      model: "ir.model.fields"
+      domain: [["model", "=", "hr.employee"], ["name", "=", "department_id"]]
+      save_as: "f_dept"
+      limit: 1
+    - step: "Find the manager field"
+      action: "search"
+      model: "ir.model.fields"
+      domain: [["model", "=", "hr.employee"], ["name", "=", "parent_id"]]
+      save_as: "f_parent"
+      limit: 1
+    - step: "Create department"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept"
+      values:
+        name: "Realization Department"
+    - step: "Create other department"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_other"
+      values:
+        name: "Realization Other Department"
+    - step: "Create female employee of the department"
+      action: "create"
+      model: "hr.employee"
+      save_as: "emp_f"
+      values:
+        name: "Realization Employee F"
+        department_id: "REC: dept.id"
+        gender: "female"
+        km_home_work: 10
+        birthday: "EVAL: datetime.now().date()"
+    - step: "Create male employee of the department"
+      action: "create"
+      model: "hr.employee"
+      save_as: "emp_m"
+      values:
+        name: "Realization Employee M"
+        department_id: "REC: dept.id"
+        gender: "male"
+        km_home_work: 30
+        birthday: "EVAL: datetime.now().date()"
+    - step: "Create employee of the other department"
+      action: "create"
+      model: "hr.employee"
+      save_as: "emp_o"
+      values:
+        name: "Realization Employee O"
+        department_id: "REC: dept_other.id"
+        gender: "male"
+        km_home_work: 5
+        birthday: "EVAL: datetime.now().date()"
+    - step: "Create plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_bsc"
+      as_user: "base.user_admin"
+      values:
+        name: "Realization plan type"
+        code: "EVAL: 'RB%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_bsc.id"
+        date_start: "EVAL: (datetime.now() - relativedelta(days=60)).date()"
+        date_end: "EVAL: (datetime.now() + relativedelta(days=60)).date()"
+    - step: "Start plan"
+      action: "call"
+      target: "plan"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create objective"
+      action: "create"
+      model: "strategy_objective"
+      save_as: "objective"
+      as_user: "validator"
+      values:
+        plan_id: "REC: plan.id"
+        department_id: "REC: dept.id"
+        perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+    - step: "Create manual measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_manual"
+      as_user: "validator"
+      values:
+        name: "Realization manual measure"
+        code: "EVAL: 'RM%s' % datetime.now().strftime('%H%M%S%f')"
+        aggregation: "sum"
+    - step: "Create count measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_count"
+      as_user: "validator"
+      values:
+        name: "Realization count measure"
+        code: "EVAL: 'RC%s' % datetime.now().strftime('%H%M%S%f')"
+        realization_method: "aggregate"
+        aggregate_model_id: "REC: model_emp.id"
+        aggregate_date_field_id: "REC: f_create.id"
+        aggregate_department_field_id: "REC: f_dept.id"
+
+scenarios:
+  - name: "Aggregate count takes the employees of the objective department"
+    steps:
+      - step: "Create KPI Headcount"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_count.id"
+          name: "Headcount"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Compute"
+        action: "call"
+        target: "t1"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t1"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t1.id"]]
+        save_as: "meas"
+        expect_count: 1
+      - step: "Check meas"
+        action: "assert"
+        target: "meas"
+        refresh: true
+        asserts:
+          automatic_value:
+            type: "value"
+            expected: 2.0
+          value:
+            type: "value"
+            expected: 2.0
+          mode:
+            type: "value"
+            expected: "auto"
+      - step: "Check t1"
+        action: "assert"
+        target: "t1"
+        refresh: true
+        asserts:
+          realization:
+            type: "value"
+            expected: 2.0
+      - step: "Compute again"
+        action: "call"
+        target: "t1"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t1"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t1.id"]]
+        save_as: "meas_again"
+        expect_count: 1
+      - step: "Check meas_again"
+        action: "assert"
+        target: "meas_again"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 2.0
+
+  - name: "Aggregate ratio divides the numerator by the denominator"
+    steps:
+      - step: "Create ratio measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_ratio"
+        as_user: "validator"
+        values:
+          name: "Realization ratio measure"
+          code: "EVAL: 'RR%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_domain: '[("gender", "=", "female")]'
+          aggregate_date_field_id: "REC: f_create.id"
+          aggregate_department_field_id: "REC: f_dept.id"
+          use_ratio: true
+          denominator_model_id: "REC: model_emp.id"
+          denominator_date_field_id: "REC: f_create.id"
+          denominator_department_field_id: "REC: f_dept.id"
+      - step: "Create ratio measure with an empty denominator"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_zero"
+        as_user: "validator"
+        values:
+          name: "Realization zero denominator measure"
+          code: "EVAL: 'RZ%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_create.id"
+          use_ratio: true
+          denominator_model_id: "REC: model_emp.id"
+          denominator_domain: '[("name", "=", "Nobody At All")]'
+          denominator_date_field_id: "REC: f_create.id"
+      - step: "Create KPI Female share"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_ratio.id"
+          name: "Female share"
+          weight: 50.0
+      - step: "Create KPI Zero share"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_zero"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_zero.id"
+          name: "Zero share"
+          weight: 50.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_zero"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_zero"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_zero.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Compute"
+        action: "call"
+        target: "t1"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t1"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t1.id"]]
+        save_as: "meas"
+        expect_count: 1
+      - step: "Check meas"
+        action: "assert"
+        target: "meas"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 50.0
+      - step: "Compute zero denominator"
+        action: "call"
+        target: "t_zero"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t_zero"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t_zero.id"]]
+        save_as: "meas_zero"
+        expect_count: 1
+      - step: "Check meas_zero"
+        action: "assert"
+        target: "meas_zero"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 0.0
+
+  - name: "Aggregate sum and maximum read a value field on a date field"
+    steps:
+      - step: "Create sum measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_sum"
+        as_user: "validator"
+        values:
+          name: "Realization sum measure"
+          code: "EVAL: 'RS%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_birthday.id"
+          aggregate_field_id: "REC: f_km.id"
+          aggregate_function: "sum"
+          aggregate_department_field_id: "REC: f_dept.id"
+      - step: "Create maximum measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_max"
+        as_user: "validator"
+        values:
+          name: "Realization maximum measure"
+          code: "EVAL: 'RX%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_birthday.id"
+          aggregate_field_id: "REC: f_km.id"
+          aggregate_function: "max"
+          aggregate_department_field_id: "REC: f_dept.id"
+      - step: "Create KPI Distance sum"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_sum"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_sum.id"
+          name: "Distance sum"
+          weight: 50.0
+      - step: "Create KPI Distance max"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_max"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_max.id"
+          name: "Distance max"
+          weight: 50.0
+      - step: "Create target t_sum"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_sum"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_sum.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_max"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_max"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_max.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Compute"
+        action: "call"
+        target: "t_sum"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t_sum"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t_sum.id"]]
+        save_as: "meas_sum"
+        expect_count: 1
+      - step: "Check meas_sum"
+        action: "assert"
+        target: "meas_sum"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 40.0
+      - step: "Compute maximum"
+        action: "call"
+        target: "t_max"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t_max"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t_max.id"]]
+        save_as: "meas_max"
+        expect_count: 1
+      - step: "Check meas_max"
+        action: "assert"
+        target: "meas_max"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 30.0
+
+  - name: "Aggregate narrows down to the employee of the objective"
+    steps:
+      - step: "Create plan type cascading to employees"
+        action: "create"
+        model: "strategy_plan_type"
+        save_as: "type_emp"
+        as_user: "base.user_admin"
+        values:
+          name: "Realization plan type employee"
+          code: "EVAL: 'RE%s' % datetime.now().strftime('%H%M%S%f')"
+          methodology: "bsc"
+          cascade_level: "employee"
+      - step: "Create plan"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan_emp"
+        as_user: "validator"
+        values:
+          type_id: "REC: type_emp.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=60)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=60)).date()"
+      - step: "Create manager"
+        action: "create"
+        model: "hr.employee"
+        save_as: "emp_mgr"
+        values:
+          name: "Realization Manager"
+          department_id: "REC: dept.id"
+      - step: "Create employee reporting to the manager"
+        action: "create"
+        model: "hr.employee"
+        values:
+          name: "Realization Report"
+          department_id: "REC: dept.id"
+          parent_id: "REC: emp_mgr.id"
+      - step: "Create objective of the manager"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_emp"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_emp.id"
+          department_id: "REC: dept.id"
+          employee_id: "REC: emp_mgr.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create reports measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_reports"
+        as_user: "validator"
+        values:
+          name: "Realization reports measure"
+          code: "EVAL: 'RP%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_create.id"
+          aggregate_department_field_id: "REC: f_dept.id"
+          aggregate_employee_field_id: "REC: f_parent.id"
+      - step: "Create KPI Reports"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_emp.id"
+          measure_id: "REC: measure_reports.id"
+          name: "Reports"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Compute"
+        action: "call"
+        target: "t1"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t1"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t1.id"]]
+        save_as: "meas"
+        expect_count: 1
+      - step: "Check meas"
+        action: "assert"
+        target: "meas"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 1.0
+
+  - name: "Python code computes the realization"
+    steps:
+      - step: "Create python measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_py"
+        as_user: "validator"
+        values:
+          name: "Realization python measure"
+          code: "EVAL: 'RY%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "python"
+          python_code: "result = 42.0"
+      - step: "Create failing python measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_bad"
+        as_user: "validator"
+        values:
+          name: "Realization failing measure"
+          code: "EVAL: 'RF%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "python"
+          python_code: "result = 1 / 0"
+      - step: "Create KPI Python KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_py.id"
+          name: "Python KPI"
+          weight: 50.0
+      - step: "Create KPI Failing KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_bad"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_bad.id"
+          name: "Failing KPI"
+          weight: 25.0
+      - step: "Create KPI Manual KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_manual"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Manual KPI"
+          weight: 25.0
+      - step: "Check kpi"
+        action: "assert"
+        target: "kpi"
+        refresh: true
+        asserts:
+          realization_method:
+            type: "value"
+            expected: "python"
+          python_code:
+            type: "value"
+            expected: "result = 42.0"
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_bad"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_bad"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_bad.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_manual"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_manual"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_manual.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Compute"
+        action: "call"
+        target: "t1"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t1"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t1.id"]]
+        save_as: "meas"
+        expect_count: 1
+      - step: "Check meas"
+        action: "assert"
+        target: "meas"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 42.0
+      - step: "Check t1"
+        action: "assert"
+        target: "t1"
+        refresh: true
+        asserts:
+          realization:
+            type: "value"
+            expected: 42.0
+      - step: "Compute failing code"
+        action: "call"
+        target: "t_bad"
+        method: "action_compute_realization"
+        as_user: "validator"
+        expect_error:
+          type: "UserError"
+          message_contains: "Error evaluating realization code"
+      - step: "Compute a manual KPI"
+        action: "call"
+        target: "t_manual"
+        method: "action_compute_realization"
+        as_user: "validator"
+        expect_error:
+          type: "UserError"
+          message_contains: "Only automatic KPIs"
+
+  - name: "A parent KPI rolls up the same-period targets of its child KPIs"
+    steps:
+      - step: "Create average measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_avg"
+        as_user: "validator"
+        values:
+          name: "Realization average measure"
+          code: "EVAL: 'RA%s' % datetime.now().strftime('%H%M%S%f')"
+          aggregation: "avg"
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create child objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: objective_parent.id"
+          weight: 100.0
+      - step: "Create KPI Parent sum"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_parent"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_parent.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Parent sum"
+          weight: 100.0
+      - step: "Create KPI Parent average"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_parent_avg"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_parent.id"
+          measure_id: "REC: measure_avg.id"
+          name: "Parent average"
+          weight: 0.0
+      - step: "Create KPI Child A"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_child.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Child A"
+          weight: 50.0
+          parent_kpi_id: "REC: kpi_parent.id"
+      - step: "Create KPI Child B"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_child.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Child B"
+          weight: 50.0
+          parent_kpi_id: "REC: kpi_parent.id"
+      - step: "Create KPI Child C"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_c"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_child.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Child C"
+          weight: 0.0
+          parent_kpi_id: "REC: kpi_parent_avg.id"
+      - step: "Create KPI Child D"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_d"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_child.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Child D"
+          weight: 0.0
+          parent_kpi_id: "REC: kpi_parent_avg.id"
+      - step: "Create target t_a"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_a"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_b"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_b"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_b.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_c"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_c"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_c.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_d"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_d"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_d.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_parent"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_parent"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_parent.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_parent_avg"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_parent_avg"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_parent_avg.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_parent_future"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_parent_future"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_parent.id"
+          date_start: "EVAL: (datetime.now() + relativedelta(days=31)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=45)).date()"
+          target: 100.0
+      - step: "Create measurement m_a"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m_a"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_a.id"
+          date: "EVAL: datetime.now().date()"
+          manual_value: 10.0
+      - step: "Create measurement m_b"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m_b"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_b.id"
+          date: "EVAL: datetime.now().date()"
+          manual_value: 20.0
+      - step: "Create measurement m_c"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m_c"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_c.id"
+          date: "EVAL: datetime.now().date()"
+          manual_value: 8.0
+      - step: "Create measurement m_d"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m_d"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_d.id"
+          date: "EVAL: datetime.now().date()"
+          manual_value: 12.0
+      - step: "Compute the parent sum"
+        action: "call"
+        target: "t_parent"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t_parent"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t_parent.id"]]
+        save_as: "meas_parent"
+        expect_count: 1
+      - step: "Check meas_parent"
+        action: "assert"
+        target: "meas_parent"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 30.0
+      - step: "Check t_parent"
+        action: "assert"
+        target: "t_parent"
+        refresh: true
+        asserts:
+          realization:
+            type: "value"
+            expected: 30.0
+      - step: "Compute the parent average"
+        action: "call"
+        target: "t_parent_avg"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t_parent_avg"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t_parent_avg.id"]]
+        save_as: "meas_avg"
+        expect_count: 1
+      - step: "Check meas_avg"
+        action: "assert"
+        target: "meas_avg"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 10.0
+      - step: "Compute a parent target without children"
+        action: "call"
+        target: "t_parent_future"
+        method: "action_compute_realization"
+        as_user: "validator"
+      - step: "Find the measurement of t_parent_future"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: t_parent_future.id"]]
+        save_as: "meas_future"
+        expect_count: 1
+      - step: "Check meas_future"
+        action: "assert"
+        target: "meas_future"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 0.0
+          date:
+            type: "value"
+            expected: "EVAL: (datetime.now() + relativedelta(days=31)).date()"
+
+  - name: "Overriding an automatic value needs a dissenting note"
+    steps:
+      - step: "Create KPI Override KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_count.id"
+          name: "Override KPI"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create overridden measurement"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m_over"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: "EVAL: datetime.now().date()"
+          mode: "auto"
+          automatic_value: 7.0
+          manual_value: 5.0
+          override_automatic: true
+          dissenting_note: "Known data error"
+      - step: "Create plain automatic measurement"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m_plain"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: "EVAL: datetime.now().date()"
+          mode: "auto"
+          automatic_value: 7.0
+          manual_value: 5.0
+      - step: "Create manual measurement"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m_manual"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: "EVAL: datetime.now().date()"
+          manual_value: 3.0
+      - step: "Create overridden measurement without a note"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains:
+            "A dissenting note is required when overriding an automatic value."
+        values:
+          target_id: "REC: t1.id"
+          date: "EVAL: datetime.now().date()"
+          mode: "auto"
+          automatic_value: 7.0
+          manual_value: 5.0
+          override_automatic: true
+      - step: "Check m_over"
+        action: "assert"
+        target: "m_over"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 5.0
+      - step: "Check m_plain"
+        action: "assert"
+        target: "m_plain"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 7.0
+      - step: "Check m_manual"
+        action: "assert"
+        target: "m_manual"
+        refresh: true
+        asserts:
+          value:
+            type: "value"
+            expected: 3.0
+
+  - name: "Invalid realization configurations are rejected"
+    steps:
+      - step: "Create aggregate measure without a date field"
+        action: "create"
+        model: "strategy_measure"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains:
+            "Aggregate measures require a model, a date field and, except for count, a
+            value field."
+        values:
+          name: "Realization invalid measure"
+          code: "EVAL: 'RI%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+      - step: "Create sum measure without a value field"
+        action: "create"
+        model: "strategy_measure"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Aggregate measures require a model"
+        values:
+          name: "Realization invalid sum measure"
+          code: "EVAL: 'RJ%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_create.id"
+          aggregate_function: "sum"
+      - step: "Create ratio measure without a denominator"
+        action: "create"
+        model: "strategy_measure"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Ratio measures require a denominator model"
+        values:
+          name: "Realization invalid ratio measure"
+          code: "EVAL: 'RK%s' % datetime.now().strftime('%H%M%S%f')"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_create.id"
+          use_ratio: true
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI Parent KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_parent"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_parent.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Parent KPI"
+          weight: 100.0
+      - step: "Create KPI whose parent KPI is on the same objective"
+        action: "create"
+        model: "strategy_kpi"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "The parent KPI must belong to the parent objective."
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Wrong child"
+          weight: 100.0
+          parent_kpi_id: "REC: kpi_parent.id"
+
+  - name: "The cron queues one job per running automatic target of its frequency"
+    steps:
+      - step: "Create quarterly measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_quarter"
+        as_user: "validator"
+        values:
+          name: "Realization quarterly measure"
+          code: "EVAL: 'RQ%s' % datetime.now().strftime('%H%M%S%f')"
+          frequency: "quarterly"
+          realization_method: "python"
+          python_code: "result = 1.0"
+      - step: "Create monthly python measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "measure_month"
+        as_user: "validator"
+        values:
+          name: "Realization monthly measure"
+          code: "EVAL: 'RO%s' % datetime.now().strftime('%H%M%S%f')"
+          frequency: "monthly"
+          realization_method: "python"
+          python_code: "result = 1.0"
+      - step: "Create quarterly objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_quarter"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI Monthly KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_month"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_month.id"
+          name: "Monthly KPI"
+          weight: 100.0
+      - step: "Create KPI Quarterly KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_quarter"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_quarter.id"
+          measure_id: "REC: measure_quarter.id"
+          name: "Quarterly KPI"
+          weight: 100.0
+      - step: "Create target t_month"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_month"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_month.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create target t_quarter"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_quarter"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_quarter.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Start objective"
+        action: "call"
+        target: "objective"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Start objective_quarter"
+        action: "call"
+        target: "objective_quarter"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Run the monthly cron"
+        action: "call"
+        target: "t_month"
+        method: "_cron_compute_realization"
+        args:
+          - "monthly"
+      - step: "A job is queued for the monthly target"
+        action: "search"
+        model: "queue.job"
+        domain:
+          - ["method_name", "=", "action_compute_realization"]
+          - [
+              "func_string",
+              "=",
+              "EVAL: repr(registry['t_month']) + '.action_compute_realization()'",
+            ]
+        save_as: "job_month"
+        expect_count: 1
+      - step: "No job is queued for the quarterly target"
+        action: "search"
+        model: "queue.job"
+        domain:
+          - ["method_name", "=", "action_compute_realization"]
+          - [
+              "func_string",
+              "=",
+              "EVAL: repr(registry['t_quarter']) + '.action_compute_realization()'",
+            ]
+        save_as: "job_quarter"
+        expect_count: 0
