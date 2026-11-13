@@ -110,6 +110,13 @@ class StrategyPlan(models.Model):
         readonly=True,
         help="Plans that are contained in this plan.",
     )
+    objective_ids = fields.One2many(
+        string="Objectives",
+        comodel_name="strategy_objective",
+        inverse_name="plan_id",
+        readonly=True,
+        help="Strategic objectives that belong to this plan.",
+    )
     vision = fields.Text(
         string="Vision",
         help="Vision statement that this plan works toward.",

@@ -74,6 +74,26 @@
                         <field name="mission" />
                     </group>
                 </page>
+                <page name="objective" string="Objectives">
+                    <field name="objective_ids" colspan="4" nolabel="1">
+                        <tree>
+                            <field name="name" />
+                            <field name="perspective_id" />
+                            <field name="department_id" />
+                            <field name="employee_id" />
+                            <field name="state" />
+                        </tree>
+                        <form>
+                            <group name="objective_form_1" colspan="4" col="2">
+                                <field name="name" />
+                                <field name="perspective_id" />
+                                <field name="department_id" />
+                                <field name="employee_id" />
+                                <field name="state" />
+                            </group>
+                        </form>
+                    </field>
+                </page>
                 <page name="sub_plan" string="Sub-Plans">
                     <field name="child_ids" colspan="4" nolabel="1">
                         <tree>
