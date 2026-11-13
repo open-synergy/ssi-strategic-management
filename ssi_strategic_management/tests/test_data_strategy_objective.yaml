@@ -551,7 +551,6 @@ scenarios:
       - step: "Create objective with an employee"
         action: "create"
         model: "strategy_objective"
-        save_as: "objective"
         as_user: "validator"
         expect_error:
           type: "ValidationError"
@@ -568,7 +567,6 @@ scenarios:
       - step: "Create objective with a foreign employee"
         action: "create"
         model: "strategy_objective"
-        save_as: "objective"
         as_user: "validator"
         expect_error:
           type: "ValidationError"
@@ -606,7 +604,6 @@ scenarios:
       - step: "Create objective without perspective"
         action: "create"
         model: "strategy_objective"
-        save_as: "objective"
         as_user: "validator"
         expect_error:
           type: "ValidationError"
@@ -660,7 +657,6 @@ scenarios:
       - step: "Create objective in the OKR plan under it"
         action: "create"
         model: "strategy_objective"
-        save_as: "child"
         as_user: "validator"
         expect_error:
           type: "ValidationError"
@@ -685,7 +681,6 @@ scenarios:
       - step: "Create objective in the plan under it"
         action: "create"
         model: "strategy_objective"
-        save_as: "child"
         as_user: "validator"
         expect_error:
           type: "ValidationError"
