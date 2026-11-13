@@ -10,6 +10,9 @@
 ## Pre-Condition
 
 - **Record:** Status is **Draft**.
+- **Record:** When the **Progress Method** is **Milestones**, the weights of the
+  milestones add up to 100. Otherwise the confirmation is rejected and the initiative
+  stays in **Draft**, so the weights can still be corrected.
 - **Config:** An active `policy.template` for `strategy_initiative` grants `confirm_ok`
   for state `draft` to the actor's group.
 - **Config:** An active `approval.template` for `strategy_initiative` matches this
