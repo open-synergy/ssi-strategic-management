@@ -22,7 +22,7 @@ class StrategyObjective(models.Model):
 
     It moves through a simple lifecycle without approval: ``draft`` ->
     ``open`` -> ``done``, with ``cancel`` available from ``draft`` and
-    ``open``.
+    ``open``. The KPIs of an objective measure its achievement.
     """
 
     _name = "strategy_objective"
@@ -161,6 +161,13 @@ class StrategyObjective(models.Model):
         column2="influenced_objective_id",
         help="Objectives that are influenced by this objective (cause and "
         "effect links of the strategy map).",
+    )
+    kpi_ids = fields.One2many(
+        string="KPIs",
+        comodel_name="strategy_kpi",
+        inverse_name="objective_id",
+        help="Key performance indicators that measure this objective. "
+        "Their weights must add up to 100% before the objective starts.",
     )
     objective_type = fields.Selection(
         string="Objective Type",
@@ -373,6 +380,31 @@ Context: Start objective
 Database ID: %s
 Problem: Total weight of contributing child objectives must be 100%%.
 Solution: Change the weights of the child objectives so that they add up to 100%%
+""" % (
+                self.id,
+            )
+            raise UserError(_(error_message))
+
+    @ssi_decorator.pre_open_check()
+    def _30_check_kpi_weight(self):
+        """Reject starting an objective whose KPI weights are not 100%.
+
+        Runs in the ``pre_open_check`` slot, after the child weight
+        check. An objective without KPIs passes.
+
+        :raises UserError: when the total weight of the KPIs differs
+            from 100%
+        """
+        self.ensure_one()
+        if not self.kpi_ids:
+            return
+        total_weight = sum(self.kpi_ids.mapped("weight"))
+        if float_compare(total_weight, 100.0, precision_digits=2) != 0:
+            error_message = """
+Context: Start objective
+Database ID: %s
+Problem: Total KPI weight of an objective must be 100%%.
+Solution: Change the weights of the KPIs so that they add up to 100%%
 """ % (
                 self.id,
             )

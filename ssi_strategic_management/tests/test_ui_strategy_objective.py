@@ -74,8 +74,24 @@ class TestUiStrategyObjective(HttpSavepointCase):
         # creates the objective itself.
         cls.dept_create = cls._create_department("Create")
 
-        # Pre-Condition 07-start.md: Draft.
+        # Pre-Condition 02-edit.md: a measure to select and a Draft
+        # objective. The tour adds the KPI, target and measurement.
+        cls.measure = cls.env["strategy_measure"].create(
+            {"name": "Tour Edit Measure", "code": "TOUREDITM"}
+        )
+        cls.objective_edit = cls._create_objective("Edit")
+
+        # Pre-Condition 07-start.md: Draft, with one KPI whose weight is
+        # 100 so that the KPI weight check of the start action passes.
         cls.objective_start = cls._create_objective("Start")
+        cls.env["strategy_kpi"].create(
+            {
+                "objective_id": cls.objective_start.id,
+                "measure_id": cls.measure.id,
+                "name": "Tour Start KPI",
+                "weight": 100.0,
+            }
+        )
 
         # Pre-Condition 09-finish.md: On Progress.
         cls.objective_finish = cls._create_objective("Finish")
@@ -149,6 +165,17 @@ class TestUiStrategyObjective(HttpSavepointCase):
         self.start_tour(
             "/web",
             "ssi_strategic_management_strategy_objective_create",
+            login="admin",
+        )
+
+    def test_edit(self):
+        """Run the edit tour for ``strategy_objective``.
+
+        IK: docs/strategy_objective/02-edit.md
+        """
+        self.start_tour(
+            "/web",
+            "ssi_strategic_management_strategy_objective_edit",
             login="admin",
         )
 

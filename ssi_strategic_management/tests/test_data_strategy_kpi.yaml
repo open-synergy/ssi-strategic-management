@@ -1,0 +1,1171 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy KPI Validator"
+        login: "EVAL: 'kpv%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Create department"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept"
+      values:
+        name: "KPI Department"
+    - step: "Create Balanced Scorecard plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_bsc"
+      as_user: "base.user_admin"
+      values:
+        name: "KPI plan type bsc"
+        code: "EVAL: 'KB%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create OKR plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_okr"
+      as_user: "base.user_admin"
+      values:
+        name: "KPI plan type okr"
+        code: "EVAL: 'KO%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "okr"
+        score_scale: "okr"
+        cascade_level: "department"
+    - step: "Create Balanced Scorecard plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_bsc"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_bsc.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create OKR plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_okr"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_okr.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create Balanced Scorecard objective"
+      action: "create"
+      model: "strategy_objective"
+      save_as: "objective"
+      as_user: "validator"
+      values:
+        plan_id: "REC: plan_bsc.id"
+        department_id: "REC: dept.id"
+        perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+    - step: "Create OKR objective"
+      action: "create"
+      model: "strategy_objective"
+      save_as: "objective_okr"
+      as_user: "validator"
+      values:
+        plan_id: "REC: plan_okr.id"
+        department_id: "REC: dept.id"
+    - step: "Create higher is better measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_high"
+      as_user: "validator"
+      values:
+        name: "KPI measure higher"
+        code: "EVAL: 'MH%s' % datetime.now().strftime('%H%M%S%f')"
+        polarity: "higher"
+        aggregation: "sum"
+    - step: "Create lower is better measure with score ranges"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_low"
+      as_user: "validator"
+      values:
+        name: "KPI measure lower"
+        code: "EVAL: 'ML%s' % datetime.now().strftime('%H%M%S%f')"
+        uom_label: "pcs"
+        polarity: "lower"
+        aggregation: "avg"
+        score_min: 10.0
+        score_max: 120.0
+        score_range_ids:
+          - [0, 0, {min_value: 0.0, max_value: 50.0, score: 60.0}]
+          - [0, 0, {min_value: 50.01, max_value: 100.0, score: 100.0}]
+
+scenarios:
+  - name: "Higher is better KPI scores realization against target"
+    steps:
+      - step: "Create KPI Revenue"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Revenue"
+          weight: 50.0
+          target: 200.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 200.0
+      - step: "Create measurement m1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-02-15
+          manual_value: 150.0
+      - step: "Target realization and scores"
+        action: "assert"
+        target: "t1"
+        asserts:
+          realization:
+            type: "value"
+            expected: 150.0
+          score:
+            type: "value"
+            expected: 75.0
+          final_score:
+            type: "value"
+            expected: 37.5
+      - step: "KPI takes the score of the measured target"
+        action: "assert"
+        target: "kpi"
+        asserts:
+          score:
+            type: "value"
+            expected: 75.0
+
+  - name: "Higher is better KPI with a zero target scores zero"
+    steps:
+      - step: "Create KPI Zero target"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Zero target"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 0.0
+      - step: "Create measurement m1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-02-15
+          manual_value: 10.0
+      - step: "Score is zero"
+        action: "assert"
+        target: "t1"
+        asserts:
+          score:
+            type: "value"
+            expected: 0.0
+
+  - name: "Lower is better KPI scores target over realization"
+    steps:
+      - step: "Create KPI Cost"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_low.id"
+          name: "Cost"
+          weight: 100.0
+      - step: "KPI inherits the definition of the measure"
+        action: "assert"
+        target: "kpi"
+        asserts:
+          polarity:
+            type: "value"
+            expected: "lower"
+          score_method:
+            type: "value"
+            expected: "lower"
+          aggregation:
+            type: "value"
+            expected: "avg"
+          uom_label:
+            type: "value"
+            expected: "pcs"
+          score_min:
+            type: "value"
+            expected: 10.0
+          score_max:
+            type: "value"
+            expected: 120.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 10.0
+      - step: "Create measurement m1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-02-15
+          manual_value: 20.0
+      - step: "Realization above target halves the score"
+        action: "assert"
+        target: "t1"
+        asserts:
+          score:
+            type: "value"
+            expected: 50.0
+      - step: "Create target t2"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t2"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-04-01
+          date_end: 2026-06-30
+          target: 10.0
+      - step: "Create measurement m2"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m2"
+        as_user: "validator"
+        values:
+          target_id: "REC: t2.id"
+          date: 2026-05-15
+          manual_value: 5.0
+      - step: "Score is clamped to the maximum score"
+        action: "assert"
+        target: "t2"
+        asserts:
+          score:
+            type: "value"
+            expected: 120.0
+      - step: "Create target t3"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t3"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-07-01
+          date_end: 2026-09-30
+          target: 10.0
+      - step: "Create measurement m3"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m3"
+        as_user: "validator"
+        values:
+          target_id: "REC: t3.id"
+          date: 2026-08-15
+          manual_value: 0.0
+      - step: "Zero realization earns the maximum score"
+        action: "assert"
+        target: "t3"
+        asserts:
+          score:
+            type: "value"
+            expected: 120.0
+
+  - name: "Score is clamped to the minimum score"
+    steps:
+      - step: "Create KPI Clamp low"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Clamp low"
+          weight: 100.0
+          score_min: 20.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement m1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-02-15
+          manual_value: 5.0
+      - step: "Score is raised to the minimum score"
+        action: "assert"
+        target: "t1"
+        asserts:
+          score:
+            type: "value"
+            expected: 20.0
+
+  - name: "Within range KPI uses the matching score range"
+    steps:
+      - step: "Create KPI Range"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Range"
+          weight: 100.0
+          polarity: "range"
+          score_range_ids:
+            - [0, 0, {min_value: 0.0, max_value: 50.0, score: 60.0}]
+            - [0, 0, {min_value: 50.01, max_value: 100.0, score: 100.0}]
+      - step: "Score method follows the polarity"
+        action: "assert"
+        target: "kpi"
+        asserts:
+          score_method:
+            type: "value"
+            expected: "range"
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement m1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-02-15
+          manual_value: 70.0
+      - step: "Second range matches"
+        action: "assert"
+        target: "t1"
+        asserts:
+          score:
+            type: "value"
+            expected: 100.0
+      - step: "Create target t2"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t2"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-04-01
+          date_end: 2026-06-30
+          target: 100.0
+      - step: "Create measurement m2"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m2"
+        as_user: "validator"
+        values:
+          target_id: "REC: t2.id"
+          date: 2026-05-15
+          manual_value: 20.0
+      - step: "First range matches"
+        action: "assert"
+        target: "t2"
+        asserts:
+          score:
+            type: "value"
+            expected: 60.0
+      - step: "Create target t3"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t3"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-07-01
+          date_end: 2026-09-30
+          target: 100.0
+      - step: "Create measurement m3"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m3"
+        as_user: "validator"
+        values:
+          target_id: "REC: t3.id"
+          date: 2026-08-15
+          manual_value: 500.0
+      - step: "No range matches"
+        action: "assert"
+        target: "t3"
+        asserts:
+          score:
+            type: "value"
+            expected: 0.0
+
+  - name: "Realization follows the aggregation of the KPI"
+    steps:
+      - step: "Create KPI Sum"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_sum"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Sum"
+          weight: 50.0
+          aggregation: "sum"
+      - step: "Create KPI Average"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_avg"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Average"
+          weight: 25.0
+          aggregation: "avg"
+      - step: "Create KPI Last"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_last"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Last"
+          weight: 25.0
+          aggregation: "last"
+      - step: "Create target t_sum"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_sum"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_sum.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement ms1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "ms1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_sum.id"
+          date: 2026-02-01
+          manual_value: 30.0
+      - step: "Create measurement ms2"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "ms2"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_sum.id"
+          date: 2026-02-02
+          manual_value: 40.0
+      - step: "Sum"
+        action: "assert"
+        target: "t_sum"
+        asserts:
+          realization:
+            type: "value"
+            expected: 70.0
+      - step: "Create target t_avg"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_avg"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_avg.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement ma1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "ma1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_avg.id"
+          date: 2026-02-01
+          manual_value: 30.0
+      - step: "Create measurement ma2"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "ma2"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_avg.id"
+          date: 2026-02-02
+          manual_value: 40.0
+      - step: "Average"
+        action: "assert"
+        target: "t_avg"
+        asserts:
+          realization:
+            type: "value"
+            expected: 35.0
+      - step: "Create target t_last"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_last"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_last.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement ml1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "ml1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_last.id"
+          date: 2026-02-20
+          manual_value: 25.0
+      - step: "Create measurement ml2"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "ml2"
+        as_user: "validator"
+        values:
+          target_id: "REC: t_last.id"
+          date: 2026-02-01
+          manual_value: 10.0
+      - step: "Last value by date"
+        action: "assert"
+        target: "t_last"
+        asserts:
+          realization:
+            type: "value"
+            expected: 25.0
+
+  - name: "Target without measurement has zero realization"
+    steps:
+      - step: "Create KPI Empty"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Empty"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "No realization"
+        action: "assert"
+        target: "t1"
+        asserts:
+          realization:
+            type: "value"
+            expected: 0.0
+          score:
+            type: "value"
+            expected: 0.0
+      - step: "No score on the KPI"
+        action: "assert"
+        target: "kpi"
+        asserts:
+          score:
+            type: "value"
+            expected: 0.0
+
+  - name: "KPI score is the score of the latest measured target"
+    steps:
+      - step: "Create KPI Latest"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Latest"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement m1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-02-15
+          manual_value: 50.0
+      - step: "Create target t2"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t2"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-04-01
+          date_end: 2026-06-30
+          target: 100.0
+      - step: "Create measurement m2"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m2"
+        as_user: "validator"
+        values:
+          target_id: "REC: t2.id"
+          date: 2026-05-15
+          manual_value: 80.0
+      - step: "Create target t3"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t3"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-07-01
+          date_end: 2026-09-30
+          target: 100.0
+      - step: "Latest measured target wins"
+        action: "assert"
+        target: "kpi"
+        asserts:
+          score:
+            type: "value"
+            expected: 80.0
+
+  - name: "Target proposes the default target of the KPI"
+    steps:
+      - step: "Create KPI Default"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Default"
+          weight: 100.0
+          target: 42.0
+      - step: "Create target without target value"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Target value is copied"
+        action: "assert"
+        target: "t1"
+        asserts:
+          target:
+            type: "value"
+            expected: 42.0
+
+  - name: "OKR plan scores on a scale of 0.0 to 1.0"
+    steps:
+      - step: "Create KPI Key result"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_okr.id"
+          measure_id: "REC: measure_high.id"
+          name: "Key result"
+          weight: 100.0
+          is_key_result: true
+          key_result_type: "committed"
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 1.0
+      - step: "Create measurement m1"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m1"
+        as_user: "validator"
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-02-15
+          manual_value: 0.7
+      - step: "Score is expressed on the OKR scale"
+        action: "assert"
+        target: "t1"
+        asserts:
+          score:
+            type: "value"
+            expected: 0.7
+      - step: "Create target t2"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t2"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-04-01
+          date_end: 2026-06-30
+          target: 1.0
+      - step: "Create measurement m2"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "m2"
+        as_user: "validator"
+        values:
+          target_id: "REC: t2.id"
+          date: 2026-05-15
+          manual_value: 1.5
+      - step: "Score is capped at 1.0"
+        action: "assert"
+        target: "t2"
+        asserts:
+          score:
+            type: "value"
+            expected: 1.0
+
+  - name: "Measure fills the definition and score ranges of the KPI"
+    steps:
+      - step: "Select the measure on a new KPI"
+        action: "form"
+        model: "strategy_kpi"
+        save: false
+        values:
+          measure_id: "REC: measure_low"
+        asserts:
+          polarity:
+            type: "value"
+            expected: "lower"
+          aggregation:
+            type: "value"
+            expected: "avg"
+          uom_label:
+            type: "value"
+            expected: "pcs"
+          score_method:
+            type: "value"
+            expected: "lower"
+          score_range_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+
+  - name: "Date range fills the period of the target"
+    steps:
+      - step: "Create date range type"
+        action: "create"
+        model: "date.range.type"
+        save_as: "range_type"
+        values:
+          name: "KPI quarter"
+      - step: "Create date range"
+        action: "create"
+        model: "date.range"
+        save_as: "range_q1"
+        values:
+          name: "KPI Q1"
+          type_id: "REC: range_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Create KPI Period"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Period"
+          weight: 100.0
+      - step: "Select the date range on a new target"
+        action: "form"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        values:
+          kpi_id: "REC: kpi"
+          date_range_id: "REC: range_q1"
+      - step: "Period follows the date range"
+        action: "assert"
+        target: "t1"
+        asserts:
+          date_start:
+            type: "value"
+            expected: "EVAL: datetime(2026, 1, 1).date()"
+          date_end:
+            type: "value"
+            expected: "EVAL: datetime(2026, 3, 31).date()"
+
+  - name: "Key result requires a key result type"
+    steps:
+      - step: "Create KPI Key result"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_ok"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Key result"
+          weight: 100.0
+          is_key_result: true
+          key_result_type: "aspirational"
+      - step: "Create key result without type"
+        action: "create"
+        model: "strategy_kpi"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Key results require a key result type."
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Key result without type"
+          is_key_result: true
+
+  - name: "Target periods of a KPI must not overlap"
+    steps:
+      - step: "Create KPI Overlap"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Overlap"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create target rejected"
+        action: "create"
+        model: "strategy_kpi.target"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Target periods of a KPI must not overlap."
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-03-31
+          date_end: 2026-06-30
+          target: 100.0
+
+  - name: "Target period must be within the plan period"
+    steps:
+      - step: "Create KPI Outside"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Outside"
+          weight: 100.0
+      - step: "Create target rejected"
+        action: "create"
+        model: "strategy_kpi.target"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Target period must be within the plan period."
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2025-12-01
+          date_end: 2026-02-01
+          target: 100.0
+      - step: "Create target rejected"
+        action: "create"
+        model: "strategy_kpi.target"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Target period must be within the plan period."
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-12-01
+          date_end: 2027-01-31
+          target: 100.0
+
+  - name: "Measurement date must be within the target period"
+    steps:
+      - step: "Create KPI Dated"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Dated"
+          weight: 100.0
+      - step: "Create target t1"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement rejected"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Measurement date must be within the target period."
+        values:
+          target_id: "REC: t1.id"
+          date: 2026-04-01
+          manual_value: 10.0
+
+  - name: "Score range start must not exceed its end"
+    steps:
+      - step: "Create KPI Bad range"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Bad range"
+          weight: 100.0
+      - step: "Create score range with inverted bounds"
+        action: "create"
+        model: "strategy_kpi.score_range"
+        as_user: "validator"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Range start must not be greater than range end"
+        values:
+          kpi_id: "REC: kpi.id"
+          min_value: 10.0
+          max_value: 5.0
+          score: 1.0
+
+  - name: "Objective whose KPI weights differ from 100 cannot start"
+    steps:
+      - step: "Start plan plan_bsc"
+        action: "call"
+        target: "plan_bsc"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Create KPI Weight A"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Weight A"
+          weight: 50.0
+      - step: "Create KPI Weight B"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Weight B"
+          weight: 40.0
+      - step: "Start objective"
+        action: "call"
+        target: "objective"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains: "Total KPI weight of an objective must be 100%."
+
+  - name: "Objective whose KPI weights add up to 100 can start"
+    steps:
+      - step: "Start plan plan_bsc"
+        action: "call"
+        target: "plan_bsc"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Create KPI Weight A"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Weight A"
+          weight: 50.0
+      - step: "Create KPI Weight B"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Weight B"
+          weight: 50.0
+      - step: "Start objective"
+        action: "call"
+        target: "objective"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+  - name: "Objective without KPIs can start"
+    steps:
+      - step: "Start plan plan_bsc"
+        action: "call"
+        target: "plan_bsc"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Start objective"
+        action: "call"
+        target: "objective"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+  - name: "Objective lists its KPIs"
+    steps:
+      - step: "Create KPI Listed A"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Listed A"
+          weight: 100.0
+      - step: "Objective lists the KPI"
+        action: "assert"
+        target: "objective"
+        asserts:
+          kpi_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 1

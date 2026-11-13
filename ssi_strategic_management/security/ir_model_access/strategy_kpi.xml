@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_kpi_viewer_access" model="ir.model.access">
+    <field name="name">strategy_kpi - viewer</field>
+    <field name="model_id" ref="model_strategy_kpi" />
+    <field name="group_id" ref="strategy_objective_viewer_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="0" />
+    <field name="perm_create" eval="0" />
+    <field name="perm_unlink" eval="0" />
+</record>
+
+<record id="strategy_kpi_user_access" model="ir.model.access">
+    <field name="name">strategy_kpi - user</field>
+    <field name="model_id" ref="model_strategy_kpi" />
+    <field name="group_id" ref="strategy_objective_user_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_create" eval="1" />
+    <field name="perm_unlink" eval="1" />
+</record>
+
+<record id="strategy_kpi_score_range_viewer_access" model="ir.model.access">
+    <field name="name">strategy_kpi_score_range - viewer</field>
+    <field name="model_id" ref="model_strategy_kpi_score_range" />
+    <field name="group_id" ref="strategy_objective_viewer_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="0" />
+    <field name="perm_create" eval="0" />
+    <field name="perm_unlink" eval="0" />
+</record>
+
+<record id="strategy_kpi_score_range_user_access" model="ir.model.access">
+    <field name="name">strategy_kpi_score_range - user</field>
+    <field name="model_id" ref="model_strategy_kpi_score_range" />
+    <field name="group_id" ref="strategy_objective_user_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_create" eval="1" />
+    <field name="perm_unlink" eval="1" />
+</record>
+
+<record id="strategy_kpi_target_viewer_access" model="ir.model.access">
+    <field name="name">strategy_kpi_target - viewer</field>
+    <field name="model_id" ref="model_strategy_kpi_target" />
+    <field name="group_id" ref="strategy_objective_viewer_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="0" />
+    <field name="perm_create" eval="0" />
+    <field name="perm_unlink" eval="0" />
+</record>
+
+<record id="strategy_kpi_target_user_access" model="ir.model.access">
+    <field name="name">strategy_kpi_target - user</field>
+    <field name="model_id" ref="model_strategy_kpi_target" />
+    <field name="group_id" ref="strategy_objective_user_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_create" eval="1" />
+    <field name="perm_unlink" eval="1" />
+</record>
+
+<record id="strategy_kpi_measurement_viewer_access" model="ir.model.access">
+    <field name="name">strategy_kpi_measurement - viewer</field>
+    <field name="model_id" ref="model_strategy_kpi_measurement" />
+    <field name="group_id" ref="strategy_objective_viewer_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="0" />
+    <field name="perm_create" eval="0" />
+    <field name="perm_unlink" eval="0" />
+</record>
+
+<record id="strategy_kpi_measurement_user_access" model="ir.model.access">
+    <field name="name">strategy_kpi_measurement - user</field>
+    <field name="model_id" ref="model_strategy_kpi_measurement" />
+    <field name="group_id" ref="strategy_objective_user_group" />
+    <field name="perm_read" eval="1" />
+    <field name="perm_write" eval="1" />
+    <field name="perm_create" eval="1" />
+    <field name="perm_unlink" eval="1" />
+</record>
+</odoo>
