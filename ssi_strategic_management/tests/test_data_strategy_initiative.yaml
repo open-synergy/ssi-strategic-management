@@ -1,0 +1,697 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Initiative Validator"
+        login: "EVAL: 'val%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_initiative_validator_group",
+              ],
+            ]
+    - step: "Create plan type as administrator"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "plan_type"
+      as_user: "base.user_admin"
+      values:
+        name: "Initiative test plan type"
+        code: "EVAL: 'IP%s' % datetime.now().strftime('%H%M%S%f')"
+    - step: "Create the running plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_open"
+      as_user: "validator"
+      values:
+        type_id: "REC: plan_type.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Start the running plan"
+      action: "call"
+      target: "plan_open"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create the draft plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_draft"
+      as_user: "validator"
+      values:
+        type_id: "REC: plan_type.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+
+scenarios:
+  - name: "Initiative goes from draft to done"
+    steps:
+      - step: "Create initiative"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "milestone"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Initiative starts in draft without health"
+        action: "assert"
+        target: "init"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          health:
+            type: "value"
+            operator: "is_falsy"
+      - step: "Add milestone Design"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        save_as: "ms_design"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Design"
+          weight: 40.0
+      - step: "Add milestone Build"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        save_as: "ms_build"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Build"
+          weight: 60.0
+      - step: "Confirm initiative"
+        action: "call"
+        target: "init"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Approve initiative as validator"
+        action: "call"
+        target: "init"
+        method: "action_approve_approval"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+          approved:
+            type: "value"
+            expected: true
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+          name:
+            type: "value"
+            operator: "contains"
+            expected: "SI/"
+      - step: "Finish initiative"
+        action: "call"
+        target: "init"
+        method: "action_done"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+          health:
+            type: "value"
+            operator: "is_falsy"
+
+  - name: "Draft initiative can be cancelled and restarted"
+    steps:
+      - step: "Create initiative"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Cancel initiative"
+        action: "call"
+        target: "init"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Restart initiative"
+        action: "call"
+        target: "init"
+        method: "action_restart"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Running initiative can be terminated and restarted"
+    steps:
+      - step: "Create initiative"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Terminate initiative"
+        action: "call"
+        target: "init"
+        method: "action_terminate"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "terminate"
+          health:
+            type: "value"
+            operator: "is_falsy"
+      - step: "Restart initiative"
+        action: "call"
+        target: "init"
+        method: "action_restart"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Milestone progress follows the weight of the done milestones"
+    steps:
+      - step: "Create initiative using milestones"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "milestone"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Progress is zero without milestones"
+        action: "assert"
+        target: "init"
+        asserts:
+          progress:
+            type: "value"
+            expected: 0.0
+      - step: "Add a done milestone of weight 40"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        save_as: "ms_a"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Milestone A"
+          weight: 40.0
+          is_done: true
+      - step: "Add a pending milestone of weight 60"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        save_as: "ms_b"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Milestone B"
+          weight: 60.0
+      - step: "Progress is 40 and only the done milestone has a date"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          progress:
+            type: "value"
+            expected: 40.0
+      - step: "Done milestone has a completion date"
+        action: "assert"
+        target: "ms_a"
+        asserts:
+          date_done:
+            type: "value"
+            operator: "is_truthy"
+      - step: "Pending milestone has no completion date"
+        action: "assert"
+        target: "ms_b"
+        asserts:
+          date_done:
+            type: "value"
+            operator: "is_falsy"
+      - step: "Complete the second milestone"
+        action: "write"
+        target: "ms_b"
+        as_user: "validator"
+        values:
+          is_done: true
+      - step: "Progress is 100"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          progress:
+            type: "value"
+            expected: 100.0
+      - step: "Reopen the first milestone"
+        action: "write"
+        target: "ms_a"
+        as_user: "validator"
+        values:
+          is_done: false
+      - step: "Progress is 60 and the date is cleared"
+        action: "assert"
+        target: "ms_a"
+        refresh: true
+        asserts:
+          date_done:
+            type: "value"
+            operator: "is_falsy"
+      - step: "Progress follows the remaining done milestone"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          progress:
+            type: "value"
+            expected: 60.0
+
+  - name: "Manual progress is taken over"
+    steps:
+      - step: "Create initiative with manual progress"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 25.0
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Progress is 25"
+        action: "assert"
+        target: "init"
+        asserts:
+          progress:
+            type: "value"
+            expected: 25.0
+
+  - name: "Python progress is computed by the button"
+    steps:
+      - step: "Create initiative with progress code"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "python"
+          python_code: "result = 80.0"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Progress is zero before computing"
+        action: "assert"
+        target: "init"
+        asserts:
+          progress:
+            type: "value"
+            expected: 0.0
+      - step: "Compute progress"
+        action: "call"
+        target: "init"
+        method: "action_compute_progress"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          python_progress:
+            type: "value"
+            expected: 80.0
+          progress:
+            type: "value"
+            expected: 80.0
+
+  - name: "Progress code that fails is rejected"
+    steps:
+      - step: "Create initiative with failing progress code"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "python"
+          python_code: "result = 1/0"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Compute progress"
+        action: "call"
+        target: "init"
+        method: "action_compute_progress"
+        as_user: "validator"
+        expect_error:
+          type: "UserError"
+          message_contains: "Error evaluating progress code"
+
+  - name: "Initiative that ended on time is green"
+    steps:
+      - step: "Create initiative whose period ended yesterday"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 100.0
+          date_start: "EVAL: date.today() - timedelta(days=60)"
+          date_end: "EVAL: date.today() - timedelta(days=1)"
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "green"
+
+  - name: "Initiative without progress after its period is red"
+    steps:
+      - step: "Create initiative whose period ended yesterday"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 0.0
+          date_start: "EVAL: date.today() - timedelta(days=60)"
+          date_end: "EVAL: date.today() - timedelta(days=1)"
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "red"
+
+  - name: "Initiative halfway through its period with a small gap is at risk"
+    steps:
+      - step: "Create a 100 day initiative that is 50 days old"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 35.0
+          date_start: "EVAL: date.today() - timedelta(days=50)"
+          date_end: "EVAL: date.today() + timedelta(days=50)"
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "yellow"
+
+  - name: "Initiative that has not started yet is green"
+    steps:
+      - step: "Create initiative that starts next month"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 0.0
+          date_start: "EVAL: date.today() + timedelta(days=30)"
+          date_end: "EVAL: date.today() + timedelta(days=90)"
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "green"
+
+  - name: "Health follows a progress update"
+    steps:
+      - step: "Create a 100 day initiative that is 50 days old"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 50.0
+          date_start: "EVAL: date.today() - timedelta(days=50)"
+          date_end: "EVAL: date.today() + timedelta(days=50)"
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "green"
+      - step: "Progress falls far behind"
+        action: "write"
+        target: "init"
+        as_user: "validator"
+        values:
+          manual_progress: 5.0
+      - step: "Initiative is off track"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "red"
+
+  - name: "The daily cron recomputes the health of running initiatives"
+    steps:
+      - step: "Create a 100 day initiative that is 50 days old"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 50.0
+          date_start: "EVAL: date.today() - timedelta(days=50)"
+          date_end: "EVAL: date.today() + timedelta(days=50)"
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "green"
+      - step: "Force a stale health value"
+        action: "write"
+        target: "init"
+        as_user: "validator"
+        values:
+          health: "red"
+      - step: "Stale value is stored"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "red"
+      - step: "Run the cron"
+        action: "call"
+        target: "init"
+        method: "_cron_update_health"
+        as_user: "validator"
+      - step: "Health is recomputed"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "green"
+
+  - name: "Starting with milestone weights that do not add up is rejected"
+    steps:
+      - step: "Create initiative using milestones"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "milestone"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Add a milestone of weight 40"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Milestone A"
+          weight: 40.0
+      - step: "Add a milestone of weight 50"
+        action: "create"
+        model: "strategy_initiative.milestone"
+        as_user: "validator"
+        values:
+          initiative_id: "REC: init.id"
+          name: "Milestone B"
+          weight: 50.0
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains: "Total milestone weight must be 100%."
+
+  - name: "Starting before the plan is in progress is rejected"
+    steps:
+      - step: "Create initiative of the draft plan"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_draft.id"
+          progress_method: "manual"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Start initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains: "The plan must be in progress before starting initiatives."
+
+  - name: "Plan type thresholds are validated"
+    steps:
+      - step: "At-risk threshold above the off-track threshold is rejected"
+        action: "create"
+        model: "strategy_plan_type"
+        as_user: "base.user_admin"
+        expect_error:
+          type: "ValidationError"
+          message_contains:
+            "The at-risk threshold must not exceed the off-track threshold."
+        values:
+          name: "Wrong thresholds"
+          code: "EVAL: 'WT%s' % datetime.now().strftime('%H%M%S%f')"
+          health_yellow_threshold: 30.0
+          health_red_threshold: 20.0
+      - step: "Default thresholds are 10 and 25"
+        action: "assert"
+        target: "plan_type"
+        asserts:
+          health_yellow_threshold:
+            type: "value"
+            expected: 10.0
+          health_red_threshold:
+            type: "value"
+            expected: 25.0
