@@ -1,0 +1,276 @@
+setup:
+  steps:
+    - step: "Create measure configurator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Python Access Configurator"
+        login: "EVAL: 'pav%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_plan_all_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_all_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Create objective user without the measure group"
+      action: "create"
+      model: "res.users"
+      save_as: "objective_user"
+      values:
+        name: "Python Access Objective User"
+        login: "EVAL: 'pao%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+              ],
+            ]
+    - step: "Create department"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept"
+      values:
+        name: "Python Access Department"
+    - step: "Create plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_bsc"
+      as_user: "base.user_admin"
+      values:
+        name: "Python access plan type"
+        code: "EVAL: 'PA%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create plan owned by the objective user"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan"
+      as_user: "base.user_admin"
+      values:
+        type_id: "REC: type_bsc.id"
+        user_id: "REC: objective_user.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create objective owned by the objective user"
+      action: "create"
+      model: "strategy_objective"
+      save_as: "objective"
+      as_user: "base.user_admin"
+      values:
+        plan_id: "REC: plan.id"
+        user_id: "REC: objective_user.id"
+        department_id: "REC: dept.id"
+        perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+    - step: "Create manual measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_manual"
+      as_user: "validator"
+      values:
+        name: "Python access manual measure"
+        code: "EVAL: 'PM%s' % datetime.now().strftime('%H%M%S%f')"
+    - step: "Create python measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_python"
+      as_user: "validator"
+      values:
+        name: "Python access python measure"
+        code: "EVAL: 'PP%s' % datetime.now().strftime('%H%M%S%f')"
+        realization_method: "python"
+        python_code: "result = 1.0"
+
+scenarios:
+  - name: "Objective user cannot change the Python code of a KPI"
+    steps:
+      - step: "Create KPI of the python measure"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "objective_user"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_python.id"
+          name: "Python access KPI"
+      - step: "Write another Python code"
+        action: "write"
+        target: "kpi"
+        as_user: "objective_user"
+        expect_error:
+          type: "AccessError"
+          message_contains: "Only strategy measure configurators"
+        values:
+          python_code: "result = 99.0"
+      - step: "Check the code of the measure is kept"
+        action: "assert"
+        target: "kpi"
+        refresh: true
+        asserts:
+          python_code:
+            type: "value"
+            expected: "result = 1.0"
+
+  - name: "Objective user cannot switch a manual KPI to Python"
+    steps:
+      - step: "Create KPI of the manual measure"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "objective_user"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Python access manual KPI"
+      - step: "Switch the realization method to Python"
+        action: "write"
+        target: "kpi"
+        as_user: "objective_user"
+        expect_error:
+          type: "AccessError"
+          message_contains: "Only strategy measure configurators"
+        values:
+          realization_method: "python"
+      - step: "Keep the realization method manual"
+        action: "write"
+        target: "kpi"
+        as_user: "objective_user"
+        values:
+          realization_method: "manual"
+      - step: "Check the realization method"
+        action: "assert"
+        target: "kpi"
+        refresh: true
+        asserts:
+          realization_method:
+            type: "value"
+            expected: "manual"
+
+  - name: "Objective user can create a KPI of a python measure"
+    steps:
+      - step: "Create KPI without the code in the values"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_plain"
+        as_user: "objective_user"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_python.id"
+          name: "Python access plain KPI"
+      - step: "Check the code copied from the measure"
+        action: "assert"
+        target: "kpi_plain"
+        refresh: true
+        asserts:
+          realization_method:
+            type: "value"
+            expected: "python"
+          python_code:
+            type: "value"
+            expected: "result = 1.0"
+      - step: "Create KPI with the code of the measure in the values"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_same"
+        as_user: "objective_user"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_python.id"
+          name: "Python access same code KPI"
+          realization_method: "python"
+          python_code: "result = 1.0"
+      - step: "Check the code of the measure is kept"
+        action: "assert"
+        target: "kpi_same"
+        refresh: true
+        asserts:
+          python_code:
+            type: "value"
+            expected: "result = 1.0"
+
+  - name: "Objective user cannot create a KPI with its own Python code"
+    steps:
+      - step: "Create KPI with another Python code"
+        action: "create"
+        model: "strategy_kpi"
+        as_user: "objective_user"
+        expect_error:
+          type: "AccessError"
+          message_contains: "Only strategy measure configurators"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_python.id"
+          name: "Python access own code KPI"
+          python_code: "result = 99.0"
+      - step: "Create Python KPI of a manual measure"
+        action: "create"
+        model: "strategy_kpi"
+        as_user: "objective_user"
+        expect_error:
+          type: "AccessError"
+          message_contains: "Only strategy measure configurators"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Python access forced python KPI"
+          realization_method: "python"
+
+  - name: "Measure configurator can change the Python code of a KPI"
+    steps:
+      - step: "Create KPI of the manual measure"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Python access configurator KPI"
+      - step: "Set the method and the code"
+        action: "write"
+        target: "kpi"
+        as_user: "validator"
+        values:
+          realization_method: "python"
+          python_code: "result = 7.0"
+      - step: "Check the new values"
+        action: "assert"
+        target: "kpi"
+        refresh: true
+        asserts:
+          realization_method:
+            type: "value"
+            expected: "python"
+          python_code:
+            type: "value"
+            expected: "result = 7.0"
+      - step: "Create KPI with its own Python code"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_own"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Python access configurator own KPI"
+          realization_method: "python"
+          python_code: "result = 8.0"
+      - step: "Check the own code"
+        action: "assert"
+        target: "kpi_own"
+        refresh: true
+        asserts:
+          python_code:
+            type: "value"
+            expected: "result = 8.0"
