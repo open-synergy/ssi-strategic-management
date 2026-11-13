@@ -37,6 +37,18 @@ class TestStrategyKpiCronOrder(YamlTransactionCase):
         self.assertEqual(child.realization, 2.0)
         self.assertEqual(parent.realization, child.realization)
 
+    def test_cron_without_target_queues_no_job(self):
+        """Queue nothing when no running target uses the frequency.
+
+        Pure Python test, trigger P6 (L-15: the YAML runner cannot trap
+        the queued jobs to count them).
+        """
+        target_obj = self.env["strategy_kpi.target"]
+        self.assertFalse(target_obj.search([]))
+        with trap_jobs() as trap:
+            target_obj._cron_compute_realization("yearly")
+            trap.assert_jobs_count(0)
+
     def test_period_domain_time_zone_fallback(self):
         """Return the datetime bounds of the period in each time zone.
 
