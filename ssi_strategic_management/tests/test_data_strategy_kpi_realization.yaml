@@ -1427,6 +1427,7 @@ scenarios:
           subject: "TZ21-in"
           date: "2026-02-28 17:30:00"
           res_id: 1
+          reply_to: "tz21@example.com"
       - step: "Create the message at 00:30 after the last day"
         action: "create"
         model: "mail.message"
@@ -1434,6 +1435,7 @@ scenarios:
           subject: "TZ21-out"
           date: "2026-03-31 17:30:00"
           res_id: 10
+          reply_to: "tz21@example.com"
       - step: "Create the KPI"
         action: "create"
         model: "strategy_kpi"
