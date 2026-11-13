@@ -23,6 +23,14 @@ automatically: by an aggregate over Odoo data configured without code (with
 an optional ratio), by Python code, or by rolling up child KPIs. They can be
 computed on demand with the Compute button or on a schedule, and an
 automatic value can be overridden by a manual one with a dissenting note.
+Strategic initiatives belong to a plan, are linked to the objectives and KPIs
+they are meant to move, and go through an approval workflow that can end in
+completion, cancellation or termination. The progress of an initiative is
+entered manually, derived from its weighted milestones, or computed by
+Python code, and its health (on track, at risk or off track) compares the
+progress with the elapsed share of the period, using thresholds configured
+on the plan type. The health is recalculated every day, and other modules
+can add their own sources of gap.
 
 
 Work Instruction
@@ -74,6 +82,23 @@ Objective
 * `Restart Objective <docs/strategy_objective/12-restart.html>`_
 * `Reset Objective Document Number <docs/strategy_objective/13-reset-number.html>`_
 * `Reload Objective Policy Template <docs/strategy_objective/15-reload-policy-template.html>`_
+
+Initiative
+----------
+
+* `Create Initiative <docs/strategy_initiative/01-create.html>`_
+* `Edit Initiative <docs/strategy_initiative/02-edit.html>`_
+* `Confirm Initiative <docs/strategy_initiative/04-confirm.html>`_
+* `Approve Initiative <docs/strategy_initiative/05-approve.html>`_
+* `Reject Initiative <docs/strategy_initiative/06-reject.html>`_
+* `Start Initiative <docs/strategy_initiative/07-start.html>`_
+* `Finish Initiative <docs/strategy_initiative/09-finish.html>`_
+* `Cancel Initiative <docs/strategy_initiative/10-cancel.html>`_
+* `Terminate Initiative <docs/strategy_initiative/11-terminate.html>`_
+* `Restart Initiative <docs/strategy_initiative/12-restart.html>`_
+* `Reset Initiative Document Number <docs/strategy_initiative/13-reset-number.html>`_
+* `Restart Initiative Approval Process <docs/strategy_initiative/14-restart-approval.html>`_
+* `Reload Initiative Policy Template <docs/strategy_initiative/15-reload-policy-template.html>`_
 
 
 Installation

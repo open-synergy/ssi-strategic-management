@@ -47,6 +47,10 @@
                         <field name="score_scale" />
                         <field name="score_category_id" />
                     </group>
+                    <group name="configuration_group_2" string="Initiative Health">
+                        <field name="health_yellow_threshold" />
+                        <field name="health_red_threshold" />
+                    </group>
                 </page>
             </xpath>
         </data>

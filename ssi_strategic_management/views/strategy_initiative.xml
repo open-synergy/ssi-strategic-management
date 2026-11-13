@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_initiative_view_search" model="ir.ui.view">
+    <field name="name">strategy_initiative - search</field>
+    <field name="model">strategy_initiative</field>
+    <field
+            name="inherit_id"
+            ref="ssi_transaction_mixin.mixin_transaction_view_search"
+        />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="plan_id" />
+                <field name="owner_id" />
+                <field name="department_id" />
+                <field name="date_start" />
+                <field name="date_end" />
+            </xpath>
+            <xpath expr="//filter[@name='grp_responsible']" position="after">
+                <filter
+                        name="grp_plan_id"
+                        string="Plan"
+                        context="{'group_by':'plan_id'}"
+                    />
+                <filter
+                        name="grp_department_id"
+                        string="Department"
+                        context="{'group_by':'department_id'}"
+                    />
+                <filter
+                        name="grp_health"
+                        string="Health"
+                        context="{'group_by':'health'}"
+                    />
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_initiative_view_tree" model="ir.ui.view">
+    <field name="name">strategy_initiative - tree</field>
+    <field name="model">strategy_initiative</field>
+    <field name="inherit_id" ref="ssi_transaction_mixin.mixin_transaction_view_tree" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="plan_id" />
+                <field name="owner_id" />
+                <field name="department_id" />
+                <field name="date_start" />
+                <field name="date_end" />
+                <field name="progress" widget="progressbar" />
+                <field
+                        name="health"
+                        decoration-success="health == 'green'"
+                        decoration-warning="health == 'yellow'"
+                        decoration-danger="health == 'red'"
+                    />
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_initiative_view_form" model="ir.ui.view">
+    <field name="name">strategy_initiative - form</field>
+    <field name="model">strategy_initiative</field>
+    <field name="inherit_id" ref="ssi_transaction_mixin.mixin_transaction_view_form" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="plan_id" />
+                <field name="owner_id" />
+                <field name="department_id" />
+            </xpath>
+            <xpath expr="//group[@name='header_right']" position="inside">
+                <field name="date_start" />
+                <field name="date_end" />
+                <field name="progress" widget="progressbar" />
+                <field name="health" />
+            </xpath>
+            <xpath expr="//page[@name='note']" position="before">
+                <page name="scope" string="Scope">
+                    <group name="scope_1" colspan="4" col="2">
+                        <field name="objective_ids" widget="many2many_tags" />
+                        <field name="kpi_ids" widget="many2many_tags" />
+                    </group>
+                </page>
+                <page name="progress" string="Progress">
+                    <group name="progress_1" colspan="4" col="2">
+                        <field name="progress_method" />
+                        <field
+                                name="manual_progress"
+                                attrs="{'invisible': [('progress_method', '!=', 'manual')]}"
+                            />
+                        <field
+                                name="python_progress"
+                                attrs="{'invisible': [('progress_method', '!=', 'python')]}"
+                            />
+                    </group>
+                    <div name="progress_action">
+                        <button
+                                name="action_compute_progress"
+                                type="object"
+                                string="Compute Progress"
+                                class="oe_highlight"
+                                attrs="{'invisible': ['|', ('progress_method', '!=', 'python'), ('state', 'not in', ['draft', 'open'])]}"
+                            />
+                    </div>
+                    <field
+                            name="python_code"
+                            colspan="4"
+                            nolabel="1"
+                            attrs="{'invisible': [('progress_method', '!=', 'python')]}"
+                        />
+                    <field
+                            name="milestone_ids"
+                            colspan="4"
+                            nolabel="1"
+                            attrs="{'invisible': [('progress_method', '!=', 'milestone')]}"
+                        >
+                        <tree editable="bottom">
+                            <field name="sequence" widget="handle" />
+                            <field name="name" />
+                            <field name="weight" />
+                            <field name="date_deadline" />
+                            <field name="is_done" />
+                            <field name="date_done" />
+                            <field name="evidence" />
+                        </tree>
+                        <form>
+                            <group name="milestone_form_1" colspan="4" col="2">
+                                <field name="name" />
+                                <field name="weight" />
+                                <field name="date_deadline" />
+                                <field name="is_done" />
+                                <field name="date_done" />
+                                <field name="evidence" />
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_initiative_action" model="ir.actions.act_window">
+    <field name="name">Initiatives</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_initiative</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem
+        id="strategy_initiative_menu"
+        name="Initiatives"
+        parent="menu_strategic_management_strategy"
+        action="strategy_initiative_action"
+        groups="strategy_initiative_viewer_group"
+        sequence="40"
+    />
+</odoo>

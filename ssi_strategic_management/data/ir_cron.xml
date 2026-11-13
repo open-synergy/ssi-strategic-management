@@ -47,4 +47,15 @@
     <field name="numbercall">-1</field>
     <field name="doall" eval="False" />
 </record>
+<record id="strategy_initiative_cron_health" model="ir.cron">
+    <field name="name">Strategy Initiative: update health</field>
+    <field name="model_id" ref="model_strategy_initiative" />
+    <field name="state">code</field>
+    <field name="code">model._cron_update_health()</field>
+    <field name="user_id" ref="base.user_root" />
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="numbercall">-1</field>
+    <field name="doall" eval="False" />
+</record>
 </odoo>

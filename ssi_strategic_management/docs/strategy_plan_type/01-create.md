@@ -24,7 +24,9 @@
    - On the **Configuration** tab, **Methodology**, **Cascade Level** and **Score
      Scale** are automatically defaulted to **Balanced Scorecard**, **Department** and
      **Percentage (0-100+)**. An OKR plan type must use the **OKR (0.0-1.0)** score
-     scale.
+     scale. **At-Risk Threshold (%)** and **Off-Track Threshold (%)** (Initiative Health
+     group) default to **10** and **25**; the at-risk threshold must not exceed the
+     off-track threshold.
 4. Click **Generate Code** in the header to automatically assign a code from the
    `sequence.template` configured for `strategy_plan_type`. This requires an active
    `sequence.template` for this model — without one, the action fails with an error. You
