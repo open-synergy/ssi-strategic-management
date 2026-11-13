@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_initiative_view_form" model="ir.ui.view">
+    <field name="name">strategy_initiative - form (analytic budget)</field>
+    <field name="model">strategy_initiative</field>
+    <field
+            name="inherit_id"
+            ref="ssi_strategic_management.strategy_initiative_view_form"
+        />
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='department_id']" position="after">
+                <field name="analytic_account_id" />
+            </xpath>
+            <xpath expr="//page[@name='scope']" position="after">
+                <page
+                        name="analytic_budget"
+                        string="Budget"
+                        groups="ssi_analytic_budget.analytic_budget_budget_viewer_group"
+                    >
+                    <group name="analytic_budget_1" colspan="4" col="2">
+                        <field name="company_currency_id" invisible="1" />
+                        <field name="amount_planned_cost" />
+                        <field name="amount_cost_realization" />
+                        <field name="budget_absorption" widget="progressbar" />
+                    </group>
+                    <field
+                            name="analytic_budget_ids"
+                            colspan="4"
+                            nolabel="1"
+                            readonly="1"
+                        >
+                        <tree>
+                            <field name="name" />
+                            <field name="analytic_account_id" />
+                            <field name="date_start" />
+                            <field name="date_end" />
+                            <field name="company_currency_id" invisible="1" />
+                            <field name="amount_planned_cost" />
+                            <field name="amount_cost_realization" />
+                            <field name="state" />
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_initiative_view_search" model="ir.ui.view">
+    <field name="name">strategy_initiative - search (analytic budget)</field>
+    <field name="model">strategy_initiative</field>
+    <field
+            name="inherit_id"
+            ref="ssi_strategic_management.strategy_initiative_view_search"
+        />
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='department_id']" position="after">
+                <field name="analytic_account_id" />
+            </xpath>
+        </data>
+    </field>
+</record>
+</odoo>

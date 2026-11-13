@@ -1,0 +1,460 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Initiative Budget Validator"
+        login: "EVAL: 'val%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_initiative_validator_group",
+              ],
+            ]
+    - step: "Create plan type as administrator"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "plan_type"
+      as_user: "base.user_admin"
+      values:
+        name: "Initiative budget test plan type"
+        code: "EVAL: 'IB%s' % datetime.now().strftime('%H%M%S%f')"
+    - step: "Create the running plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan_open"
+      as_user: "validator"
+      values:
+        type_id: "REC: plan_type.id"
+        date_start: "EVAL: date.today() - timedelta(days=400)"
+        date_end: "EVAL: date.today() + timedelta(days=400)"
+    - step: "Start the running plan"
+      action: "call"
+      target: "plan_open"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Get the expense account type"
+      action: "ref"
+      xml_id: "account.data_account_type_expenses"
+      save_as: "acc_type"
+    - step: "Create the expense account"
+      action: "create"
+      model: "account.account"
+      save_as: "acc_exp"
+      values:
+        name: "Initiative budget test expense"
+        code: "EVAL: 'XB%s' % datetime.now().strftime('%H%M%S%f')"
+        user_type_id: "REC: acc_type.id"
+    - step: "Create the budget type"
+      action: "create"
+      model: "analytic_budget.type"
+      save_as: "budget_type"
+      values:
+        name: "Initiative budget test type"
+        code: "EVAL: 'IB%s' % datetime.now().strftime('%H%M%S%f')"
+    - step: "Create the date range type"
+      action: "create"
+      model: "date.range.type"
+      save_as: "drt"
+      values:
+        name: "EVAL: 'Initiative budget %s' % datetime.now().strftime('%H%M%S%f')"
+        allow_overlap: true
+    - step: "Create the period that overlaps the initiatives"
+      action: "create"
+      model: "date.range"
+      save_as: "period_in"
+      values:
+        name: "EVAL: 'In %s' % datetime.now().strftime('%H%M%S%f')"
+        type_id: "REC: drt.id"
+        date_start: "EVAL: date.today() - timedelta(days=30)"
+        date_end: "EVAL: date.today() + timedelta(days=30)"
+    - step: "Create the period that is far after the initiatives"
+      action: "create"
+      model: "date.range"
+      save_as: "period_out"
+      values:
+        name: "EVAL: 'Out %s' % datetime.now().strftime('%H%M%S%f')"
+        type_id: "REC: drt.id"
+        date_start: "EVAL: date.today() + timedelta(days=200)"
+        date_end: "EVAL: date.today() + timedelta(days=260)"
+    - step: "Create the parent analytic account"
+      action: "create"
+      model: "account.analytic.account"
+      save_as: "analytic_parent"
+      values:
+        name: "Initiative budget parent account"
+    - step: "Create the child analytic account"
+      action: "create"
+      model: "account.analytic.account"
+      save_as: "analytic_child"
+      values:
+        name: "Initiative budget child account"
+        parent_id: "REC: analytic_parent.id"
+    - step: "Create the budget that counts, planned cost 1000"
+      action: "create"
+      model: "analytic_budget.budget"
+      save_as: "budget_open"
+      as_user: "base.user_admin"
+      values:
+        type_id: "REC: budget_type.id"
+        analytic_account_id: "REC: analytic_child.id"
+        detail_ids:
+          - - 0
+            - 0
+            - name: "Cost in the period"
+              direction: "cost"
+              account_id: "REC: acc_exp.id"
+              price_unit: 1000.0
+              uom_quantity: 1.0
+              period_id: "REC: period_in.id"
+    - step: "Confirm the budget that counts"
+      action: "call"
+      target: "budget_open"
+      method: "action_confirm"
+      as_user: "base.user_admin"
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "confirm"
+    - step: "Approve the budget that counts"
+      action: "call"
+      target: "budget_open"
+      method: "action_approve_approval"
+      as_user: "base.user_admin"
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create the draft budget, planned cost 5000"
+      action: "create"
+      model: "analytic_budget.budget"
+      save_as: "budget_draft"
+      as_user: "base.user_admin"
+      values:
+        type_id: "REC: budget_type.id"
+        analytic_account_id: "REC: analytic_child.id"
+        detail_ids:
+          - - 0
+            - 0
+            - name: "Cost of the draft budget"
+              direction: "cost"
+              account_id: "REC: acc_exp.id"
+              price_unit: 5000.0
+              uom_quantity: 1.0
+              period_id: "REC: period_in.id"
+    - step: "Create the budget outside the period, planned cost 7000"
+      action: "create"
+      model: "analytic_budget.budget"
+      save_as: "budget_out"
+      as_user: "base.user_admin"
+      values:
+        type_id: "REC: budget_type.id"
+        analytic_account_id: "REC: analytic_child.id"
+        detail_ids:
+          - - 0
+            - 0
+            - name: "Cost outside the period"
+              direction: "cost"
+              account_id: "REC: acc_exp.id"
+              price_unit: 7000.0
+              uom_quantity: 1.0
+              period_id: "REC: period_out.id"
+    - step: "Confirm the budget outside the period"
+      action: "call"
+      target: "budget_out"
+      method: "action_confirm"
+      as_user: "base.user_admin"
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "confirm"
+    - step: "Approve the budget outside the period"
+      action: "call"
+      target: "budget_out"
+      method: "action_approve_approval"
+      as_user: "base.user_admin"
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Post a cost of 500 on the child account"
+      action: "create"
+      model: "account.analytic.line"
+      save_as: "cost_line"
+      as_user: "base.user_admin"
+      values:
+        name: "Initiative budget cost"
+        account_id: "REC: analytic_child.id"
+        amount: -500.0
+        date: "EVAL: date.today() - timedelta(days=10)"
+    - step: "Flush the pending realization"
+      action: "call"
+      target: "budget_open"
+      method: "flush"
+
+scenarios:
+  - name: "The initiative reads the plan, the cost and the absorption of its budgets"
+    steps:
+      - step: "Create the initiative on the parent account"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 50.0
+          date_start: "EVAL: date.today() - timedelta(days=50)"
+          date_end: "EVAL: date.today() + timedelta(days=50)"
+          analytic_account_id: "REC: analytic_parent.id"
+      - step: "Only the open budget of the child account counts"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          analytic_budget_ids:
+            type: "m2m"
+            check: "exact"
+            expected_records:
+              - "REC: budget_open"
+          amount_planned_cost:
+            type: "value"
+            expected: 1000.0
+          amount_cost_realization:
+            type: "value"
+            expected: 500.0
+          budget_absorption:
+            type: "value"
+            expected: 50.0
+
+  - name: "A done budget counts and a budget without a period is always counted"
+    steps:
+      - step: "Create the analytic account of the new budget"
+        action: "create"
+        model: "account.analytic.account"
+        save_as: "analytic_free"
+        values:
+          name: "Initiative budget free account"
+      - step: "Create a budget without any period"
+        action: "create"
+        model: "analytic_budget.budget"
+        save_as: "budget_free"
+        as_user: "base.user_admin"
+        values:
+          type_id: "REC: budget_type.id"
+          analytic_account_id: "REC: analytic_free.id"
+      - step: "Confirm the budget without a period"
+        action: "call"
+        target: "budget_free"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Approve the budget without a period"
+        action: "call"
+        target: "budget_free"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Finish the budget without a period"
+        action: "call"
+        target: "budget_free"
+        method: "action_done"
+        as_user: "base.user_admin"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+      - step: "Post a cost of 300 on the free account"
+        action: "create"
+        model: "account.analytic.line"
+        save_as: "free_line"
+        as_user: "base.user_admin"
+        values:
+          name: "Initiative budget free cost"
+          account_id: "REC: analytic_free.id"
+          amount: -300.0
+          date: "EVAL: date.today() - timedelta(days=10)"
+      - step: "Create the initiative on the free account"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          date_start: "EVAL: date.today() - timedelta(days=50)"
+          date_end: "EVAL: date.today() + timedelta(days=50)"
+          analytic_account_id: "REC: analytic_free.id"
+      - step: "The done budget counts, nothing is planned so absorption is zero"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          analytic_budget_ids:
+            type: "m2m"
+            check: "exact"
+            expected_records:
+              - "REC: budget_free"
+          amount_planned_cost:
+            type: "value"
+            expected: 0.0
+          amount_cost_realization:
+            type: "value"
+            expected: 300.0
+          budget_absorption:
+            type: "value"
+            expected: 0.0
+
+  - name: "An initiative without an analytic account has no budget figure"
+    steps:
+      - step: "Create the initiative without an analytic account"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 20.0
+          date_start: "EVAL: date.today() - timedelta(days=20)"
+          date_end: "EVAL: date.today() + timedelta(days=80)"
+      - step: "Every budget figure is zero"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          analytic_budget_ids:
+            type: "m2m"
+            check: "count"
+            expected_count: 0
+          amount_planned_cost:
+            type: "value"
+            expected: 0.0
+          amount_cost_realization:
+            type: "value"
+            expected: 0.0
+          budget_absorption:
+            type: "value"
+            expected: 0.0
+      - step: "Start the initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          health:
+            type: "value"
+            expected: "green"
+
+  - name: "Budget absorption ahead of the progress turns the health red"
+    steps:
+      - step: "Create an initiative whose progress follows the schedule"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          manual_progress: 20.0
+          date_start: "EVAL: date.today() - timedelta(days=20)"
+          date_end: "EVAL: date.today() + timedelta(days=80)"
+          analytic_account_id: "REC: analytic_child.id"
+      - step: "Start the initiative"
+        action: "call"
+        target: "init"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Force a stale health value"
+        action: "write"
+        target: "init"
+        as_user: "validator"
+        values:
+          health: "green"
+      - step: "Run the cron"
+        action: "call"
+        target: "init"
+        method: "_cron_update_health"
+        as_user: "validator"
+      - step: "The absorption is 50 and the progress 20, so the initiative is off track"
+        action: "assert"
+        target: "init"
+        refresh: true
+        asserts:
+          budget_absorption:
+            type: "value"
+            expected: 50.0
+          health:
+            type: "value"
+            expected: "red"
+
+  - name: "The budget lists the initiatives of its analytic account"
+    steps:
+      - step: "Create an initiative on the account of the budget"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init_child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          date_start: "EVAL: date.today() - timedelta(days=50)"
+          date_end: "EVAL: date.today() + timedelta(days=50)"
+          analytic_account_id: "REC: analytic_child.id"
+      - step: "Create an initiative on the parent account"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "init_parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_open.id"
+          progress_method: "manual"
+          date_start: "EVAL: date.today() - timedelta(days=50)"
+          date_end: "EVAL: date.today() + timedelta(days=50)"
+          analytic_account_id: "REC: analytic_parent.id"
+      - step: "Only the initiative of the same account is listed"
+        action: "assert"
+        target: "budget_open"
+        refresh: true
+        asserts:
+          strategy_initiative_ids:
+            type: "m2m"
+            check: "exact"
+            expected_records:
+              - "REC: init_child"
