@@ -1,0 +1,444 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Review Validator"
+        login: "EVAL: 'srv%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_initiative_validator_group",
+                "REF: ssi_strategic_management.strategy_review_validator_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Create department A"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_a"
+      values:
+        name: "Review Department A"
+    - step: "Create department B"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_b"
+      values:
+        name: "Review Department B"
+    - step: "Create plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "plan_type"
+      as_user: "base.user_admin"
+      values:
+        name: "Review plan type"
+        code: "EVAL: 'RV%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan"
+      as_user: "validator"
+      values:
+        type_id: "REC: plan_type.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create higher is better measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_high"
+      as_user: "validator"
+      values:
+        name: "Review measure higher"
+        code: "EVAL: 'RM%s' % datetime.now().strftime('%H%M%S%f')"
+        polarity: "higher"
+        aggregation: "sum"
+    - step: "Create objective of department A"
+      action: "create"
+      model: "strategy_objective"
+      save_as: "objective_a"
+      as_user: "validator"
+      values:
+        plan_id: "REC: plan.id"
+        department_id: "REC: dept_a.id"
+        perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+    - step: "Create KPI of department A"
+      action: "create"
+      model: "strategy_kpi"
+      save_as: "kpi_a"
+      as_user: "validator"
+      values:
+        objective_id: "REC: objective_a.id"
+        measure_id: "REC: measure_high.id"
+        name: "Review KPI A"
+        weight: 100.0
+    - step: "Create target of department A"
+      action: "create"
+      model: "strategy_kpi.target"
+      save_as: "target_a"
+      as_user: "validator"
+      values:
+        kpi_id: "REC: kpi_a.id"
+        date_start: 2026-01-01
+        date_end: 2026-03-31
+        target: 100.0
+    - step: "Create measurement of department A before the review"
+      action: "create"
+      model: "strategy_kpi.measurement"
+      save_as: "measurement_a"
+      as_user: "validator"
+      values:
+        target_id: "REC: target_a.id"
+        date: 2026-02-15
+        manual_value: 80.0
+    - step: "Create review of the whole plan until the end of February"
+      action: "create"
+      model: "strategy_review"
+      save_as: "review"
+      as_user: "validator"
+      values:
+        plan_id: "REC: plan.id"
+        date_start: 2026-01-01
+        date_end: 2026-02-28
+    - step: "Take the snapshot"
+      action: "call"
+      target: "review"
+      method: "action_take_snapshot"
+      as_user: "validator"
+      refresh: true
+      asserts:
+        line_ids:
+          type: "o2m"
+          check: "count"
+          expected_count: 2
+
+scenarios:
+  - name: "A done review locks the measurements of its period until it is cancelled"
+    steps:
+      - step: "Confirm review"
+        action: "call"
+        target: "review"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Approve review"
+        action: "call"
+        target: "review"
+        method: "action_approve_approval"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+          approved:
+            type: "value"
+            expected: true
+      - step: "Review that is not done yet does not lock the period"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "measurement_before"
+        as_user: "validator"
+        values:
+          target_id: "REC: target_a.id"
+          date: 2026-02-10
+          manual_value: 70.0
+      - step: "Finish review"
+        action: "call"
+        target: "review"
+        method: "action_done"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+      - step: "Create a measurement inside the reviewed period"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        as_user: "validator"
+        values:
+          target_id: "REC: target_a.id"
+          date: 2026-02-20
+          manual_value: 10.0
+        expect_error:
+          type: "UserError"
+          message_contains: "Measurements of a reviewed period are locked."
+      - step: "Change a measurement inside the reviewed period"
+        action: "write"
+        target: "measurement_a"
+        as_user: "validator"
+        values:
+          manual_value: 10.0
+        expect_error:
+          type: "UserError"
+          message_contains: "Measurements of a reviewed period are locked."
+      - step: "Delete a measurement inside the reviewed period"
+        action: "unlink"
+        target: "measurement_a"
+        as_user: "validator"
+        expect_error:
+          type: "UserError"
+          message_contains: "Measurements of a reviewed period are locked."
+      - step: "Create a measurement outside the reviewed period"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "measurement_outside"
+        as_user: "validator"
+        values:
+          target_id: "REC: target_a.id"
+          date: 2026-03-15
+          manual_value: 30.0
+      - step: "Change a measurement outside the reviewed period"
+        action: "write"
+        target: "measurement_outside"
+        as_user: "validator"
+        values:
+          note: "Still editable"
+      - step: "Move a measurement into the reviewed period"
+        action: "write"
+        target: "measurement_outside"
+        as_user: "validator"
+        values:
+          date: 2026-02-20
+        expect_error:
+          type: "UserError"
+          message_contains: "Measurements of a reviewed period are locked."
+      - step: "Cancel the review"
+        action: "call"
+        target: "review"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Create a measurement inside the period again"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "measurement_again"
+        as_user: "validator"
+        values:
+          target_id: "REC: target_a.id"
+          date: 2026-02-20
+          manual_value: 10.0
+      - step: "Change a measurement inside the period again"
+        action: "write"
+        target: "measurement_a"
+        as_user: "validator"
+        values:
+          manual_value: 60.0
+      - step: "Delete a measurement inside the period again"
+        action: "unlink"
+        target: "measurement_again"
+        as_user: "validator"
+      - step: "Measurement is gone"
+        action: "search"
+        model: "strategy_kpi.measurement"
+        domain: [["target_id", "=", "REC: target_a.id"], ["date", "=", "2026-02-20"]]
+        save_as: "gone"
+        expect_count: 0
+
+  - name: "A review of one department locks only the objectives of that department"
+    steps:
+      - step: "Create objective of department B"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_b.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI of department B"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_b"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_b.id"
+          measure_id: "REC: measure_high.id"
+          name: "Review KPI B"
+          weight: 100.0
+      - step: "Create target of department B"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "target_b"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_b.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create review of department A"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-02-28
+      - step: "Take the snapshot of department A"
+        action: "call"
+        target: "review_a"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+      - step: "Confirm review of department A"
+        action: "call"
+        target: "review_a"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Approve review of department A"
+        action: "call"
+        target: "review_a"
+        method: "action_approve_approval"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+          approved:
+            type: "value"
+            expected: true
+      - step: "Finish review of department A"
+        action: "call"
+        target: "review_a"
+        method: "action_done"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+      - step: "Objective of department A is locked"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        as_user: "validator"
+        values:
+          target_id: "REC: target_a.id"
+          date: 2026-02-20
+          manual_value: 10.0
+        expect_error:
+          type: "UserError"
+          message_contains: "Measurements of a reviewed period are locked."
+      - step: "Objective of department B is not locked"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "measurement_b"
+        as_user: "validator"
+        values:
+          target_id: "REC: target_b.id"
+          date: 2026-02-20
+          manual_value: 10.0
+
+  - name: "A done review does not lock the measurements of another plan"
+    steps:
+      - step: "Create the other plan"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan_other"
+        as_user: "validator"
+        values:
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create objective of the other plan"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_other"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_other.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI of the other plan"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_other"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_other.id"
+          measure_id: "REC: measure_high.id"
+          name: "Review KPI other"
+          weight: 100.0
+      - step: "Create target of the other plan"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "target_other"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_other.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Confirm review"
+        action: "call"
+        target: "review"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Approve review"
+        action: "call"
+        target: "review"
+        method: "action_approve_approval"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+          approved:
+            type: "value"
+            expected: true
+      - step: "Finish review"
+        action: "call"
+        target: "review"
+        method: "action_done"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+      - step: "Measurement of the other plan is not locked"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "measurement_other"
+        as_user: "validator"
+        values:
+          target_id: "REC: target_other.id"
+          date: 2026-02-20
+          manual_value: 10.0

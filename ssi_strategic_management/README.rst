@@ -31,6 +31,12 @@ Python code, and its health (on track, at risk or off track) compares the
 progress with the elapsed share of the period, using thresholds configured
 on the plan type. The health is recalculated every day, and other modules
 can add their own sources of gap.
+Strategy reviews are periodic reviews of a plan, optionally for one department
+only: a snapshot copies the scores of the objectives, the targets, realizations
+and scores of the KPIs, the progress and health of the initiatives and the
+score of the plan, reviewers add comments and corrective actions, and the
+review goes through an approval workflow. Finishing a review locks the
+measurements recorded inside its period, and cancelling it unlocks them again.
 
 
 Work Instruction
@@ -99,6 +105,20 @@ Initiative
 * `Reset Initiative Document Number <docs/strategy_initiative/13-reset-number.html>`_
 * `Restart Initiative Approval Process <docs/strategy_initiative/14-restart-approval.html>`_
 * `Reload Initiative Policy Template <docs/strategy_initiative/15-reload-policy-template.html>`_
+
+Review
+------
+
+* `Create Review <docs/strategy_review/01-create.html>`_
+* `Confirm Review <docs/strategy_review/04-confirm.html>`_
+* `Approve Review <docs/strategy_review/05-approve.html>`_
+* `Reject Review <docs/strategy_review/06-reject.html>`_
+* `Finish Review <docs/strategy_review/09-finish.html>`_
+* `Cancel Review <docs/strategy_review/10-cancel.html>`_
+* `Restart Review <docs/strategy_review/12-restart.html>`_
+* `Reset Review Document Number <docs/strategy_review/13-reset-number.html>`_
+* `Restart Review Approval Process <docs/strategy_review/14-restart-approval.html>`_
+* `Reload Review Policy Template <docs/strategy_review/15-reload-policy-template.html>`_
 
 
 Installation

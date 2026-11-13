@@ -37,6 +37,10 @@
                 type="text/javascript"
                 src="/ssi_strategic_management/static/tests/tours/strategy_initiative_tour.js"
             />
+            <script
+                type="text/javascript"
+                src="/ssi_strategic_management/static/tests/tours/strategy_review_tour.js"
+            />
         </xpath>
     </template>
 </odoo>

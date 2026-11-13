@@ -15,6 +15,7 @@ from . import (  # noqa: F401
     test_strategy_kpi_cron_order,
     test_strategy_kpi_python_access,
     test_strategy_initiative,
+    test_strategy_review,
     test_ui_strategy_perspective,
     test_ui_strategy_measure,
     test_ui_strategy_score_category,
@@ -22,4 +23,5 @@ from . import (  # noqa: F401
     test_ui_strategy_plan,
     test_ui_strategy_objective,
     test_ui_strategy_initiative,
+    test_ui_strategy_review,
 )

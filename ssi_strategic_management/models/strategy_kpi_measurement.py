@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class StrategyKpiMeasurement(models.Model):
@@ -15,6 +15,10 @@ class StrategyKpiMeasurement(models.Model):
     mode). An automatic value can be overridden by a manual one, which
     then requires a dissenting note. The ``value`` field carries the
     figure that the target rolls up.
+
+    The measurements of a period that a done review covers are locked:
+    they cannot be created, changed or deleted until the review is
+    cancelled.
     """
 
     _name = "strategy_kpi.measurement"
@@ -170,3 +174,63 @@ Solution: Type a dissenting note or uncheck the override
         return not (
             self.mode == "auto" and self.override_automatic and not self.dissenting_note
         )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Reject measurements created inside a reviewed period.
+
+        The lock is checked once the records exist, so the default date
+        is taken into account. The error rolls the creation back.
+
+        :param vals_list: list of values of the measurements to create
+        :return: the created measurements
+        :raises UserError: when a measurement falls in a locked period
+        """
+        result = super().create(vals_list)
+        result._check_period_lock()
+        return result
+
+    def write(self, vals):
+        """Reject changes of the measurements of a reviewed period.
+
+        The measurements are checked before the change, and again after
+        it when the target or the date moved, so that a measurement
+        cannot be moved into a locked period either.
+
+        :param vals: values to write
+        :return: True
+        :raises UserError: when a measurement is in a locked period
+        """
+        self._check_period_lock()
+        result = super().write(vals)
+        if "target_id" in vals or "date" in vals:
+            self._check_period_lock()
+        return result
+
+    def unlink(self):
+        """Reject deleting the measurements of a reviewed period.
+
+        :return: True
+        :raises UserError: when a measurement is in a locked period
+        """
+        self._check_period_lock()
+        return super().unlink()
+
+    def _check_period_lock(self):
+        """Reject the measurements that a done review locks.
+
+        :raises UserError: when a done review of the plan of the target
+            covers the date of a measurement
+        """
+        review_obj = self.env["strategy_review"]
+        for record in self:
+            if review_obj._get_locking_reviews(record.target_id, record.date):
+                error_message = """
+Context: Record KPI measurement
+Database ID: %s
+Problem: Measurements of a reviewed period are locked.
+Solution: Cancel the done review of the period to unlock its measurements
+""" % (
+                    record.id,
+                )
+                raise UserError(_(error_message))

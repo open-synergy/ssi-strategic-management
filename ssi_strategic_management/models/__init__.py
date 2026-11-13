@@ -17,4 +17,6 @@ from . import (  # noqa: F401
     strategy_kpi_measurement,
     strategy_initiative,
     strategy_initiative_milestone,
+    strategy_review,
+    strategy_review_line,
 )

@@ -1,0 +1,750 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Review Validator"
+        login: "EVAL: 'srv%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_initiative_validator_group",
+                "REF: ssi_strategic_management.strategy_review_validator_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Create department A"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_a"
+      values:
+        name: "Review Department A"
+    - step: "Create department B"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_b"
+      values:
+        name: "Review Department B"
+    - step: "Create plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "plan_type"
+      as_user: "base.user_admin"
+      values:
+        name: "Review plan type"
+        code: "EVAL: 'RV%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan"
+      as_user: "validator"
+      values:
+        type_id: "REC: plan_type.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create higher is better measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_high"
+      as_user: "validator"
+      values:
+        name: "Review measure higher"
+        code: "EVAL: 'RM%s' % datetime.now().strftime('%H%M%S%f')"
+        polarity: "higher"
+        aggregation: "sum"
+
+scenarios:
+  - name: "Snapshot copies the scores and keeps them when the sources change"
+    steps:
+      - step: "Create objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Review KPI"
+          weight: 100.0
+      - step: "Create target of the first quarter"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "target"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create measurement"
+        action: "create"
+        model: "strategy_kpi.measurement"
+        save_as: "measurement"
+        as_user: "validator"
+        values:
+          target_id: "REC: target.id"
+          date: 2026-02-15
+          manual_value: 80.0
+      - step: "Create initiative"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "initiative"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          progress_method: "manual"
+          manual_progress: 40.0
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Plan score follows the objective"
+        action: "assert"
+        target: "plan"
+        asserts:
+          score:
+            type: "value"
+            expected: 80.0
+      - step: "Create review of the whole plan"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Review starts in draft without lines"
+        action: "assert"
+        target: "review"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 0
+          plan_score:
+            type: "value"
+            expected: 0.0
+      - step: "Take the snapshot"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          plan_score:
+            type: "value"
+            expected: 80.0
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 3
+      - step: "Find the objective line"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "objective"]]
+        save_as: "line_objective"
+        expect_count: 1
+      - step: "Objective line copies the score"
+        action: "assert"
+        target: "line_objective"
+        asserts:
+          objective_id:
+            type: "m2o"
+            expected: "REC: objective"
+          score:
+            type: "value"
+            expected: 80.0
+      - step: "Find the KPI line"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "kpi"]]
+        save_as: "line_kpi"
+        expect_count: 1
+      - step: "KPI line copies target, realization and score"
+        action: "assert"
+        target: "line_kpi"
+        asserts:
+          kpi_id:
+            type: "m2o"
+            expected: "REC: kpi"
+          objective_id:
+            type: "m2o"
+            expected: "REC: objective"
+          target:
+            type: "value"
+            expected: 100.0
+          realization:
+            type: "value"
+            expected: 80.0
+          score:
+            type: "value"
+            expected: 80.0
+      - step: "Find the initiative line"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "initiative"]]
+        save_as: "line_initiative"
+        expect_count: 1
+      - step: "Initiative line copies progress and health"
+        action: "assert"
+        target: "line_initiative"
+        asserts:
+          initiative_id:
+            type: "m2o"
+            expected: "REC: initiative"
+          progress:
+            type: "value"
+            expected: 40.0
+          health:
+            type: "value"
+            operator: "is_falsy"
+      - step: "Change the measurement after the snapshot"
+        action: "write"
+        target: "measurement"
+        as_user: "validator"
+        values:
+          manual_value: 50.0
+      - step: "Change the initiative progress after the snapshot"
+        action: "write"
+        target: "initiative"
+        as_user: "validator"
+        values:
+          manual_progress: 90.0
+      - step: "Sources moved on"
+        action: "assert"
+        target: "plan"
+        asserts:
+          score:
+            type: "value"
+            expected: 50.0
+      - step: "Snapshot values did not change"
+        action: "assert"
+        target: "review"
+        asserts:
+          plan_score:
+            type: "value"
+            expected: 80.0
+      - step: "KPI line did not change"
+        action: "assert"
+        target: "line_kpi"
+        asserts:
+          realization:
+            type: "value"
+            expected: 80.0
+          score:
+            type: "value"
+            expected: 80.0
+      - step: "Initiative line did not change"
+        action: "assert"
+        target: "line_initiative"
+        asserts:
+          progress:
+            type: "value"
+            expected: 40.0
+      - step: "Take the snapshot again"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          plan_score:
+            type: "value"
+            expected: 50.0
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 3
+      - step: "Find the refreshed KPI line"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "kpi"]]
+        save_as: "line_kpi_new"
+        expect_count: 1
+      - step: "Refreshed KPI line copies the new figures"
+        action: "assert"
+        target: "line_kpi_new"
+        asserts:
+          realization:
+            type: "value"
+            expected: 50.0
+          score:
+            type: "value"
+            expected: 50.0
+
+  - name:
+      "Snapshot of a department leaves out other departments and cancelled objectives"
+    steps:
+      - step: "Create objective of department A"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create objective of department B"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_b.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create cancelled objective of department A"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_cancelled"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Cancel the objective"
+        action: "call"
+        target: "objective_cancelled"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Create KPI of department A without a target in the period"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_a"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_a.id"
+          measure_id: "REC: measure_high.id"
+          name: "Review KPI A"
+          weight: 100.0
+      - step: "Create target of the third quarter"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "target_q3"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_a.id"
+          date_start: 2026-07-01
+          date_end: 2026-09-30
+          target: 100.0
+      - step: "Create initiative of department A"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "initiative_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          progress_method: "manual"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create initiative of department B"
+        action: "create"
+        model: "strategy_initiative"
+        save_as: "initiative_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_b.id"
+          progress_method: "manual"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Create review of department A"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Take the snapshot"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+      - step: "Find the objective line"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "objective"]]
+        save_as: "line_objective"
+        expect_count: 1
+      - step: "Only the objective of department A is copied"
+        action: "assert"
+        target: "line_objective"
+        asserts:
+          objective_id:
+            type: "m2o"
+            expected: "REC: objective_a"
+      - step: "Find the initiative line"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "initiative"]]
+        save_as: "line_initiative"
+        expect_count: 1
+      - step: "Only the initiative of department A is copied"
+        action: "assert"
+        target: "line_initiative"
+        asserts:
+          initiative_id:
+            type: "m2o"
+            expected: "REC: initiative_a"
+      - step: "No KPI line without a target in the period"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "kpi"]]
+        save_as: "lines_kpi"
+        expect_count: 0
+
+  - name: "Snapshot takes the target that ends last among those in the period"
+    steps:
+      - step: "Create objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective.id"
+          measure_id: "REC: measure_high.id"
+          name: "Review KPI"
+          weight: 100.0
+      - step: "Create target of the first quarter"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "target_q1"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          target: 100.0
+      - step: "Create target of the second quarter"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "target_q2"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi.id"
+          date_start: 2026-04-01
+          date_end: 2026-06-30
+          target: 200.0
+      - step: "Create review of the first semester"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          date_start: 2026-01-01
+          date_end: 2026-06-30
+      - step: "Take the snapshot"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 2
+      - step: "Find the KPI line"
+        action: "search"
+        model: "strategy_review.line"
+        domain: [["review_id", "=", "REC: review.id"], ["line_type", "=", "kpi"]]
+        save_as: "line_kpi"
+        expect_count: 1
+      - step: "KPI line copies the target that ends last"
+        action: "assert"
+        target: "line_kpi"
+        asserts:
+          target:
+            type: "value"
+            expected: 200.0
+          realization:
+            type: "value"
+            expected: 0.0
+
+  - name: "Review goes from draft to done through approval"
+    steps:
+      - step: "Create objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create review"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+          summary: "Quarter review"
+      - step: "Take the snapshot"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 1
+      - step: "Confirm review"
+        action: "call"
+        target: "review"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Approve review as validator"
+        action: "call"
+        target: "review"
+        method: "action_approve_approval"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+          approved:
+            type: "value"
+            expected: true
+      - step: "Finish review"
+        action: "call"
+        target: "review"
+        method: "action_done"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+          name:
+            type: "value"
+            operator: "contains"
+            expected: "SR/"
+
+  - name: "Review that is rejected can be restarted"
+    steps:
+      - step: "Create objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create review"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Take the snapshot"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 1
+      - step: "Confirm review"
+        action: "call"
+        target: "review"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Reject review as validator"
+        action: "call"
+        target: "review"
+        method: "action_reject_approval"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "reject"
+      - step: "Restart review"
+        action: "call"
+        target: "review"
+        method: "action_restart"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Draft review can be cancelled and restarted"
+    steps:
+      - step: "Create review"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Cancel review"
+        action: "call"
+        target: "review"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Restart review"
+        action: "call"
+        target: "review"
+        method: "action_restart"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Confirming a review without a snapshot is rejected"
+    steps:
+      - step: "Create review"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Confirm review"
+        action: "call"
+        target: "review"
+        method: "action_confirm"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains: "Take a snapshot before confirming the review."
+
+  - name: "A snapshot can only be taken while the review is a draft"
+    steps:
+      - step: "Create objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create review"
+        action: "create"
+        model: "strategy_review"
+        save_as: "review"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          date_start: 2026-01-01
+          date_end: 2026-03-31
+      - step: "Take the snapshot"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          line_ids:
+            type: "o2m"
+            check: "count"
+            expected_count: 1
+      - step: "Confirm review"
+        action: "call"
+        target: "review"
+        method: "action_confirm"
+        as_user: "validator"
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Take the snapshot again"
+        action: "call"
+        target: "review"
+        method: "action_take_snapshot"
+        as_user: "validator"
+        expect_error:
+          type: "UserError"
+          message_contains: "A snapshot can only be taken while the review is a draft."
