@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class StrategyKpi(models.Model):
@@ -295,6 +295,78 @@ class StrategyKpi(models.Model):
                 latest = measured.sorted(key=lambda r: (r.date_end, r.id))[-1]
                 result = latest.score
             record.score = result
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Create KPIs and guard the Python code against unauthorized users.
+
+        :param vals_list: list of value dictionaries of the new KPIs
+        :return: the created KPIs
+        :raises AccessError: when a user outside the measure configurators
+            sets a Python code that is not the one of the measure
+        """
+        records = super().create(vals_list)
+        if any(
+            "python_code" in vals or "realization_method" in vals for vals in vals_list
+        ):
+            records._check_python_code_access()
+        return records
+
+    def write(self, vals):
+        """Update KPIs and guard the Python code against unauthorized users.
+
+        :param vals: dictionary of the values to write
+        :return: result of the parent method
+        :raises AccessError: when a user outside the measure configurators
+            sets a Python code that is not the one of the measure
+        """
+        result = super().write(vals)
+        if "python_code" in vals or "realization_method" in vals:
+            self._check_python_code_access()
+        return result
+
+    def _check_python_code_access(self):
+        """Reject Python code that the user is not allowed to set.
+
+        Superusers and members of the strategy measure configurators
+        group may set any code. Other users may only keep the Python
+        code and the Python method carried by the measure of the KPI.
+
+        :raises AccessError: when the condition method returns False
+        """
+        if self.env.su or self.env.user.has_group(
+            "ssi_strategic_management.strategy_measure_group"
+        ):
+            return
+        for record in self.sudo():
+            if not record._check_python_code_access_condition():
+                error_message = (
+                    "\nContext: Create or update strategy KPI\n"
+                    "Database ID: %s\n"
+                    "Problem: Only strategy measure configurators may "
+                    "change the Python code of a KPI.\n"
+                    "Solution: Select a measure that already carries the "
+                    "Python code, or ask a strategy measure configurator "
+                    "to change it\n"
+                ) % (record.id,)
+                raise AccessError(_(error_message))
+
+    def _check_python_code_access_condition(self):
+        """Tell whether the Python code of the KPI comes from its measure.
+
+        Extension point: override to relax or tighten the rule.
+
+        :return: False when the method is Python while the measure is
+            not, or when the code differs from the code of the measure
+        """
+        self.ensure_one()
+        measure = self.measure_id
+        if (
+            self.realization_method == "python"
+            and measure.realization_method != "python"
+        ):
+            return False
+        return (self.python_code or "") == (measure.python_code or "")
 
     @api.onchange("measure_id")
     def onchange_score_range_ids(self):
