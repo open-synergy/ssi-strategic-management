@@ -21,7 +21,7 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
-[ssi_strategic_management](ssi_strategic_management/) | 14.0.1.1.0 |  | Strategic Management
+[ssi_strategic_management](ssi_strategic_management/) | 14.0.1.2.0 |  | Strategic Management
 
 [//]: # (end addons)
 
