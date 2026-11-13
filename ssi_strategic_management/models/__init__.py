@@ -9,4 +9,5 @@ from . import (  # noqa: F401
     strategy_score_category,
     strategy_score_category_range,
     strategy_plan_type,
+    strategy_plan,
 )
