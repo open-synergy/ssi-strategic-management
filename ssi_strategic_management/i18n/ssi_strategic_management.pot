@@ -20,6 +20,11 @@ msgid "# Document"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__kpi_id
+msgid "# KPI"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__measure_id
 msgid "# Measure"
 msgstr ""
@@ -103,6 +108,7 @@ msgid "Activity Type Icon"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__aggregation
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregation
 msgid "Aggregation"
 msgstr ""
@@ -148,6 +154,11 @@ msgid "Approved"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__key_result_type__aspirational
+msgid "Aspirational"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__message_attachment_count
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__message_attachment_count
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__message_attachment_count
@@ -158,6 +169,7 @@ msgid "Attachment Count"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__aggregation__avg
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__avg
 msgid "Average"
 msgstr ""
@@ -172,6 +184,11 @@ msgstr ""
 msgid ""
 "Balanced Scorecard perspective of this objective. Required for plans that "
 "follow the Balanced Scorecard methodology."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__baseline
+msgid "Baseline"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -255,6 +272,11 @@ msgid "Cascade Method"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__is_key_result
+msgid "Check to mark this KPI as a Key Result of an OKR objective."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__child_ids
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_form
 msgid "Child Objectives"
@@ -276,6 +298,18 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_perspective__color
 msgid "Color index used to tint the perspective on dashboards."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__key_result_type__committed
+msgid "Committed"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__key_result_type
+msgid ""
+"Committed = must be achieved fully, Aspirational = a stretch goal. Required "
+"for key results."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -338,6 +372,10 @@ msgid "Contributive"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__create_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__create_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__create_uid
@@ -350,6 +388,10 @@ msgid "Created by"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__create_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__create_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__create_date
@@ -372,13 +414,32 @@ msgid "Data Source"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__date
+msgid "Date"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__date_end
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__date_end
 msgid "Date End"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__date_start
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__date_start
 msgid "Date Start"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__date_range_id
+msgid "Date range that fills the start and end date of the target."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__date
+msgid ""
+"Date that the value was observed. It must lie within the period of the "
+"target."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -386,6 +447,11 @@ msgstr ""
 msgid ""
 "Deepest organization level objectives can be cascaded to: Department = stop "
 "at departments, Employee = continue down to employees."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__target
+msgid "Default Target"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -417,6 +483,12 @@ msgid "Direction"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__polarity
+msgid ""
+"Direction in which the KPI improves. Copied from the measure and editable."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__polarity
 msgid ""
 "Direction in which the measure improves: Higher is Better = larger values "
@@ -425,6 +497,10 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__display_name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__display_name
@@ -475,8 +551,18 @@ msgid "Employee who is accountable for achieving this objective."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__final_score
+msgid "Final Score"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:strategy_perspective,name:ssi_strategic_management.strategy_perspective_financial
 msgid "Financial"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__date_start
+msgid "First day of the target period."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -520,6 +606,14 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__score_method
+msgid ""
+"Formula that turns a realization into a score: Higher is Better = "
+"realization / target, Lower is Better = target / realization, Within Range ="
+" score of the matching score range. Derived from the polarity and editable."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__note
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__note
 msgid ""
@@ -533,12 +627,21 @@ msgid "Frequency"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__min_value
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__min_value
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__min_value
 msgid "From"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_measurement_view_search
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_search
+msgid "Group By"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__polarity__higher
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__score_method__higher
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__polarity__higher
 msgid "Higher is Better"
 msgstr ""
@@ -546,6 +649,13 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__score_max
 msgid "Highest score a realization can receive."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__score_max
+msgid ""
+"Highest score a realization can receive. Copied from the measure and "
+"editable."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -561,6 +671,14 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__aggregation
+msgid ""
+"How the measurements of a target roll up into its realization: Sum = add "
+"them, Average = mean value, Last Value = value of the latest measurement. "
+"Copied from the measure and editable."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__cascade_method
 msgid ""
 "How this objective is derived from its parent: Direct = taken over as is, "
@@ -568,6 +686,10 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__id
@@ -657,6 +779,58 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__kpi_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__kpi_id
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_measurement_view_search
+msgid "KPI"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__kpi_id
+msgid "KPI of the target."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_score_range__kpi_id
+msgid "KPI that owns this score range line."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__kpi_id
+msgid "KPI that this target belongs to."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_kpi_action
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__kpi_ids
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_kpi_menu
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_form
+msgid "KPIs"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__is_key_result
+msgid "Key Result"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__key_result_type
+msgid "Key Result Type"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_search
+msgid "Key Results"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__kpi_ids
+msgid ""
+"Key performance indicators that measure this objective. Their weights must "
+"add up to 100% before the objective starts."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__name
 msgid "Label"
 msgstr ""
@@ -679,6 +853,10 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range____last_update
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective____last_update
@@ -691,6 +869,10 @@ msgid "Last Modified on"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__write_uid
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__write_uid
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__write_uid
@@ -703,6 +885,10 @@ msgid "Last Updated by"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__write_date
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__write_date
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__write_date
@@ -715,8 +901,14 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__aggregation__last
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__last
 msgid "Last Value"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__date_end
+msgid "Last day of the target period."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -730,6 +922,7 @@ msgid "Learning & Growth"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_score_range__min_value
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__min_value
 msgid "Lower bound of the realization value range."
 msgstr ""
@@ -740,6 +933,8 @@ msgid "Lower bound of the score range."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__polarity__lower
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__score_method__lower
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__polarity__lower
 msgid "Lower is Better"
 msgstr ""
@@ -747,6 +942,13 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__score_min
 msgid "Lowest score a realization can receive."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__score_min
+msgid ""
+"Lowest score a realization can receive. Copied from the measure and "
+"editable."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -771,6 +973,13 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__score_range_ids
 msgid "Mapping from realization value ranges to scores."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__score_range_ids
+msgid ""
+"Mapping from realization value ranges to scores. Filled from the measure and"
+" editable."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -802,8 +1011,15 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__score_max
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__score_max
 msgid "Maximum Score"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__measure_id
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_search
+msgid "Measure"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -813,8 +1029,26 @@ msgid "Measure Library"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__measure_id
+msgid ""
+"Measure of the library that defines how this KPI is expressed and scored."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__measure_id
 msgid "Measure that owns this score range line."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__value
+msgid "Measured Value"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_kpi_measurement_action
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__measurement_ids
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_kpi_measurement_menu
+msgid "Measurements"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -848,6 +1082,7 @@ msgid "Methodology of the plan type of the plan: Balanced Scorecard or OKR."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__score_min
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__score_min
 msgid "Minimum Score"
 msgstr ""
@@ -883,11 +1118,23 @@ msgid "My Activity Deadline"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__name
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan_type__name
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category__name
 msgid "Name"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__name
+msgid "Name of the KPI."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__name
+msgid "Name of the target, built from the KPI and the period."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -931,6 +1178,7 @@ msgid "Next Approvals"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__note
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__note
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__note
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_perspective__note
@@ -1001,6 +1249,13 @@ msgid "OKR (0.0-1.0)"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__objective_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__objective_id
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_search
+msgid "Objective"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__objective_type
 msgid "Objective Type"
 msgstr ""
@@ -1066,6 +1321,11 @@ msgid "Percentage (0-100+)"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__date_range_id
+msgid "Period"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__perspective_id
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_search
 msgid "Perspective"
@@ -1123,6 +1383,7 @@ msgid "Plans that are contained in this plan."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__polarity
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__polarity
 msgid "Polarity"
 msgstr ""
@@ -1145,6 +1406,21 @@ msgid "Ranges"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__realization
+msgid "Realization"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__measurement_ids
+msgid "Realizations recorded for this target."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__user_id
+msgid "Recorded By"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__reject_ok
 msgid ""
 "Reject policy\n"
@@ -1155,6 +1431,11 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__rejected
 msgid "Rejected"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__note
+msgid "Remark about the measurement."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1207,6 +1488,9 @@ msgid "Scale in which scores of plans of this type are expressed."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__score
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__score
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__score
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__score
 msgid "Score"
 msgstr ""
@@ -1228,7 +1512,15 @@ msgid "Score Limits"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__score_method
+msgid "Score Method"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__score_range_ids
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__score_range_ids
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_form
 msgid "Score Ranges"
 msgstr ""
 
@@ -1248,8 +1540,28 @@ msgid "Score category used to classify scores of plans of this type."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_score_range__score
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__score
 msgid "Score earned when the realization falls in this range."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__final_score
+msgid "Score multiplied by the weight of the KPI."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__score
+msgid ""
+"Score of the measured target with the latest end date. 0 when no target has "
+"a measurement yet."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__score
+msgid ""
+"Score of the realization against the target, following the score method of "
+"the KPI."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1278,6 +1590,13 @@ msgstr ""
 msgid ""
 "Share of the parent objective that this objective carries. The weights of "
 "the contributing children of one parent must add up to 100%."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__weight
+msgid ""
+"Share of this KPI in the objective. The weights of all KPIs of an objective "
+"must add up to 100% before the objective can be started."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1341,6 +1660,26 @@ msgid "Strategy"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_kpi
+msgid "Strategy KPI"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_kpi_measurement
+msgid "Strategy KPI - Measurement"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_kpi_score_range
+msgid "Strategy KPI - Score Range"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model,name:ssi_strategic_management.model_strategy_kpi_target
+msgid "Strategy KPI - Target"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model,name:ssi_strategic_management.model_strategy_measure
 #: model:res.groups,name:ssi_strategic_management.strategy_measure_group
 msgid "Strategy Measure"
@@ -1389,6 +1728,16 @@ msgid "Strategy Score Category - Range"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__objective_id
+msgid "Strategy objective of the KPI."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__objective_id
+msgid "Strategy objective that this KPI measures."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__plan_id
 msgid "Strategy plan that owns this objective."
 msgstr ""
@@ -1400,11 +1749,42 @@ msgid "Sub-Plans"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__aggregation__sum
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__sum
 msgid "Sum"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__target_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__target
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_measurement_view_search
+msgid "Target"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__target
+msgid "Target proposed for every new period of this KPI."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__target_id
+msgid "Target that this measurement is recorded for."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__target_ids
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_form
+msgid "Targets"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__target_ids
+msgid "Targets of this KPI per period."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_score_range__max_value
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure_score_range__max_value
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_score_category_range__max_value
 msgid "To"
@@ -1435,8 +1815,16 @@ msgid "Type of the exception activity on record."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__uom_label
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__uom_label
 msgid "Unit"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__uom_label
+msgid ""
+"Unit label shown next to values of this KPI. Copied from the measure and "
+"editable."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1465,6 +1853,7 @@ msgid "Unread Messages Counter"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_score_range__max_value
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure_score_range__max_value
 msgid "Upper bound of the realization value range."
 msgstr ""
@@ -1501,6 +1890,11 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__user_id
+msgid "User who recorded the measurement."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__active_approver_user_ids
 msgid "Users that can approve/reject document"
 msgstr ""
@@ -1509,6 +1903,40 @@ msgstr ""
 #: model:res.groups,name:ssi_strategic_management.strategy_objective_validator_group
 #: model:res.groups,name:ssi_strategic_management.strategy_plan_validator_group
 msgid "Validator"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__manual_value
+msgid "Value"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__manual_value
+msgid "Value entered manually."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__baseline
+msgid "Value of the KPI before the plan period started."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__realization
+msgid ""
+"Value of the measurements rolled up with the aggregation of the KPI. 0 when "
+"there is no measurement."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__value
+msgid "Value that the target rolls up. Equals the manual value."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__target
+msgid ""
+"Value to reach in the period. Proposed from the default target of the KPI "
+"and editable."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1548,6 +1976,11 @@ msgid "Website communication history"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__weight
+msgid "Weight (%)"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__data_source
 msgid "Where the realization data of this measure comes from."
 msgstr ""
@@ -1561,6 +1994,8 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__polarity__range
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__score_method__range
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__polarity__range
 msgid "Within Range"
 msgstr ""
