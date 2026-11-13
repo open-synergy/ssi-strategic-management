@@ -108,6 +108,17 @@ msgid "Activity Type Icon"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
+msgid "Aggregate"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__realization_method__aggregate
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__realization_method__aggregate
+msgid "Aggregate (no code)"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__aggregation
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregation
 msgid "Aggregation"
@@ -169,8 +180,25 @@ msgid "Attachment Count"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi_measurement__mode__auto
+msgid "Automatic"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__is_automatic
+msgid "Automatic Realization"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__automatic_value
+msgid "Automatic Value"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__aggregation__avg
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregate_function__avg
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__avg
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__denominator_function__avg
 msgid "Average"
 msgstr ""
 
@@ -272,8 +300,35 @@ msgid "Cascade Method"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__use_ratio
+msgid ""
+"Check to divide the aggregate above by a second aggregate (the denominator) "
+"and express the result as a percentage."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__is_key_result
 msgid "Check to mark this KPI as a Key Result of an OKR objective."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__override_automatic
+msgid ""
+"Check to use the manual value instead of the automatic value. A dissenting "
+"note is then required."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__is_automatic
+msgid ""
+"Checked when the realization of this target can be computed: the KPI is not "
+"manual, or it has child KPIs."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__child_kpi_ids
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_form
+msgid "Child KPIs"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -343,6 +398,12 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_form
+msgid "Compute"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.ui.menu,name:ssi_strategic_management.menu_strategic_management_configuration
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_type_view_form
 msgid "Configuration"
@@ -369,6 +430,12 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_objective__cascade_method__contributive
 msgid "Contributive"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregate_function__count
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__denominator_function__count
+msgid "Count"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -425,9 +492,21 @@ msgid "Date End"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_date_field_id
+msgid "Date Field"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__date_start
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__date_start
 msgid "Date Start"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregate_date_field_id
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__denominator_date_field_id
+msgid ""
+"Date or datetime field that places a record in the period of the target."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -461,10 +540,55 @@ msgid "Definition"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
+msgid "Denominator"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__denominator_date_field_id
+msgid "Denominator Date Field"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__denominator_department_field_id
+msgid "Denominator Department Field"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__denominator_domain
+msgid "Denominator Domain"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__denominator_employee_field_id
+msgid "Denominator Employee Field"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__denominator_function
+msgid "Denominator Function"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__denominator_model_id
+msgid "Denominator Model"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__denominator_field_id
+msgid "Denominator Value Field"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__department_id
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__cascade_level__department
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_search
 msgid "Department"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_department_field_id
+msgid "Department Field"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -523,6 +647,24 @@ msgid "Display order of the range inside its category."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__dissenting_note
+msgid "Dissenting Note"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_domain
+msgid "Domain"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregate_domain
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__denominator_domain
+msgid ""
+"Domain that selects the records of the model. Evaluated as Python; the "
+"period filter of the target is added to it."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__done_ok
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__done_ok
 msgid ""
@@ -535,6 +677,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__employee_id
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__cascade_level__employee
 msgid "Employee"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_employee_field_id
+msgid "Employee Field"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -634,6 +781,11 @@ msgid "From"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_function
+msgid "Function"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_measurement_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_search
 msgid "Group By"
@@ -676,6 +828,28 @@ msgid ""
 "How the measurements of a target roll up into its realization: Sum = add "
 "them, Average = mean value, Last Value = value of the latest measurement. "
 "Copied from the measure and editable."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__realization_method
+msgid ""
+"How the realization of a KPI using this measure is obtained: Manual = "
+"recorded by hand, Aggregate (no code) = computed from Odoo data with a "
+"count, sum, average, minimum or maximum, Python Code = computed by the code "
+"below."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__realization_method
+msgid ""
+"How the realization of this KPI is obtained. Copied from the measure and "
+"editable. The aggregate definition is always read from the measure."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregate_function
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__denominator_function
+msgid "How the records are reduced to one number."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -786,6 +960,13 @@ msgid "KPI"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__parent_kpi_id
+msgid ""
+"KPI of the parent objective that this KPI feeds. The realization of the "
+"parent KPI is then rolled up from its child KPIs (direct cascade)."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__kpi_id
 msgid "KPI of the target."
 msgstr ""
@@ -806,6 +987,11 @@ msgstr ""
 #: model:ir.ui.menu,name:ssi_strategic_management.strategy_kpi_menu
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_form
 msgid "KPIs"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__child_kpi_ids
+msgid "KPIs of the child objectives that feed this KPI."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -962,12 +1148,42 @@ msgid "Main Attachment"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__realization_method__manual
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi_measurement__mode__manual
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__realization_method__manual
+msgid "Manual"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__mode
+msgid ""
+"Manual = entered by a user, Automatic = computed by the realization engine "
+"of the KPI."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__manual_number_ok
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__manual_number_ok
 msgid ""
 "Manual number assignment policy\n"
 "\n"
 "* If active user can edit document number"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregate_department_field_id
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__denominator_department_field_id
+msgid ""
+"Many2one field to departments. When set, only records of the department of "
+"the objective are taken."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregate_employee_field_id
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__denominator_employee_field_id
+msgid ""
+"Many2one field to employees. When set and the objective has an employee, "
+"only records of that employee are taken."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1008,6 +1224,12 @@ msgid ""
 "* Click 'Generate Code' button to automatically assign code.\n"
 "  Sequence template mush be set to perform this action\n"
 "  Only master data with '/' code will be assign automatic code"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregate_function__max
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__denominator_function__max
+msgid "Maximum"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1082,6 +1304,12 @@ msgid "Methodology of the plan type of the plan: Balanced Scorecard or OKR."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregate_function__min
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__denominator_function__min
+msgid "Minimum"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__score_min
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__score_min
 msgid "Minimum Score"
@@ -1095,6 +1323,16 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__mission
 msgid "Mission statement that this plan carries out."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__mode
+msgid "Mode"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_model_id
+msgid "Model"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1239,6 +1477,12 @@ msgid "Number of unread messages"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregate_field_id
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__denominator_field_id
+msgid "Numeric stored field to aggregate. Not needed for count."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__methodology__okr
 msgid "OKR"
 msgstr ""
@@ -1288,8 +1532,28 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__denominator_model_id
+msgid "Odoo model whose records are counted or aggregated as the divisor."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__aggregate_model_id
+msgid "Odoo model whose records are counted or aggregated."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_measurement__override_automatic
+msgid "Override Automatic Value"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__owner_id
 msgid "Owner"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__parent_kpi_id
+msgid "Parent KPI"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1395,6 +1659,31 @@ msgid "Policy Template"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__python_code
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__python_code
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__realization_method__python
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__realization_method__python
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
+msgid "Python Code"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__python_code
+msgid ""
+"Python code that computes the realization when the method is Python Code. "
+"Copied from the measure and editable."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_measure__python_code
+msgid ""
+"Python code that computes the realization. Assign the figure to the variable"
+" ``result``. Available variables: document (the KPI target), date_start, "
+"date_end, department, employee, company, env, time, datetime and dateutil."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__frequency__quarterly
 msgid "Quarterly"
 msgstr ""
@@ -1407,12 +1696,24 @@ msgstr ""
 
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__realization
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_measure_view_form
 msgid "Realization"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi__realization_method
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__realization_method
+msgid "Realization Method"
 msgstr ""
 
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__measurement_ids
 msgid "Realizations recorded for this target."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__dissenting_note
+msgid "Reason why the automatic value is overridden."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1680,6 +1981,34 @@ msgid "Strategy KPI - Target"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.actions.server,name:ssi_strategic_management.strategy_kpi_target_cron_monthly_ir_actions_server
+#: model:ir.cron,cron_name:ssi_strategic_management.strategy_kpi_target_cron_monthly
+#: model:ir.cron,name:ssi_strategic_management.strategy_kpi_target_cron_monthly
+msgid "Strategy KPI: compute monthly realization"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.server,name:ssi_strategic_management.strategy_kpi_target_cron_quarterly_ir_actions_server
+#: model:ir.cron,cron_name:ssi_strategic_management.strategy_kpi_target_cron_quarterly
+#: model:ir.cron,name:ssi_strategic_management.strategy_kpi_target_cron_quarterly
+msgid "Strategy KPI: compute quarterly realization"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.server,name:ssi_strategic_management.strategy_kpi_target_cron_semesterly_ir_actions_server
+#: model:ir.cron,cron_name:ssi_strategic_management.strategy_kpi_target_cron_semesterly
+#: model:ir.cron,name:ssi_strategic_management.strategy_kpi_target_cron_semesterly
+msgid "Strategy KPI: compute semesterly realization"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.server,name:ssi_strategic_management.strategy_kpi_target_cron_yearly_ir_actions_server
+#: model:ir.cron,cron_name:ssi_strategic_management.strategy_kpi_target_cron_yearly
+#: model:ir.cron,name:ssi_strategic_management.strategy_kpi_target_cron_yearly
+msgid "Strategy KPI: compute yearly realization"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model,name:ssi_strategic_management.model_strategy_measure
 #: model:res.groups,name:ssi_strategic_management.strategy_measure_group
 msgid "Strategy Measure"
@@ -1750,7 +2079,9 @@ msgstr ""
 
 #. module: ssi_strategic_management
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_kpi__aggregation__sum
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregate_function__sum
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__aggregation__sum
+#: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_measure__denominator_function__sum
 msgid "Sum"
 msgstr ""
 
@@ -1864,6 +2195,11 @@ msgid "Upper bound of the score range."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__use_ratio
+msgid "Use Ratio"
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:res.groups,name:ssi_strategic_management.strategy_objective_user_group
 #: model:res.groups,name:ssi_strategic_management.strategy_plan_user_group
 msgid "User"
@@ -1911,8 +2247,20 @@ msgid "Value"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_field_id
+msgid "Value Field"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__automatic_value
+msgid "Value computed by the realization engine of the KPI."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__manual_value
-msgid "Value entered manually."
+msgid ""
+"Value entered manually. For an automatic measurement it only counts when the"
+" automatic value is overridden."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1929,7 +2277,9 @@ msgstr ""
 
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_measurement__value
-msgid "Value that the target rolls up. Equals the manual value."
+msgid ""
+"Value that the target rolls up. The manual value for a manual measurement or"
+" an overridden automatic one, otherwise the automatic value."
 msgstr ""
 
 #. module: ssi_strategic_management
