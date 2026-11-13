@@ -1,0 +1,124 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ssi_strategic_management_analytic_budget
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__analytic_account_id
+msgid "Analytic Account"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model,name:ssi_strategic_management_analytic_budget.model_analytic_budget_budget
+msgid "Analytic Budget"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__analytic_budget_ids
+msgid "Analytic Budgets"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,help:ssi_strategic_management_analytic_budget.field_strategy_initiative__analytic_account_id
+msgid ""
+"Analytic account whose budgets fund this initiative. The budgets of its "
+"child accounts are counted as well."
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management_analytic_budget.strategy_initiative_view_form
+msgid "Budget"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__budget_absorption
+msgid "Budget Absorption (%)"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__company_currency_id
+msgid "Company Currency"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__amount_cost_realization
+msgid "Cost Realization"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,help:ssi_strategic_management_analytic_budget.field_strategy_initiative__budget_absorption
+msgid ""
+"Cost realization as a percentage of the planned cost. Zero when nothing is "
+"planned."
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,help:ssi_strategic_management_analytic_budget.field_strategy_initiative__company_currency_id
+msgid "Currency of the company that owns the initiative."
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_analytic_budget_budget__display_name
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_analytic_budget_budget__id
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__id
+msgid "ID"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_analytic_budget_budget____last_update
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,help:ssi_strategic_management_analytic_budget.field_strategy_initiative__analytic_budget_ids
+msgid ""
+"Open and done budgets of the analytic account (and of its child accounts) "
+"whose period overlaps the period of this initiative."
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_strategy_initiative__amount_planned_cost
+msgid "Planned Cost"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,field_description:ssi_strategic_management_analytic_budget.field_analytic_budget_budget__strategy_initiative_ids
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management_analytic_budget.analytic_budget_budget_view_form
+msgid "Strategic Initiatives"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model,name:ssi_strategic_management_analytic_budget.model_strategy_initiative
+msgid "Strategy Initiative"
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,help:ssi_strategic_management_analytic_budget.field_analytic_budget_budget__strategy_initiative_ids
+msgid "Strategy initiatives that use the analytic account of this budget."
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,help:ssi_strategic_management_analytic_budget.field_strategy_initiative__amount_cost_realization
+msgid "Sum of the cost realization of the analytic budgets of the initiative."
+msgstr ""
+
+#. module: ssi_strategic_management_analytic_budget
+#: model:ir.model.fields,help:ssi_strategic_management_analytic_budget.field_strategy_initiative__amount_planned_cost
+msgid "Sum of the planned cost of the analytic budgets of the initiative."
+msgstr ""
