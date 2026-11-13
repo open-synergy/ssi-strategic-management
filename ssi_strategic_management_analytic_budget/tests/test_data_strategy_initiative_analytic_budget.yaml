@@ -31,6 +31,7 @@ setup:
       save_as: "plan_open"
       as_user: "validator"
       values:
+        title: "Test plan title"
         type_id: "REC: plan_type.id"
         date_start: "EVAL: date.today() - timedelta(days=400)"
         date_end: "EVAL: date.today() + timedelta(days=400)"
@@ -218,6 +219,7 @@ scenarios:
         save_as: "init"
         as_user: "validator"
         values:
+          title: "Test initiative title"
           plan_id: "REC: plan_open.id"
           progress_method: "manual"
           manual_progress: 50.0
@@ -306,6 +308,7 @@ scenarios:
         save_as: "init"
         as_user: "validator"
         values:
+          title: "Test initiative title"
           plan_id: "REC: plan_open.id"
           progress_method: "manual"
           date_start: "EVAL: date.today() - timedelta(days=50)"
@@ -339,6 +342,7 @@ scenarios:
         save_as: "init"
         as_user: "validator"
         values:
+          title: "Test initiative title"
           plan_id: "REC: plan_open.id"
           progress_method: "manual"
           manual_progress: 20.0
@@ -383,6 +387,7 @@ scenarios:
         save_as: "init"
         as_user: "validator"
         values:
+          title: "Test initiative title"
           plan_id: "REC: plan_open.id"
           progress_method: "manual"
           manual_progress: 20.0
@@ -432,6 +437,7 @@ scenarios:
         save_as: "init_child"
         as_user: "validator"
         values:
+          title: "Test initiative title"
           plan_id: "REC: plan_open.id"
           progress_method: "manual"
           date_start: "EVAL: date.today() - timedelta(days=50)"
@@ -443,6 +449,7 @@ scenarios:
         save_as: "init_parent"
         as_user: "validator"
         values:
+          title: "Test initiative title"
           plan_id: "REC: plan_open.id"
           progress_method: "manual"
           date_start: "EVAL: date.today() - timedelta(days=50)"

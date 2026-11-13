@@ -14,6 +14,9 @@ When this module is installed, the create form gains one optional field:
   only while the initiative is in **Draft** status. The budgets of the child accounts of
   the selected account are counted as well.
 
+The required **Title** field of the base module must also be filled in before the
+initiative can be saved.
+
 ## Additional Post-Condition
 
 - Once an analytic account is selected, the **Budget** tab shows the planned cost, the
