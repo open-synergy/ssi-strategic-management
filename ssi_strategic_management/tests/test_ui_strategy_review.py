@@ -69,12 +69,18 @@ class TestUiStrategyReview(HttpSavepointCase):
         )
         cls._run_transition(cls.plan, "action_open")
         cls.plan.sudo().write({"name": "Tour Review Plan"})
+        department = (
+            cls.env["hr.department"]
+            .with_user(cls.admin)
+            .create({"name": "Tour Review Department"})
+        )
         objective = (
             cls.env["strategy_objective"]
             .with_user(cls.admin)
             .create(
                 {
                     "plan_id": cls.plan.id,
+                    "department_id": department.id,
                     "perspective_id": cls.env.ref(
                         "ssi_strategic_management.strategy_perspective_financial"
                     ).id,

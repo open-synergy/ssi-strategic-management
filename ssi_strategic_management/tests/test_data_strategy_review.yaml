@@ -440,6 +440,7 @@ scenarios:
         as_user: "validator"
         values:
           plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
       - step: "Create KPI"
         action: "create"
@@ -517,6 +518,7 @@ scenarios:
         as_user: "validator"
         values:
           plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
       - step: "Create review"
         action: "create"
@@ -586,6 +588,7 @@ scenarios:
         as_user: "validator"
         values:
           plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
       - step: "Create review"
         action: "create"
@@ -705,6 +708,7 @@ scenarios:
         as_user: "validator"
         values:
           plan_id: "REC: plan.id"
+          department_id: "REC: dept_a.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
       - step: "Create review"
         action: "create"

@@ -285,34 +285,6 @@ scenarios:
           date_start: 2026-01-01
           date_end: 2026-03-31
           target: 100.0
-      - step: "Create objective without a department"
-        action: "create"
-        model: "strategy_objective"
-        save_as: "objective_n"
-        as_user: "validator"
-        values:
-          plan_id: "REC: plan.id"
-          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
-      - step: "Create KPI without a department"
-        action: "create"
-        model: "strategy_kpi"
-        save_as: "kpi_n"
-        as_user: "validator"
-        values:
-          objective_id: "REC: objective_n.id"
-          measure_id: "REC: measure_high.id"
-          name: "Review KPI N"
-          weight: 100.0
-      - step: "Create target without a department"
-        action: "create"
-        model: "strategy_kpi.target"
-        save_as: "target_n"
-        as_user: "validator"
-        values:
-          kpi_id: "REC: kpi_n.id"
-          date_start: 2026-01-01
-          date_end: 2026-03-31
-          target: 100.0
       - step: "Create review of department A"
         action: "create"
         model: "strategy_review"
@@ -385,15 +357,6 @@ scenarios:
         as_user: "validator"
         values:
           target_id: "REC: target_b.id"
-          date: 2026-02-20
-          manual_value: 10.0
-      - step: "Objective without a department is not locked"
-        action: "create"
-        model: "strategy_kpi.measurement"
-        save_as: "measurement_n"
-        as_user: "validator"
-        values:
-          target_id: "REC: target_n.id"
           date: 2026-02-20
           manual_value: 10.0
 
