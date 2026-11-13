@@ -11,4 +11,8 @@ from . import (  # noqa: F401
     strategy_plan_type,
     strategy_plan,
     strategy_objective,
+    strategy_kpi,
+    strategy_kpi_score_range,
+    strategy_kpi_target,
+    strategy_kpi_measurement,
 )

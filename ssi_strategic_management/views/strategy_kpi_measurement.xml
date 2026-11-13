@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_kpi_measurement_view_search" model="ir.ui.view">
+    <field name="name">strategy_kpi.measurement - search</field>
+    <field name="model">strategy_kpi.measurement</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="target_id" />
+            <field name="kpi_id" />
+            <field name="user_id" />
+            <group name="group_by" string="Group By">
+                <filter
+                        name="grp_kpi_id"
+                        string="KPI"
+                        context="{'group_by':'kpi_id'}"
+                    />
+                <filter
+                        name="grp_target_id"
+                        string="Target"
+                        context="{'group_by':'target_id'}"
+                    />
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="strategy_kpi_measurement_view_tree" model="ir.ui.view">
+    <field name="name">strategy_kpi.measurement - tree</field>
+    <field name="model">strategy_kpi.measurement</field>
+    <field name="arch" type="xml">
+        <tree create="0">
+            <field name="kpi_id" />
+            <field name="target_id" />
+            <field name="date" />
+            <field name="value" />
+            <field name="user_id" />
+        </tree>
+    </field>
+</record>
+
+<record id="strategy_kpi_measurement_view_form" model="ir.ui.view">
+    <field name="name">strategy_kpi.measurement - form</field>
+    <field name="model">strategy_kpi.measurement</field>
+    <field name="arch" type="xml">
+        <form create="0">
+            <sheet>
+                <group name="measurement_group_1" colspan="4" col="2">
+                    <field name="target_id" />
+                    <field name="date" />
+                    <field name="manual_value" />
+                    <field name="value" />
+                    <field name="user_id" />
+                    <field name="note" />
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="strategy_kpi_measurement_action" model="ir.actions.act_window">
+    <field name="name">Measurements</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_kpi.measurement</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem
+        id="strategy_kpi_measurement_menu"
+        name="Measurements"
+        parent="menu_strategic_management_monitoring"
+        action="strategy_kpi_measurement_action"
+        groups="strategy_objective_viewer_group"
+        sequence="10"
+    />
+</odoo>

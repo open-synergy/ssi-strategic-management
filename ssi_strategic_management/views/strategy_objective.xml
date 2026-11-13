@@ -87,6 +87,96 @@
                 <field name="weight" />
             </xpath>
             <xpath expr="//page[@name='note']" position="before">
+                <page name="kpi" string="KPIs">
+                    <field name="kpi_ids" colspan="4" nolabel="1">
+                        <tree>
+                            <field name="name" />
+                            <field name="measure_id" />
+                            <field name="weight" />
+                            <field name="target" />
+                            <field name="is_key_result" />
+                            <field name="score" />
+                        </tree>
+                        <form>
+                            <group name="kpi_group_1" colspan="4" col="2">
+            <field name="measure_id" />
+            <field name="name" />
+            <field name="weight" />
+            <field name="baseline" />
+            <field name="target" />
+            <field name="uom_label" />
+            <field name="polarity" />
+            <field name="aggregation" />
+            <field name="score_method" />
+            <field name="score_min" />
+            <field name="score_max" />
+            <field name="is_key_result" />
+            <field
+                                        name="key_result_type"
+                                        attrs="{'required': [('is_key_result', '=', True)], 'invisible': [('is_key_result', '=', False)]}"
+                                    />
+            <field name="score" />
+        </group>
+        <notebook>
+            <page name="targets" string="Targets">
+                <field name="target_ids" colspan="4" nolabel="1">
+                    <tree>
+                        <field name="date_start" />
+                        <field name="date_end" />
+                        <field name="target" />
+                        <field name="realization" />
+                        <field name="score" />
+                        <field name="final_score" />
+                    </tree>
+                    <form>
+                        <group name="target_group_1" colspan="4" col="2">
+                            <field name="date_range_id" />
+                            <field name="date_start" />
+                            <field name="date_end" />
+                            <field name="target" />
+                            <field name="realization" />
+                            <field name="score" />
+                            <field name="final_score" />
+                        </group>
+                        <field name="measurement_ids" colspan="4" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="date" />
+                                <field name="manual_value" />
+                                <field name="user_id" />
+                                <field name="note" />
+                            </tree>
+                            <form>
+                                <group name="measurement_group_1" colspan="4" col="2">
+                                    <field name="date" />
+                                    <field name="manual_value" />
+                                    <field name="user_id" />
+                                    <field name="note" />
+                                </group>
+                            </form>
+                        </field>
+                    </form>
+                </field>
+            </page>
+            <page name="score_ranges" string="Score Ranges">
+                <field name="score_range_ids" colspan="4" nolabel="1">
+                    <tree editable="bottom">
+                        <field name="min_value" />
+                        <field name="max_value" />
+                        <field name="score" />
+                    </tree>
+                    <form>
+                        <group name="score_range_group_1" colspan="4" col="2">
+                            <field name="min_value" />
+                            <field name="max_value" />
+                            <field name="score" />
+                        </group>
+                    </form>
+                </field>
+            </page>
+        </notebook>
+                        </form>
+                    </field>
+                </page>
                 <page name="child" string="Child Objectives">
                     <field name="child_ids" colspan="4" nolabel="1">
                         <tree>

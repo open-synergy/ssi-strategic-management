@@ -15,7 +15,10 @@ also provides the strategy plan, the parent document of every objective,
 KPI and initiative, which can be nested into sub-plans and goes through
 an approval workflow. Strategy objectives belong to a plan and are cascaded
 to departments and, when the plan type allows it, to employees, from a
-parent objective down to its children.
+parent objective down to its children. Each objective is measured by KPIs
+(including OKR key results) that have targets per period and manually
+recorded measurements, and every target and KPI is scored according to the
+score method of the KPI.
 
 
 Work Instruction
@@ -60,6 +63,7 @@ Objective
 ---------
 
 * `Create Objective <docs/strategy_objective/01-create.html>`_
+* `Edit Objective <docs/strategy_objective/02-edit.html>`_
 * `Start Objective <docs/strategy_objective/07-start.html>`_
 * `Finish Objective <docs/strategy_objective/09-finish.html>`_
 * `Cancel Objective <docs/strategy_objective/10-cancel.html>`_

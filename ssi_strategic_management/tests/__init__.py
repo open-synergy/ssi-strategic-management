@@ -9,6 +9,7 @@ from . import (  # noqa: F401
     test_strategy_plan_type,
     test_strategy_plan,
     test_strategy_objective,
+    test_strategy_kpi,
     test_ui_strategy_perspective,
     test_ui_strategy_measure,
     test_ui_strategy_score_category,
