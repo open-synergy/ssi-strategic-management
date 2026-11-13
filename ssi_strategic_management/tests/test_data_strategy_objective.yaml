@@ -405,6 +405,190 @@ scenarios:
           message_contains:
             "Total weight of contributing child objectives must be 100%."
 
+  - name: "Parent with cancelled child and active weights below 100 cannot start"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create first child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 40
+      - step: "Create second child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 30
+      - step: "Create third child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_c"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 30
+      - step: "Cancel third child"
+        action: "call"
+        target: "child_c"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Start parent objective with an active total weight of 70"
+        action: "call"
+        target: "parent"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        expect_error:
+          type: "UserError"
+          message_contains:
+            "Total weight of contributing child objectives must be 100%."
+
+  - name: "Cancelled child is excluded from the weight check"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create first child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 50
+      - step: "Create second child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_b"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 50
+      - step: "Create cancelled child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_c"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 25
+      - step: "Cancel cancelled child"
+        action: "call"
+        target: "child_c"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Start parent objective ignoring the cancelled child"
+        action: "call"
+        target: "parent"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+  - name: "Parent whose only contributing child is cancelled can start"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "parent"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create only child"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "child_a"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_dept.id"
+          department_id: "REC: dept_a.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: parent.id"
+          weight: 30
+      - step: "Cancel only child"
+        action: "call"
+        target: "child_a"
+        method: "action_cancel"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "cancel"
+      - step: "Start parent objective without active contributing children"
+        action: "call"
+        target: "parent"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
   - name: "Non contributing children are ignored by the weight check"
     steps:
       - step: "Create parent objective"

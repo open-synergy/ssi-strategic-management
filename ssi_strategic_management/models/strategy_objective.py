@@ -364,13 +364,16 @@ Solution: Start the plan before starting this objective
     def _20_check_child_weight(self):
         """Reject starting a parent whose contributing weights are not 100%.
 
-        Runs in the ``pre_open_check`` slot, after the plan check.
+        Cancelled children are excluded from the total. Runs in the
+        ``pre_open_check`` slot, after the plan check.
 
-        :raises UserError: when the total weight of the contributing
-            child objectives differs from 100%
+        :raises UserError: when the total weight of the contributing,
+            non-cancelled child objectives differs from 100%
         """
         self.ensure_one()
-        contributing = self.child_ids.filtered(lambda r: r.contribute_to_parent)
+        contributing = self.child_ids.filtered(
+            lambda r: r.contribute_to_parent and r.state != "cancel"
+        )
         if not contributing:
             return
         total_weight = sum(contributing.mapped("weight"))
