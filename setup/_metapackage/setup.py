@@ -9,6 +9,7 @@ setuptools.setup(
     version=version,
     install_requires=[
         'odoo14-addon-ssi_strategic_management',
+        'odoo14-addon-ssi_strategic_management_analytic_budget',
     ],
     classifiers=[
         'Programming Language :: Python',

@@ -22,6 +22,7 @@ Available addons
 addon | version | maintainers | summary
 --- | --- | --- | ---
 [ssi_strategic_management](ssi_strategic_management/) | 14.0.1.6.2 |  | Strategic Management
+[ssi_strategic_management_analytic_budget](ssi_strategic_management_analytic_budget/) | 14.0.1.0.1 |  | Strategic Management + Analytic Budget Integration
 
 [//]: # (end addons)
 
