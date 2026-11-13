@@ -1436,13 +1436,43 @@ scenarios:
           date: "2026-03-31 17:30:00"
           res_id: 10
           reply_to: "tz21@example.com"
+      - step: "Create the plan of the year"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan_tz"
+        as_user: "validator"
+        values:
+          type_id: "REC: type_bsc.id"
+          date_start: "2026-01-01"
+          date_end: "2026-12-31"
+      - step: "Start the plan of the year"
+        action: "call"
+        target: "plan_tz"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Create the objective of the plan of the year"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_tz"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan_tz.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
       - step: "Create the KPI"
         action: "create"
         model: "strategy_kpi"
         save_as: "kpi_tz"
         as_user: "validator"
         values:
-          objective_id: "REC: objective.id"
+          objective_id: "REC: objective_tz.id"
           measure_id: "REC: measure_tz.id"
           name: "Time zone KPI"
           weight: 100.0
