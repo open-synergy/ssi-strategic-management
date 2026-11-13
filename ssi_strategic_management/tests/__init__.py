@@ -14,6 +14,7 @@ from . import (  # noqa: F401
     test_strategy_kpi_realization,
     test_strategy_kpi_cron_order,
     test_strategy_kpi_python_access,
+    test_strategy_kpi_report,
     test_strategy_initiative,
     test_strategy_review,
     test_ui_strategy_perspective,

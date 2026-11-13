@@ -1,0 +1,193 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Report Validator"
+        login: "EVAL: 'rpv%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Create department A"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_a"
+      values:
+        name: "Report Department A"
+    - step: "Create department B"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept_b"
+      values:
+        name: "Report Department B"
+    - step: "Create Balanced Scorecard plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_bsc"
+      as_user: "base.user_admin"
+      values:
+        name: "Report plan type"
+        code: "EVAL: 'RB%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_bsc.id"
+        date_start: 2026-01-01
+        date_end: 2026-12-31
+    - step: "Create measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure"
+      as_user: "validator"
+      values:
+        name: "Report measure"
+        code: "EVAL: 'RM%s' % datetime.now().strftime('%H%M%S%f')"
+        polarity: "higher"
+        aggregation: "sum"
+    - step: "Create objective of department A"
+      action: "create"
+      model: "strategy_objective"
+      save_as: "objective_a"
+      as_user: "validator"
+      values:
+        plan_id: "REC: plan.id"
+        department_id: "REC: dept_a.id"
+        perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+    - step: "Create KPI of department A"
+      action: "create"
+      model: "strategy_kpi"
+      save_as: "kpi_a"
+      as_user: "validator"
+      values:
+        objective_id: "REC: objective_a.id"
+        measure_id: "REC: measure.id"
+        name: "Report KPI A"
+        weight: 100.0
+        target: 100.0
+    - step: "Create target of the KPI of department A"
+      action: "create"
+      model: "strategy_kpi.target"
+      save_as: "target_a"
+      as_user: "validator"
+      values:
+        kpi_id: "REC: kpi_a.id"
+        date_start: 2026-01-01
+        date_end: 2026-01-31
+        target: 100.0
+
+scenarios:
+  - name: "Target takes the grouping fields of its objective"
+    steps:
+      - step: "Target related fields are filled"
+        action: "assert"
+        target: "target_a"
+        asserts:
+          objective_id:
+            type: "m2o"
+            expected: "REC: objective_a"
+          plan_id:
+            type: "m2o"
+            expected: "REC: plan"
+          department_id:
+            type: "m2o"
+            expected: "REC: dept_a"
+          perspective_id:
+            type: "m2o"
+            expected: "REF: ssi_strategic_management.strategy_perspective_financial"
+
+  - name: "Target follows a change of the department of its objective"
+    steps:
+      - step: "Move the objective to department B"
+        action: "write"
+        target: "objective_a"
+        as_user: "validator"
+        values:
+          department_id: "REC: dept_b.id"
+      - step: "Target moved to department B"
+        action: "assert"
+        target: "target_a"
+        refresh: true
+        asserts:
+          department_id:
+            type: "m2o"
+            expected: "REC: dept_b"
+
+  - name: "Target follows a change of the perspective of its objective"
+    steps:
+      - step: "Move the objective to the customer perspective"
+        action: "write"
+        target: "objective_a"
+        as_user: "validator"
+        values:
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_customer"
+      - step: "Target moved to the customer perspective"
+        action: "assert"
+        target: "target_a"
+        refresh: true
+        asserts:
+          perspective_id:
+            type: "m2o"
+            expected: "REF: ssi_strategic_management.strategy_perspective_customer"
+
+  - name: "Target is found by the department of its objective"
+    steps:
+      - step: "Search the targets of department A"
+        action: "search"
+        model: "strategy_kpi.target"
+        domain: [["department_id", "=", "REC: dept_a.id"]]
+        save_as: "found"
+        expect_count: 1
+      - step: "The target of the KPI is found"
+        action: "assert"
+        target: "found"
+        asserts:
+          kpi_id:
+            type: "m2o"
+            expected: "REC: kpi_a"
+
+  - name: "Target is not found by another department"
+    steps:
+      - step: "Search the targets of department B"
+        action: "search"
+        model: "strategy_kpi.target"
+        domain: [["department_id", "=", "REC: dept_b.id"]]
+        save_as: "not_found"
+        expect_count: 0
+
+  - name: "Objective tree links a child objective to its parent"
+    steps:
+      - step: "Create child objective of department B"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_child"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept_b.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: objective_a.id"
+      - step: "Child objective is listed under its parent"
+        action: "assert"
+        target: "objective_a"
+        refresh: true
+        asserts:
+          child_ids:
+            type: "o2m"
+            check: "exact"
+            expected_records:
+              - "REC: objective_child"

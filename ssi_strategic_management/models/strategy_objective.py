@@ -232,6 +232,7 @@ class StrategyObjective(models.Model):
         store=True,
         compute_sudo=True,
         recursive=True,
+        group_operator="avg",
         help="Score of this objective: the KPI portion of the KPI score "
         "plus the remaining portion of the child score.",
     )
