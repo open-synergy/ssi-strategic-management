@@ -260,6 +260,11 @@ msgid "Balanced Scorecard"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__perspective_id
+msgid "Balanced Scorecard perspective of the objective of the KPI."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__perspective_id
 msgid ""
 "Balanced Scorecard perspective of this objective. Required for plans that "
@@ -735,10 +740,12 @@ msgstr ""
 
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_initiative__department_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__department_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__department_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_review__department_id
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__cascade_level__department
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_initiative_view_search
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_review_view_search
 msgid "Department"
@@ -757,6 +764,11 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_review__department_id
 msgid "Department that is reviewed. Leave empty to review the whole plan."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__department_id
+msgid "Department that the objective of the KPI is cascaded to."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -853,6 +865,7 @@ msgid ""
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__employee_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__employee_id
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_plan_type__cascade_level__employee
 msgid "Employee"
@@ -861,6 +874,11 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_measure__aggregate_employee_field_id
 msgid "Employee Field"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__employee_id
+msgid "Employee that the objective of the KPI is cascaded to."
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -991,6 +1009,7 @@ msgstr ""
 
 #. module: ssi_strategic_management
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_measurement_view_search
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_search
 msgid "Group By"
 msgstr ""
@@ -1250,6 +1269,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_review_line__kpi_id
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_review_line__line_type__kpi
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_measurement_view_search
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_search
 msgid "KPI"
 msgstr ""
 
@@ -1261,6 +1281,14 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__kpi_score
 msgid "KPI Score"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_kpi_target_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_kpi_target_menu
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_graph
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_pivot
+msgid "KPI Scorecard"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -1874,8 +1902,24 @@ msgstr ""
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__objective_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_review_line__objective_id
 #: model:ir.model.fields.selection,name:ssi_strategic_management.selection__strategy_review_line__line_type__objective
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_view_search
 msgid "Objective"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_objective_scorecard_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_objective_scorecard_menu
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_graph
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_pivot
+msgid "Objective Scorecard"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.actions.act_window,name:ssi_strategic_management.strategy_objective_tree_action
+#: model:ir.ui.menu,name:ssi_strategic_management.strategy_objective_tree_menu
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_hierarchy
+msgid "Objective Tree"
 msgstr ""
 
 #. module: ssi_strategic_management
@@ -2010,7 +2054,14 @@ msgid "Period"
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_search
+msgid "Period (Month)"
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__perspective_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__perspective_id
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_search
 msgid "Perspective"
 msgstr ""
@@ -2023,9 +2074,11 @@ msgstr ""
 
 #. module: ssi_strategic_management
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_initiative__plan_id
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_kpi_target__plan_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__plan_id
 #: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_review__plan_id
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_initiative_view_search
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_kpi_target_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_search
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_review_view_search
 msgid "Plan"
@@ -2706,6 +2759,11 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi__objective_id
 msgid "Strategy objective that this KPI measures."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_kpi_target__plan_id
+msgid "Strategy plan of the objective of the KPI."
 msgstr ""
 
 #. module: ssi_strategic_management
