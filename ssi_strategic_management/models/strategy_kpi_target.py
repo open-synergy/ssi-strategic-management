@@ -2,11 +2,15 @@
 # Copyright 2026 PT. Simetri Sinergi Indonesia
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
+
+import pytz
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.safe_eval import safe_eval
+
+from odoo.addons.queue_job.delay import chain, group
 
 
 class StrategyKpiTarget(models.Model):
@@ -445,22 +449,51 @@ Solution: Change the realization method of the KPI or add child KPIs
     def _get_period_domain(self, date_field):
         """Build the domain that keeps the records inside the period.
 
-        A datetime field is compared from the start of the first day to
-        the end of the last day of the period.
+        A date field is compared with the first and the last day of the
+        period. A datetime field is compared from midnight of the first
+        day to midnight of the day after the last day, in the time zone
+        returned by ``_get_period_timezone``, converted to naive UTC.
 
         :param date_field: the ``ir.model.fields`` date or datetime field
         :return: a list of two domain leaves
         """
         self.ensure_one()
-        date_start = self.date_start
-        date_end = self.date_end
         if date_field.ttype == "datetime":
-            date_start = datetime.combine(date_start, time.min)
-            date_end = datetime.combine(date_end, time(23, 59, 59))
+            zone = self._get_period_timezone()
+            date_start = self._get_local_midnight(zone, self.date_start)
+            date_end = self._get_local_midnight(zone, self.date_end + timedelta(days=1))
+            return [
+                (date_field.name, ">=", date_start),
+                (date_field.name, "<", date_end),
+            ]
         return [
-            (date_field.name, ">=", date_start),
-            (date_field.name, "<=", date_end),
+            (date_field.name, ">=", self.date_start),
+            (date_field.name, "<=", self.date_end),
         ]
+
+    def _get_period_timezone(self):
+        """Find the time zone that delimits the days of the period.
+
+        The time zone of the company of the objective comes first (the
+        current company when the target has no objective), then the time
+        zone of the current user, then UTC.
+
+        :return: the name of the time zone, never empty
+        """
+        self.ensure_one()
+        company = self.objective_id.company_id or self.env.company
+        return company.partner_id.tz or self.env.user.tz or "UTC"
+
+    @api.model
+    def _get_local_midnight(self, zone, date_value):
+        """Convert the midnight of a local day to naive UTC.
+
+        :param zone: the name of the time zone of the day
+        :param date_value: the local day as a date
+        :return: the naive UTC datetime of the start of that day
+        """
+        local = pytz.timezone(zone).localize(datetime.combine(date_value, time.min))
+        return local.astimezone(pytz.utc).replace(tzinfo=None)
 
     def _compute_python_value(self):
         """Compute the realization with the Python code of the KPI.
@@ -517,7 +550,10 @@ Solution: Correct the Python code of the KPI
 
         One job is queued for each target whose period holds today,
         whose objective is in progress, and whose KPI is not manual (or
-        has child KPIs) and uses a measure of the given frequency.
+        has child KPIs) and uses a measure of the given frequency. The
+        jobs are chained by depth of the KPI in the parent KPI tree, the
+        deepest KPIs first, so that a parent KPI is computed only after
+        all its child KPIs of the same run.
 
         :param frequency: ``monthly``, ``quarterly``, ``semesterly`` or
             ``yearly``
@@ -534,5 +570,27 @@ Solution: Correct the Python code of the KPI
                 ("kpi_id.child_kpi_ids", "!=", False),
             ]
         )
+        delayables = {}
         for target in targets:
-            target.with_delay().action_compute_realization()
+            depth = target._get_kpi_depth()
+            delayables.setdefault(depth, []).append(
+                target.delayable().action_compute_realization()
+            )
+        groups = [
+            group(*delayables[depth]) for depth in sorted(delayables, reverse=True)
+        ]
+        if groups:
+            chain(*groups).delay()
+
+    def _get_kpi_depth(self):
+        """Count the parent KPIs above the KPI of the target.
+
+        :return: the number of hops up to the top KPI; 0 for a top KPI
+        """
+        self.ensure_one()
+        depth = 0
+        kpi = self.kpi_id
+        while kpi.parent_kpi_id:
+            depth += 1
+            kpi = kpi.parent_kpi_id
+        return depth

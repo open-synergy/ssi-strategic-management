@@ -1,0 +1,214 @@
+setup:
+  steps:
+    - step: "Create validator user"
+      action: "create"
+      model: "res.users"
+      save_as: "validator"
+      values:
+        name: "Strategy Realization Validator"
+        login: "EVAL: 'rzv%s' % datetime.now().strftime('%H%M%S%f')"
+        groups_id:
+          - [
+              6,
+              0,
+              [
+                "REF: base.group_user",
+                "REF: ssi_strategic_management.strategy_plan_validator_group",
+                "REF: ssi_strategic_management.strategy_objective_validator_group",
+                "REF: ssi_strategic_management.strategy_measure_group",
+              ],
+            ]
+    - step: "Find the employee model"
+      action: "search"
+      model: "ir.model"
+      domain: [["model", "=", "hr.employee"]]
+      save_as: "model_emp"
+      limit: 1
+    - step: "Find the create date field"
+      action: "search"
+      model: "ir.model.fields"
+      domain: [["model", "=", "hr.employee"], ["name", "=", "create_date"]]
+      save_as: "f_create"
+      limit: 1
+    - step: "Find the department field"
+      action: "search"
+      model: "ir.model.fields"
+      domain: [["model", "=", "hr.employee"], ["name", "=", "department_id"]]
+      save_as: "f_dept"
+      limit: 1
+    - step: "Create department"
+      action: "create"
+      model: "hr.department"
+      save_as: "dept"
+      values:
+        name: "Realization Department"
+    - step: "Create first employee of the department"
+      action: "create"
+      model: "hr.employee"
+      save_as: "emp_f"
+      values:
+        name: "Cron Order Employee F"
+        department_id: "REC: dept.id"
+    - step: "Create second employee of the department"
+      action: "create"
+      model: "hr.employee"
+      save_as: "emp_m"
+      values:
+        name: "Cron Order Employee M"
+        department_id: "REC: dept.id"
+    - step: "Create plan type"
+      action: "create"
+      model: "strategy_plan_type"
+      save_as: "type_bsc"
+      as_user: "base.user_admin"
+      values:
+        name: "Realization plan type"
+        code: "EVAL: 'RB%s' % datetime.now().strftime('%H%M%S%f')"
+        methodology: "bsc"
+        cascade_level: "department"
+    - step: "Create plan"
+      action: "create"
+      model: "strategy_plan"
+      save_as: "plan"
+      as_user: "validator"
+      values:
+        type_id: "REC: type_bsc.id"
+        date_start: "EVAL: (datetime.now() - relativedelta(days=60)).date()"
+        date_end: "EVAL: (datetime.now() + relativedelta(days=60)).date()"
+    - step: "Start plan"
+      action: "call"
+      target: "plan"
+      method: "action_open"
+      as_user: "validator"
+      context:
+        bypass_policy_check: true
+      refresh: true
+      asserts:
+        state:
+          type: "value"
+          expected: "open"
+    - step: "Create objective"
+      action: "create"
+      model: "strategy_objective"
+      save_as: "objective"
+      as_user: "validator"
+      values:
+        plan_id: "REC: plan.id"
+        department_id: "REC: dept.id"
+        perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+    - step: "Create manual measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_manual"
+      as_user: "validator"
+      values:
+        name: "Realization manual measure"
+        code: "EVAL: 'RM%s' % datetime.now().strftime('%H%M%S%f')"
+        aggregation: "sum"
+    - step: "Create count measure"
+      action: "create"
+      model: "strategy_measure"
+      save_as: "measure_count"
+      as_user: "validator"
+      values:
+        name: "Realization count measure"
+        code: "EVAL: 'RC%s' % datetime.now().strftime('%H%M%S%f')"
+        realization_method: "aggregate"
+        aggregate_model_id: "REC: model_emp.id"
+        aggregate_date_field_id: "REC: f_create.id"
+        aggregate_department_field_id: "REC: f_dept.id"
+
+scenarios:
+  - name: "One cron run lets the parent realization follow the child realization"
+    steps:
+      - step: "Create parent objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_top"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+      - step: "Create child objective"
+        action: "create"
+        model: "strategy_objective"
+        save_as: "objective_leaf"
+        as_user: "validator"
+        values:
+          plan_id: "REC: plan.id"
+          department_id: "REC: dept.id"
+          perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
+          parent_id: "REC: objective_top.id"
+          weight: 100.0
+      - step: "Create the parent KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_top"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_top.id"
+          measure_id: "REC: measure_manual.id"
+          name: "Cascade parent KPI"
+          weight: 100.0
+      - step: "Create the child KPI"
+        action: "create"
+        model: "strategy_kpi"
+        save_as: "kpi_leaf"
+        as_user: "validator"
+        values:
+          objective_id: "REC: objective_leaf.id"
+          measure_id: "REC: measure_count.id"
+          name: "Cascade child KPI"
+          weight: 100.0
+          parent_kpi_id: "REC: kpi_top.id"
+      - step: "Create the parent target"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_top"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_top.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Create the child target"
+        action: "create"
+        model: "strategy_kpi.target"
+        save_as: "t_leaf"
+        as_user: "validator"
+        values:
+          kpi_id: "REC: kpi_leaf.id"
+          date_start: "EVAL: (datetime.now() - relativedelta(days=30)).date()"
+          date_end: "EVAL: (datetime.now() + relativedelta(days=30)).date()"
+          target: 100.0
+      - step: "Start the parent objective"
+        action: "call"
+        target: "objective_top"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Start the child objective"
+        action: "call"
+        target: "objective_leaf"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Run the monthly cron"
+        action: "call"
+        target: "t_top"
+        method: "_cron_compute_realization"
+        args:
+          - "monthly"

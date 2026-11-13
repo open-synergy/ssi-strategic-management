@@ -152,3 +152,114 @@ scenarios:
           code: "INVRNG"
           score_range_ids:
             - [0, 0, {min_value: 80.0, max_value: 20.0, score: 10.0}]
+
+  - name: "Aggregate field of another model is rejected"
+    steps:
+      - step: "Find the employee model"
+        action: "search"
+        model: "ir.model"
+        domain: [["model", "=", "hr.employee"]]
+        save_as: "model_emp"
+        limit: 1
+      - step: "Find the employee create date field"
+        action: "search"
+        model: "ir.model.fields"
+        domain: [["model", "=", "hr.employee"], ["name", "=", "create_date"]]
+        save_as: "f_emp_date"
+        limit: 1
+      - step: "Find the partner color field"
+        action: "search"
+        model: "ir.model.fields"
+        domain: [["model", "=", "res.partner"], ["name", "=", "color"]]
+        save_as: "f_partner_color"
+        limit: 1
+      - step: "Create measure with a value field of another model"
+        action: "create"
+        model: "strategy_measure"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Aggregate fields must belong"
+        values:
+          name: "Foreign Aggregate Field"
+          code: "FRNAGG"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_emp_date.id"
+          aggregate_field_id: "REC: f_partner_color.id"
+          aggregate_function: "sum"
+
+  - name: "Denominator field of another model is rejected"
+    steps:
+      - step: "Find the employee model"
+        action: "search"
+        model: "ir.model"
+        domain: [["model", "=", "hr.employee"]]
+        save_as: "model_emp"
+        limit: 1
+      - step: "Find the employee create date field"
+        action: "search"
+        model: "ir.model.fields"
+        domain: [["model", "=", "hr.employee"], ["name", "=", "create_date"]]
+        save_as: "f_emp_date"
+        limit: 1
+      - step: "Find the partner create date field"
+        action: "search"
+        model: "ir.model.fields"
+        domain: [["model", "=", "res.partner"], ["name", "=", "create_date"]]
+        save_as: "f_partner_date"
+        limit: 1
+      - step: "Create ratio measure with a date field of another model"
+        action: "create"
+        model: "strategy_measure"
+        expect_error:
+          type: "ValidationError"
+          message_contains: "Aggregate fields must belong"
+        values:
+          name: "Foreign Denominator Field"
+          code: "FRNDEN"
+          realization_method: "aggregate"
+          aggregate_model_id: "REC: model_emp.id"
+          aggregate_date_field_id: "REC: f_emp_date.id"
+          use_ratio: true
+          denominator_model_id: "REC: model_emp.id"
+          denominator_date_field_id: "REC: f_partner_date.id"
+
+  - name: "Internal user cannot edit measure"
+    steps:
+      - step: "Create measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "record"
+        values:
+          name: "Protected measure"
+          code: "ACLW"
+          score_range_ids:
+            - [0, 0, {min_value: 0.0, max_value: 50.0, score: 50.0}]
+            - [0, 0, {min_value: 50.0, max_value: 100.0, score: 100.0}]
+      - step: "Write as plain internal user"
+        action: "write"
+        target: "record"
+        as_user: "plain_user"
+        expect_error:
+          type: "AccessError"
+        values:
+          name: "Hijacked measure"
+
+  - name: "Internal user cannot delete measure"
+    steps:
+      - step: "Create measure"
+        action: "create"
+        model: "strategy_measure"
+        save_as: "record"
+        values:
+          name: "Undeletable measure"
+          code: "ACLD"
+          score_range_ids:
+            - [0, 0, {min_value: 0.0, max_value: 50.0, score: 50.0}]
+            - [0, 0, {min_value: 50.0, max_value: 100.0, score: 100.0}]
+      - step: "Delete as plain internal user"
+        action: "unlink"
+        target: "record"
+        as_user: "plain_user"
+        expect_error:
+          type: "AccessError"
