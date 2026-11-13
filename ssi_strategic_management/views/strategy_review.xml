@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<record id="strategy_review_view_search" model="ir.ui.view">
+    <field name="name">strategy_review - search</field>
+    <field name="model">strategy_review</field>
+    <field
+            name="inherit_id"
+            ref="ssi_transaction_mixin.mixin_transaction_view_search"
+        />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="plan_id" />
+                <field name="department_id" />
+                <field name="date_start" />
+                <field name="date_end" />
+            </xpath>
+            <xpath expr="//filter[@name='grp_responsible']" position="after">
+                <filter
+                        name="grp_plan_id"
+                        string="Plan"
+                        context="{'group_by':'plan_id'}"
+                    />
+                <filter
+                        name="grp_department_id"
+                        string="Department"
+                        context="{'group_by':'department_id'}"
+                    />
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_review_view_tree" model="ir.ui.view">
+    <field name="name">strategy_review - tree</field>
+    <field name="model">strategy_review</field>
+    <field name="inherit_id" ref="ssi_transaction_mixin.mixin_transaction_view_tree" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="plan_id" />
+                <field name="department_id" />
+                <field name="date_start" />
+                <field name="date_end" />
+                <field name="plan_score" />
+                <field name="summary" />
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_review_view_form" model="ir.ui.view">
+    <field name="name">strategy_review - form</field>
+    <field name="model">strategy_review</field>
+    <field name="inherit_id" ref="ssi_transaction_mixin.mixin_transaction_view_form" />
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+        <data>
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="plan_id" />
+                <field name="department_id" />
+            </xpath>
+            <xpath expr="//group[@name='header_right']" position="inside">
+                <field name="date_start" />
+                <field name="date_end" />
+                <field name="plan_score" />
+            </xpath>
+            <xpath expr="//page[@name='note']" position="before">
+                <page name="snapshot" string="Snapshot">
+                    <div name="snapshot_action">
+                        <button
+                                name="action_take_snapshot"
+                                type="object"
+                                string="Take Snapshot"
+                                class="oe_highlight"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"
+                            />
+                    </div>
+                    <field name="line_ids" colspan="4" nolabel="1">
+                        <tree editable="bottom" create="false" delete="false">
+                            <field name="line_type" readonly="1" />
+                            <field name="objective_id" readonly="1" />
+                            <field name="kpi_id" readonly="1" />
+                            <field name="initiative_id" readonly="1" />
+                            <field name="target" readonly="1" />
+                            <field name="realization" readonly="1" />
+                            <field name="score" readonly="1" />
+                            <field name="progress" readonly="1" />
+                            <field name="health" readonly="1" />
+                            <field name="comment" />
+                            <field name="corrective_action" />
+                        </tree>
+                        <form>
+                            <group name="line_form_1" colspan="4" col="2">
+                                <field name="line_type" readonly="1" />
+                                <field name="objective_id" readonly="1" />
+                                <field name="kpi_id" readonly="1" />
+                                <field name="initiative_id" readonly="1" />
+                                <field name="target" readonly="1" />
+                                <field name="realization" readonly="1" />
+                                <field name="score" readonly="1" />
+                                <field name="progress" readonly="1" />
+                                <field name="health" readonly="1" />
+                                <field name="comment" />
+                                <field name="corrective_action" />
+                            </group>
+                        </form>
+                    </field>
+                </page>
+                <page name="summary" string="Summary">
+                    <field name="summary" colspan="4" nolabel="1" />
+                </page>
+            </xpath>
+        </data>
+    </field>
+</record>
+
+<record id="strategy_review_action" model="ir.actions.act_window">
+    <field name="name">Reviews</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">strategy_review</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem
+        id="strategy_review_menu"
+        name="Reviews"
+        parent="menu_strategic_management_monitoring"
+        action="strategy_review_action"
+        groups="strategy_review_viewer_group"
+        sequence="10"
+    />
+</odoo>

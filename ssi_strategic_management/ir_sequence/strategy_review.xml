@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2026 OpenSynergy Indonesia
+     Copyright 2026 PT. Simetri Sinergi Indonesia
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+<data noupdate="1">
+<record id="sequence_strategy_review" model="ir.sequence">
+    <field name="name">Strategy Review</field>
+    <field name="code">strategy_review</field>
+    <field name="padding">5</field>
+    <field name="prefix">SR/</field>
+    <field name="number_next" eval="1" />
+    <field name="number_increment" eval="1" />
+</record>
+</data>
+</odoo>
