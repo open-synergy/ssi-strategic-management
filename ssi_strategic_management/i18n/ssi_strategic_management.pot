@@ -2545,6 +2545,16 @@ msgid "Short description of the milestone."
 msgstr ""
 
 #. module: ssi_strategic_management
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_initiative__title
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_objective__title
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_plan__title
+#: model:ir.model.fields,help:ssi_strategic_management.field_strategy_review__title
+msgid ""
+"Short title that identifies this document. It is shown next to the document "
+"number in the document name."
+msgstr ""
+
+#. module: ssi_strategic_management
 #: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_review_view_form
 msgid "Snapshot"
 msgstr ""
@@ -2857,6 +2867,18 @@ msgstr ""
 #. module: ssi_strategic_management
 #: model:ir.model.fields,help:ssi_strategic_management.field_strategy_initiative_milestone__is_done
 msgid "Tick when the milestone has been completed."
+msgstr ""
+
+#. module: ssi_strategic_management
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_initiative__title
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_objective__title
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_plan__title
+#: model:ir.model.fields,field_description:ssi_strategic_management.field_strategy_review__title
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_initiative_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_objective_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_plan_view_form
+#: model_terms:ir.ui.view,arch_db:ssi_strategic_management.strategy_review_view_form
+msgid "Title"
 msgstr ""
 
 #. module: ssi_strategic_management
