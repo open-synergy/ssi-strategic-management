@@ -117,9 +117,15 @@ odoo.define("ssi_strategic_management.strategy_initiative_tour", function (requi
                     },
                 },
 
-                // Flow 3 -- Fill in the required fields: Plan, Date Start,
+                // Flow 3 -- Fill in the required fields: Title, Plan, Date Start,
                 // Date End. Responsible and Progress Method keep their
                 // default values.
+                {
+                    content: "Fill in the Title",
+                    trigger: ".o_field_widget[name='title']",
+                    extra_trigger: ".o_form_view.o_form_editable",
+                    run: "text Tour Initiative Title",
+                },
                 {
                     content: "Type the Plan",
                     trigger: ".o_field_many2one[name='plan_id'] input",

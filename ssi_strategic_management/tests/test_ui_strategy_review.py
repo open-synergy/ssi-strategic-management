@@ -60,6 +60,7 @@ class TestUiStrategyReview(HttpSavepointCase):
             .with_user(cls.admin)
             .create(
                 {
+                    "title": "Fixture plan",
                     "type_id": plan_type.id,
                     "date_start": "2026-01-01",
                     "date_end": "2026-12-31",
@@ -79,6 +80,7 @@ class TestUiStrategyReview(HttpSavepointCase):
             .with_user(cls.admin)
             .create(
                 {
+                    "title": "Fixture objective",
                     "plan_id": cls.plan.id,
                     "department_id": department.id,
                     "perspective_id": cls.env.ref(
@@ -155,6 +157,7 @@ class TestUiStrategyReview(HttpSavepointCase):
             .with_user(cls.admin)
             .create(
                 {
+                    "title": "Fixture review",
                     "plan_id": cls.plan.id,
                     "date_start": "2026-01-01",
                     "date_end": "2026-03-31",

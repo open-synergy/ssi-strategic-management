@@ -72,6 +72,7 @@ setup:
       save_as: "plan"
       as_user: "validator"
       values:
+        title: "Test plan title"
         type_id: "REC: type_bsc.id"
         date_start: "EVAL: (datetime.now() - relativedelta(days=60)).date()"
         date_end: "EVAL: (datetime.now() + relativedelta(days=60)).date()"
@@ -93,6 +94,7 @@ setup:
       save_as: "objective"
       as_user: "validator"
       values:
+        title: "Test objective title"
         plan_id: "REC: plan.id"
         department_id: "REC: dept.id"
         perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -127,6 +129,7 @@ scenarios:
         save_as: "objective_top"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -136,6 +139,7 @@ scenarios:
         save_as: "objective_leaf"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"

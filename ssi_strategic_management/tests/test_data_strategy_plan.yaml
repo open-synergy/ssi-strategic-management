@@ -34,6 +34,7 @@ scenarios:
         save_as: "plan"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           date_start: 2026-01-01
           date_end: 2026-12-31
@@ -102,6 +103,7 @@ scenarios:
         save_as: "plan"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           date_start: 2026-01-01
           date_end: 2026-12-31
@@ -126,6 +128,7 @@ scenarios:
         save_as: "parent"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           date_start: 2026-01-01
           date_end: 2026-12-31
@@ -135,6 +138,7 @@ scenarios:
         save_as: "child"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           parent_id: "REC: parent.id"
           date_start: 2026-04-01
@@ -187,6 +191,7 @@ scenarios:
         save_as: "parent"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           date_start: 2026-01-01
           date_end: 2026-12-31
@@ -198,6 +203,7 @@ scenarios:
           type: "ValidationError"
           message_contains: "Plan period must be within its parent plan period."
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           parent_id: "REC: parent.id"
           date_start: 2026-04-01
@@ -211,6 +217,7 @@ scenarios:
         save_as: "parent"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           date_start: 2026-01-01
           date_end: 2026-12-31
@@ -220,6 +227,7 @@ scenarios:
         save_as: "child"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           parent_id: "REC: parent.id"
           date_start: 2026-04-01
@@ -242,6 +250,7 @@ scenarios:
         save_as: "plan_a"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           date_start: 2026-01-01
           date_end: 2026-12-31
@@ -251,6 +260,7 @@ scenarios:
         save_as: "plan_b"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           parent_id: "REC: plan_a.id"
           date_start: 2026-01-01
@@ -273,6 +283,7 @@ scenarios:
         save_as: "parent"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           date_start: 2026-01-01
           date_end: 2026-12-31
@@ -282,6 +293,7 @@ scenarios:
         save_as: "child"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: plan_type.id"
           parent_id: "REC: parent.id"
           date_start: 2026-04-01
@@ -296,3 +308,55 @@ scenarios:
         expect_error:
           type: "UserError"
           message_contains: "The parent plan must be in progress first."
+
+  - name: "Display name follows the number and the title"
+    steps:
+      - step: "Create plan as validator"
+        action: "create"
+        model: "strategy_plan"
+        save_as: "plan"
+        as_user: "validator"
+        values:
+          title: "Growth"
+          type_id: "REC: plan_type.id"
+          date_start: 2026-01-01
+          date_end: 2026-12-31
+      - step: "Draft plan is named after its title only"
+        action: "assert"
+        target: "plan"
+        asserts:
+          display_name:
+            type: "value"
+            expected: "Growth"
+      - step: "Start plan so the document number is issued"
+        action: "call"
+        target: "plan"
+        method: "action_open"
+        as_user: "validator"
+        context:
+          bypass_policy_check: true
+        refresh: true
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Numbered plan is named number - title"
+        action: "assert"
+        target: "plan"
+        asserts:
+          display_name:
+            type: "value"
+            expected: "EVAL: registry['plan'].name + ' - Growth'"
+      - step: "Change the title"
+        action: "write"
+        target: "plan"
+        as_user: "validator"
+        values:
+          title: "Expansion"
+      - step: "Stored display name follows the new title"
+        action: "assert"
+        target: "plan"
+        asserts:
+          display_name:
+            type: "value"
+            expected: "EVAL: registry['plan'].name + ' - Expansion'"

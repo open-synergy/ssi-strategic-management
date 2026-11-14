@@ -112,6 +112,7 @@ setup:
       save_as: "plan"
       as_user: "validator"
       values:
+        title: "Test plan title"
         type_id: "REC: type_bsc.id"
         date_start: "EVAL: (datetime.now() - relativedelta(days=60)).date()"
         date_end: "EVAL: (datetime.now() + relativedelta(days=60)).date()"
@@ -133,6 +134,7 @@ setup:
       save_as: "objective"
       as_user: "validator"
       values:
+        title: "Test objective title"
         plan_id: "REC: plan.id"
         department_id: "REC: dept.id"
         perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -474,6 +476,7 @@ scenarios:
         save_as: "plan_emp"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: type_emp.id"
           date_start: "EVAL: (datetime.now() - relativedelta(days=60)).date()"
           date_end: "EVAL: (datetime.now() + relativedelta(days=60)).date()"
@@ -497,6 +500,7 @@ scenarios:
         save_as: "objective_emp"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan_emp.id"
           department_id: "REC: dept.id"
           employee_id: "REC: emp_mgr.id"
@@ -713,6 +717,7 @@ scenarios:
         save_as: "objective_parent"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -722,6 +727,7 @@ scenarios:
         save_as: "objective_child"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -1111,6 +1117,7 @@ scenarios:
         save_as: "objective_parent"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -1168,6 +1175,7 @@ scenarios:
         save_as: "objective_quarter"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -1268,6 +1276,7 @@ scenarios:
         save_as: "objective_top"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -1277,6 +1286,7 @@ scenarios:
         save_as: "objective_leaf"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"
@@ -1442,6 +1452,7 @@ scenarios:
         save_as: "plan_tz"
         as_user: "validator"
         values:
+          title: "Test plan title"
           type_id: "REC: type_bsc.id"
           date_start: "2026-01-01"
           date_end: "2026-12-31"
@@ -1463,6 +1474,7 @@ scenarios:
         save_as: "objective_tz"
         as_user: "validator"
         values:
+          title: "Test objective title"
           plan_id: "REC: plan_tz.id"
           department_id: "REC: dept.id"
           perspective_id: "REF: ssi_strategic_management.strategy_perspective_financial"

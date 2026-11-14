@@ -19,6 +19,8 @@
 1. Open the **Strategic Management > Strategy > Plans** menu.
 2. Click the **New** button. **(14.0: "Create")**
 3. Fill in the required fields:
+   - **Title** _(required)_: Enter a short title that identifies the plan. It is shown
+     next to the document number in the document name.
    - **Plan Type** _(required)_: Select the plan type that fixes the methodology of the
      plan.
    - **Date Start** _(required)_: Enter the first day covered by the plan.
@@ -33,6 +35,8 @@
 
 ## Post-Condition
 
+- The record is listed under its title, and the title is searchable. Once a number is
+  assigned, the name shows **number - title**.
 - A new Strategy Plan record is created in **Draft** status.
 - The document number (**Name**) still shows **/** — it is only assigned when the plan
   is started (see `07-start`).

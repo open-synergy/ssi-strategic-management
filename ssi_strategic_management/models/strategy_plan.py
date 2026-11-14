@@ -4,6 +4,7 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.osv import expression
 
 from odoo.addons.ssi_decorator import ssi_decorator
 
@@ -84,6 +85,14 @@ class StrategyPlan(models.Model):
 
     # Sequence attribute
     _create_sequence_state = "open"
+
+    title = fields.Char(
+        string="Title",
+        required=True,
+        tracking=True,
+        help="Short title that identifies this document. It is shown "
+        "next to the document number in the document name.",
+    )
 
     type_id = fields.Many2one(
         string="Plan Type",
@@ -305,3 +314,52 @@ Solution: Start the parent plan before starting this plan
         ]
         res += policy_field
         return res
+
+    @api.depends("name", "title")
+    def _compute_display_name(self):
+        """Recompute the stored display name.
+
+        The depends cover the document number and the title, so the
+        stored name follows a title change.
+        """
+        super()._compute_display_name()
+
+    def name_get(self):
+        """Return ``number - title``, or the title for unnumbered records.
+
+        :return: list of ``(id, display name)`` tuples
+        :rtype: list
+        """
+        result = []
+        for record in self:
+            title = record.title or ""
+            if record.name and record.name != "/":
+                name = "%s - %s" % (record.name, title) if title else record.name
+            else:
+                name = title or "*%s" % record.id
+            result.append((record.id, name))
+        return result
+
+    @api.model
+    def _name_search(
+        self, name="", args=None, operator="ilike", limit=100, name_get_uid=None
+    ):
+        """Search by document number or by title.
+
+        :param name: text typed by the user
+        :param args: extra domain
+        :param operator: comparison operator requested by the caller
+        :param limit: maximum number of records
+        :param name_get_uid: user used to resolve the names
+        :return: ids of the matching records
+        """
+        args = list(args or [])
+        domain = []
+        if name:
+            connector = "&" if operator in expression.NEGATIVE_TERM_OPERATORS else "|"
+            domain = [connector, ("name", operator, name), ("title", operator, name)]
+        return self._search(
+            expression.AND([domain, args]),
+            limit=limit,
+            access_rights_uid=name_get_uid,
+        )

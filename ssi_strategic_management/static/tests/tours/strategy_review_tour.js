@@ -116,8 +116,14 @@ odoo.define("ssi_strategic_management.strategy_review_tour", function (require) 
                     },
                 },
 
-                // Flow 3 -- Fill in the required fields: Plan, Date Start,
+                // Flow 3 -- Fill in the required fields: Title, Plan, Date Start,
                 // Date End. Responsible keeps its default value.
+                {
+                    content: "Fill in the Title",
+                    trigger: ".o_field_widget[name='title']",
+                    extra_trigger: ".o_form_view.o_form_editable",
+                    run: "text Tour Review Title",
+                },
                 {
                     content: "Type the Plan",
                     trigger: ".o_field_many2one[name='plan_id'] input",

@@ -69,6 +69,7 @@ class TestUiStrategyInitiative(HttpSavepointCase):
             .with_user(cls.admin)
             .create(
                 {
+                    "title": "Fixture plan",
                     "type_id": plan_type.id,
                     "date_start": "2026-01-01",
                     "date_end": "2026-12-31",
@@ -145,6 +146,7 @@ class TestUiStrategyInitiative(HttpSavepointCase):
             .with_user(cls.admin)
             .create(
                 {
+                    "title": "Fixture initiative",
                     "plan_id": cls.plan.id,
                     "department_id": department.id,
                     "progress_method": "manual",

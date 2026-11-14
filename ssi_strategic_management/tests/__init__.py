@@ -17,6 +17,7 @@ from . import (  # noqa: F401
     test_strategy_kpi_report,
     test_strategy_initiative,
     test_strategy_review,
+    test_strategy_title,
     test_ui_strategy_perspective,
     test_ui_strategy_measure,
     test_ui_strategy_score_category,

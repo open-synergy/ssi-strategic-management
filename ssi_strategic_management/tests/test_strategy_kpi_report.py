@@ -46,6 +46,7 @@ class TestStrategyKpiReport(YamlTransactionCase):
         )
         plan = env["strategy_plan"].create(
             {
+                "title": "Fixture plan",
                 "type_id": plan_type.id,
                 "date_start": "2026-01-01",
                 "date_end": "2026-12-31",
@@ -86,6 +87,7 @@ class TestStrategyKpiReport(YamlTransactionCase):
         """
         return self.env["strategy_objective"].create(
             {
+                "title": "Fixture objective",
                 "plan_id": plan.id,
                 "department_id": department.id,
                 "perspective_id": perspective.id,
